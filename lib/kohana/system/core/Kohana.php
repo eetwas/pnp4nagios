@@ -133,7 +133,7 @@ final class Kohana
             $ER = error_reporting(~E_NOTICE);
         }
         else {
-            $ER = error_reporting(~E_NOTICE & ~E_NOTICE);
+            $ER = error_reporting(~E_NOTICE);
         }
 
         // Set the user agent
