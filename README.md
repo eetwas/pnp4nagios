@@ -1,3 +1,5 @@
+[![PHP Tests](https://github.com/eetwas/pnp4nagios/actions/workflows/lint.yml/badge.svg)](https://github.com/eetwas/pnp4nagios/actions/workflows/lint.yml)
+
 # PNP4Nagios
 
 The new/current place for the pnp4nagios organization is
