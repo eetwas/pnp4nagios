@@ -18,7 +18,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class Database_Mysqli_Driver extends Database_Mysql_Driver
+class DatabaseMysqliDriver extends DatabaseMysqlDriver
 {
     // Database connection link
     protected $link;
@@ -76,12 +76,12 @@ class Database_Mysqli_Driver extends Database_Mysql_Driver
     public function query($sql)
     {
         // Only cache if it's turned on, and only cache if it's not a write statement
-        if ($this->db_config['cache'] and ! preg_match('#\b(?:INSERT|UPDATE|REPLACE|SET|DELETE|TRUNCATE)\b#i', $sql)) {
+        if ($this->db_config['cache'] and !preg_match('#\b(?:INSERT|UPDATE|REPLACE|SET|DELETE|TRUNCATE)\b#i', $sql)) {
             $hash = $this->query_hash($sql);
 
-            if (! isset($this->query_cache[$hash])) {
+            if (!isset($this->query_cache[$hash])) {
                 // Set the cached object
-                $this->query_cache[$hash] = new Kohana_Mysqli_Result($this->link, $this->db_config['object'], $sql);
+                $this->query_cache[$hash] = new KohanaMysqliResult($this->link, $this->db_config['object'], $sql);
             } else {
                 // Rewind cached result
                 $this->query_cache[$hash]->rewind();
@@ -91,13 +91,13 @@ class Database_Mysqli_Driver extends Database_Mysql_Driver
             return $this->query_cache[$hash];
         }
 
-        return new Kohana_Mysqli_Result($this->link, $this->db_config['object'], $sql);
+        return new KohanaMysqliResult($this->link, $this->db_config['object'], $sql);
     }
 
     public function set_charset($charset)
     {
         if ($this->link->set_charset($charset) === false) {
-            throw new Kohana_Database_Exception('database.error', $this->show_error());
+            throw new KohanaDatabaseException('database.error', $this->show_error());
         }
     }
 
@@ -117,18 +117,18 @@ class Database_Mysqli_Driver extends Database_Mysql_Driver
         return $this->link->error;
     }
 }
-// End Database_Mysqli_Driver Class
+// End DatabaseMysqliDriver Class
 
 /**
  * MySQLi Result
  */
-class Kohana_Mysqli_Result extends Database_Result
+class KohanaMysqliResult extends DatabaseResult
 {
     // Database connection
     protected $link;
 
     // Data fetching types
-    protected $fetch_type  = 'mysqli_fetch_object';
+    protected $fetch_type = 'mysqli_fetch_object';
     protected $return_type = MYSQLI_ASSOC;
 
     /**
@@ -142,23 +142,23 @@ class Kohana_Mysqli_Result extends Database_Result
     {
         $this->link = $link;
 
-        if (! $this->link->multi_query($sql)) {
+        if (!$this->link->multi_query($sql)) {
             // SQL error
-            throw new Kohana_Database_Exception('database.error', $this->link->error . ' - ' . $sql);
+            throw new KohanaDatabaseException('database.error', $this->link->error . ' - ' . $sql);
         } else {
             $this->result = $this->link->store_result();
 
             // If the query is an object, it was a SELECT, SHOW, DESCRIBE, EXPLAIN query
             if (is_object($this->result)) {
                 $this->current_row = 0;
-                $this->total_rows  = $this->result->num_rows;
+                $this->total_rows = $this->result->num_rows;
                 $this->fetch_type = ($object === true) ? 'fetch_object' : 'fetch_array';
             } elseif ($this->link->error) {
                 // SQL error
-                throw new Kohana_Database_Exception('database.error', $this->link->error . ' - ' . $sql);
+                throw new KohanaDatabaseException('database.error', $this->link->error . ' - ' . $sql);
             } else {
                 // Its an DELETE, INSERT, REPLACE, or UPDATE query
-                $this->insert_id  = $this->link->insert_id;
+                $this->insert_id = $this->link->insert_id;
                 $this->total_rows = $this->link->affected_rows;
             }
         }
@@ -274,7 +274,7 @@ class Kohana_Mysqli_Result extends Database_Result
 
     public function offsetGet($offset)
     {
-        if (! $this->seek($offset)) {
+        if (!$this->seek($offset)) {
             return false;
         }
 
@@ -288,7 +288,7 @@ class Kohana_Mysqli_Result extends Database_Result
 /**
  * MySQLi Prepared Statement (experimental)
  */
-class Kohana_Mysqli_Statement
+class KohanaMysqliStatement
 {
     protected $link = null;
     protected $stmt;

@@ -18,7 +18,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class Database_Core
+class DatabaseCore
 {
     // Database instances
     public static $instances = array();
@@ -29,14 +29,14 @@ class Database_Core
     // Configuration
     protected $config = array
     (
-        'benchmark'     => true,
-        'persistent'    => false,
-        'connection'    => '',
+        'benchmark' => true,
+        'persistent' => false,
+        'connection' => '',
         'character_set' => 'utf8',
-        'table_prefix'  => '',
-        'object'        => true,
-        'cache'         => false,
-        'escape'        => true,
+        'table_prefix' => '',
+        'object' => true,
+        'cache' => false,
+        'escape' => true,
     );
 
     // Database driver object
@@ -44,18 +44,18 @@ class Database_Core
     protected $link;
 
     // Un-compiled parts of the SQL query
-    protected $select     = array();
-    protected $set        = array();
-    protected $from       = array();
-    protected $join       = array();
-    protected $where      = array();
-    protected $orderby    = array();
-    protected $order      = array();
-    protected $groupby    = array();
-    protected $having     = array();
-    protected $distinct   = false;
-    protected $limit      = false;
-    protected $offset     = false;
+    protected $select = array();
+    protected $set = array();
+    protected $from = array();
+    protected $join = array();
+    protected $where = array();
+    protected $orderby = array();
+    protected $order = array();
+    protected $groupby = array();
+    protected $having = array();
+    protected $distinct = false;
+    protected $limit = false;
+    protected $offset = false;
     protected $last_query = '';
 
     // Stack of queries for push/pop
@@ -65,11 +65,11 @@ class Database_Core
      * Returns a singleton instance of Database.
      *
      * @param   mixed   configuration array or DSN
-     * @return  Database_Core
+     * @return  DatabaseCore
      */
-    public static function & instance($name = 'default', $config = null)
+    public static function &instance($name = 'default', $config = null)
     {
-        if (! isset(Database::$instances[$name])) {
+        if (!isset(Database::$instances[$name])) {
             // Create a new instance
             Database::$instances[$name] = new Database($config === null ? $name : $config);
         }
@@ -89,9 +89,9 @@ class Database_Core
     }
 
     /**
-     * Sets up the database configuration, loads the Database_Driver.
+     * Sets up the database configuration, loads the DatabaseDriver.
      *
-     * @throws  Kohana_Database_Exception
+     * @throws  KohanaDatabaseException
      */
     public function __construct($config = array())
     {
@@ -99,7 +99,7 @@ class Database_Core
             // Load the default group
             $config = Kohana::config('database.default');
         } elseif (is_array($config) and count($config) > 0) {
-            if (! array_key_exists('connection', $config)) {
+            if (!array_key_exists('connection', $config)) {
                 $config = array('connection' => $config);
             }
         } elseif (is_string($config)) {
@@ -107,12 +107,12 @@ class Database_Core
             if (strpos($config, '://') !== false) {
                 $config = array('connection' => $config);
             } else {
-            // The config is a group name
+                // The config is a group name
                 $name = $config;
 
                 // Test the config group name
                 if (($config = Kohana::config('database.' . $config)) === null) {
-                    throw new Kohana_Database_Exception('database.undefined_group', $name);
+                    throw new KohanaDatabaseException('database.undefined_group', $name);
                 }
             }
         }
@@ -123,27 +123,27 @@ class Database_Core
         if (is_string($this->config['connection'])) {
             // Make sure the connection is valid
             if (strpos($this->config['connection'], '://') === false) {
-                throw new Kohana_Database_Exception('database.invalid_dsn', $this->config['connection']);
+                throw new KohanaDatabaseException('database.invalid_dsn', $this->config['connection']);
             }
 
             // Parse the DSN, creating an array to hold the connection parameters
             $db = array
             (
-                'type'     => false,
-                'user'     => false,
-                'pass'     => false,
-                'host'     => false,
-                'port'     => false,
-                'socket'   => false,
+                'type' => false,
+                'user' => false,
+                'pass' => false,
+                'host' => false,
+                'port' => false,
+                'socket' => false,
                 'database' => false
             );
 
             // Get the protocol and arguments
-            list ($db['type'], $connection) = explode('://', $this->config['connection'], 2);
+            list($db['type'], $connection) = explode('://', $this->config['connection'], 2);
 
             if (strpos($connection, '@') !== false) {
                 // Get the username and password
-                list ($db['pass'], $connection) = explode('@', $connection, 2);
+                list($db['pass'], $connection) = explode('@', $connection, 2);
                 // Check if a password is supplied
                 $logindata = explode(':', $db['pass'], 2);
                 $db['pass'] = (count($logindata) > 1) ? $logindata[1] : '';
@@ -162,10 +162,10 @@ class Database_Core
                 if (preg_match('/^unix\([^)]++\)/', $connection)) {
                     // This one is a little hairy: we explode based on the end of
                     // the socket, removing the 'unix(' from the connection string
-                    list ($db['socket'], $connection) = explode(')', substr($connection, 5), 2);
+                    list($db['socket'], $connection) = explode(')', substr($connection, 5), 2);
                 } elseif (strpos($connection, ':') !== false) {
                     // Fetch the host and port name
-                    list ($db['host'], $db['port']) = explode(':', $connection, 2);
+                    list($db['host'], $db['port']) = explode(':', $connection, 2);
                 } else {
                     $db['host'] = $connection;
                 }
@@ -187,16 +187,16 @@ class Database_Core
         $driver = 'Database_' . ucfirst($this->config['connection']['type']) . '_Driver';
 
         // Load the driver
-        if (! Kohana::auto_load($driver)) {
-            throw new Kohana_Database_Exception('core.driver_not_found', $this->config['connection']['type'], get_class($this));
+        if (!Kohana::auto_load($driver)) {
+            throw new KohanaDatabaseException('core.driver_not_found', $this->config['connection']['type'], get_class($this));
         }
 
         // Initialize the driver
         $this->driver = new $driver($this->config);
 
         // Validate the driver
-        if (! ($this->driver instanceof Database_Driver)) {
-            throw new Kohana_Database_Exception('core.driver_implements', $this->config['connection']['type'], get_class($this), 'Database_Driver');
+        if (!($this->driver instanceof DatabaseDriver)) {
+            throw new KohanaDatabaseException('core.driver_implements', $this->config['connection']['type'], get_class($this), 'DatabaseDriver');
         }
 
         Kohana::log('debug', 'Database Library initialized');
@@ -210,10 +210,10 @@ class Database_Core
     public function connect()
     {
         // A link can be a resource or an object
-        if (! is_resource($this->link) and ! is_object($this->link)) {
+        if (!is_resource($this->link) and !is_object($this->link)) {
             $this->link = $this->driver->connect();
-            if (! is_resource($this->link) and ! is_object($this->link)) {
-                throw new Kohana_Database_Exception('database.connection', $this->driver->show_error());
+            if (!is_resource($this->link) and !is_object($this->link)) {
+                throw new KohanaDatabaseException('database.connection', $this->driver->show_error());
             }
 
             // Clear password after successful connect
@@ -225,7 +225,7 @@ class Database_Core
      * Runs a query into the driver and returns the result.
      *
      * @param   string  SQL query to execute
-     * @return  Database_Result
+     * @return  DatabaseResult
      */
     public function query($sql = '')
     {
@@ -267,7 +267,7 @@ class Database_Core
      * Selects the column names for a database query.
      *
      * @param   string  string or array of column names to select
-     * @return  Database_Core  This Database object.
+     * @return  DatabaseCore  This Database object.
      */
     public function select($sql = '*')
     {
@@ -307,7 +307,7 @@ class Database_Core
      * Selects the from table(s) for a database query.
      *
      * @param   string  string or array of tables to select
-     * @return  Database_Core  This Database object.
+     * @return  DatabaseCore  This Database object.
      */
     public function from($sql)
     {
@@ -351,16 +351,16 @@ class Database_Core
      * @param   string|array  where key or array of key => value pairs
      * @param   string        where value
      * @param   string        type of join
-     * @return  Database_Core        This Database object.
+     * @return  DatabaseCore        This Database object.
      */
     public function join($table, $key, $value = null, $type = '')
     {
         $join = array();
 
-        if (! empty($type)) {
+        if (!empty($type)) {
             $type = strtoupper(trim($type));
 
-            if (! in_array($type, array('LEFT', 'RIGHT', 'OUTER', 'INNER', 'LEFT OUTER', 'RIGHT OUTER'), true)) {
+            if (!in_array($type, array('LEFT', 'RIGHT', 'OUTER', 'INNER', 'LEFT OUTER', 'RIGHT OUTER'), true)) {
                 $type = '';
             } else {
                 $type .= ' ';
@@ -368,9 +368,9 @@ class Database_Core
         }
 
         $cond = array();
-        $keys  = is_array($key) ? $key : array($key => $value);
+        $keys = is_array($key) ? $key : array($key => $value);
         foreach ($keys as $key => $value) {
-            $key    = (strpos($key, '.') !== false) ? $this->config['table_prefix'] . $key : $key;
+            $key = (strpos($key, '.') !== false) ? $this->config['table_prefix'] . $key : $key;
 
             if (is_string($value)) {
                 // Only escape if it's a string
@@ -380,11 +380,11 @@ class Database_Core
             $cond[] = $this->driver->where($key, $value, 'AND ', count($cond), false);
         }
 
-        if (! is_array($this->join)) {
+        if (!is_array($this->join)) {
             $this->join = array();
         }
 
-        if (! is_array($table)) {
+        if (!is_array($table)) {
             $table = array($table);
         }
 
@@ -421,21 +421,21 @@ class Database_Core
      * @param   string|array  key name or array of key => value pairs
      * @param   string        value to match with key
      * @param   boolean       disable quoting of WHERE clause
-     * @return  Database_Core        This Database object.
+     * @return  DatabaseCore        This Database object.
      */
     public function where($key, $value = null, $quote = true)
     {
-        $quote = (func_num_args() < 2 and ! is_array($key)) ? -1 : $quote;
+        $quote = (func_num_args() < 2 and !is_array($key)) ? -1 : $quote;
         if (is_object($key)) {
             $keys = array((string) $key => '');
-        } elseif (! is_array($key)) {
+        } elseif (!is_array($key)) {
             $keys = array($key => $value);
         } else {
             $keys = $key;
         }
 
         foreach ($keys as $key => $value) {
-            $key           = (strpos($key, '.') !== false) ? $this->config['table_prefix'] . $key : $key;
+            $key = (strpos($key, '.') !== false) ? $this->config['table_prefix'] . $key : $key;
             $this->where[] = $this->driver->where($key, $value, 'AND ', count($this->where), $quote);
         }
 
@@ -448,21 +448,21 @@ class Database_Core
      * @param   string|array  key name or array of key => value pairs
      * @param   string        value to match with key
      * @param   boolean       disable quoting of WHERE clause
-     * @return  Database_Core        This Database object.
+     * @return  DatabaseCore        This Database object.
      */
     public function orwhere($key, $value = null, $quote = true)
     {
-        $quote = (func_num_args() < 2 and ! is_array($key)) ? -1 : $quote;
+        $quote = (func_num_args() < 2 and !is_array($key)) ? -1 : $quote;
         if (is_object($key)) {
             $keys = array((string) $key => '');
-        } elseif (! is_array($key)) {
+        } elseif (!is_array($key)) {
             $keys = array($key => $value);
         } else {
             $keys = $key;
         }
 
         foreach ($keys as $key => $value) {
-            $key           = (strpos($key, '.') !== false) ? $this->config['table_prefix'] . $key : $key;
+            $key = (strpos($key, '.') !== false) ? $this->config['table_prefix'] . $key : $key;
             $this->where[] = $this->driver->where($key, $value, 'OR ', count($this->where), $quote);
         }
 
@@ -475,14 +475,14 @@ class Database_Core
      * @param   string|array  field name or array of field => match pairs
      * @param   string        like value to match with field
      * @param   boolean       automatically add starting and ending wildcards
-     * @return  Database_Core        This Database object.
+     * @return  DatabaseCore        This Database object.
      */
     public function like($field, $match = '', $auto = true)
     {
         $fields = is_array($field) ? $field : array($field => $match);
 
         foreach ($fields as $field => $match) {
-            $field         = (strpos($field, '.') !== false) ? $this->config['table_prefix'] . $field : $field;
+            $field = (strpos($field, '.') !== false) ? $this->config['table_prefix'] . $field : $field;
             $this->where[] = $this->driver->like($field, $match, $auto, 'AND ', count($this->where));
         }
 
@@ -495,14 +495,14 @@ class Database_Core
      * @param   string|array  field name or array of field => match pairs
      * @param   string        like value to match with field
      * @param   boolean       automatically add starting and ending wildcards
-     * @return  Database_Core        This Database object.
+     * @return  DatabaseCore        This Database object.
      */
     public function orlike($field, $match = '', $auto = true)
     {
         $fields = is_array($field) ? $field : array($field => $match);
 
         foreach ($fields as $field => $match) {
-            $field         = (strpos($field, '.') !== false) ? $this->config['table_prefix'] . $field : $field;
+            $field = (strpos($field, '.') !== false) ? $this->config['table_prefix'] . $field : $field;
             $this->where[] = $this->driver->like($field, $match, $auto, 'OR ', count($this->where));
         }
 
@@ -515,14 +515,14 @@ class Database_Core
      * @param   string|array  field name or array of field => match pairs
      * @param   string        like value to match with field
      * @param   boolean       automatically add starting and ending wildcards
-     * @return  Database_Core        This Database object.
+     * @return  DatabaseCore        This Database object.
      */
     public function notlike($field, $match = '', $auto = true)
     {
         $fields = is_array($field) ? $field : array($field => $match);
 
         foreach ($fields as $field => $match) {
-            $field         = (strpos($field, '.') !== false) ? $this->config['table_prefix'] . $field : $field;
+            $field = (strpos($field, '.') !== false) ? $this->config['table_prefix'] . $field : $field;
             $this->where[] = $this->driver->notlike($field, $match, $auto, 'AND ', count($this->where));
         }
 
@@ -534,14 +534,14 @@ class Database_Core
      *
      * @param   string|array  field name or array of field => match pairs
      * @param   string        like value to match with field
-     * @return  Database_Core        This Database object.
+     * @return  DatabaseCore        This Database object.
      */
     public function ornotlike($field, $match = '', $auto = true)
     {
         $fields = is_array($field) ? $field : array($field => $match);
 
         foreach ($fields as $field => $match) {
-            $field         = (strpos($field, '.') !== false) ? $this->config['table_prefix'] . $field : $field;
+            $field = (strpos($field, '.') !== false) ? $this->config['table_prefix'] . $field : $field;
             $this->where[] = $this->driver->notlike($field, $match, $auto, 'OR ', count($this->where));
         }
 
@@ -553,14 +553,14 @@ class Database_Core
      *
      * @param   string|array  field name or array of field => match pairs
      * @param   string        like value to match with field
-     * @return  Database_Core        This Database object.
+     * @return  DatabaseCore        This Database object.
      */
     public function regex($field, $match = '')
     {
         $fields = is_array($field) ? $field : array($field => $match);
 
         foreach ($fields as $field => $match) {
-            $field         = (strpos($field, '.') !== false) ? $this->config['table_prefix'] . $field : $field;
+            $field = (strpos($field, '.') !== false) ? $this->config['table_prefix'] . $field : $field;
             $this->where[] = $this->driver->regex($field, $match, 'AND ', count($this->where));
         }
 
@@ -572,14 +572,14 @@ class Database_Core
      *
      * @param   string|array  field name or array of field => match pairs
      * @param   string        like value to match with field
-     * @return  Database_Core        This Database object.
+     * @return  DatabaseCore        This Database object.
      */
     public function orregex($field, $match = '')
     {
         $fields = is_array($field) ? $field : array($field => $match);
 
         foreach ($fields as $field => $match) {
-            $field         = (strpos($field, '.') !== false) ? $this->config['table_prefix'] . $field : $field;
+            $field = (strpos($field, '.') !== false) ? $this->config['table_prefix'] . $field : $field;
             $this->where[] = $this->driver->regex($field, $match, 'OR ', count($this->where));
         }
 
@@ -591,14 +591,14 @@ class Database_Core
      *
      * @param   string|array  field name or array of field => match pairs
      * @param   string        regex value to match with field
-     * @return  Database_Core        This Database object.
+     * @return  DatabaseCore        This Database object.
      */
     public function notregex($field, $match = '')
     {
         $fields = is_array($field) ? $field : array($field => $match);
 
         foreach ($fields as $field => $match) {
-            $field         = (strpos($field, '.') !== false) ? $this->config['table_prefix'] . $field : $field;
+            $field = (strpos($field, '.') !== false) ? $this->config['table_prefix'] . $field : $field;
             $this->where[] = $this->driver->notregex($field, $match, 'AND ', count($this->where));
         }
 
@@ -610,14 +610,14 @@ class Database_Core
      *
      * @param   string|array  field name or array of field => match pairs
      * @param   string        regex value to match with field
-     * @return  Database_Core        This Database object.
+     * @return  DatabaseCore        This Database object.
      */
     public function ornotregex($field, $match = '')
     {
         $fields = is_array($field) ? $field : array($field => $match);
 
         foreach ($fields as $field => $match) {
-            $field         = (strpos($field, '.') !== false) ? $this->config['table_prefix'] . $field : $field;
+            $field = (strpos($field, '.') !== false) ? $this->config['table_prefix'] . $field : $field;
             $this->where[] = $this->driver->notregex($field, $match, 'OR ', count($this->where));
         }
 
@@ -628,11 +628,11 @@ class Database_Core
      * Chooses the column to group by in a select query.
      *
      * @param   string  column name to group by
-     * @return  Database_Core  This Database object.
+     * @return  DatabaseCore  This Database object.
      */
     public function groupby($by)
     {
-        if (! is_array($by)) {
+        if (!is_array($by)) {
             $by = explode(',', (string) $by);
         }
 
@@ -658,7 +658,7 @@ class Database_Core
      * @param   string|array  key name or array of key => value pairs
      * @param   string        value to match with key
      * @param   boolean       disable quoting of WHERE clause
-     * @return  Database_Core        This Database object.
+     * @return  DatabaseCore        This Database object.
      */
     public function having($key, $value = '', $quote = true)
     {
@@ -672,7 +672,7 @@ class Database_Core
      * @param   string|array  key name or array of key => value pairs
      * @param   string        value to match with key
      * @param   boolean       disable quoting of WHERE clause
-     * @return  Database_Core        This Database object.
+     * @return  DatabaseCore        This Database object.
      */
     public function orhaving($key, $value = '', $quote = true)
     {
@@ -685,11 +685,11 @@ class Database_Core
      *
      * @param   string|array  column(s) to order on, can be an array, single column, or comma seperated list of columns
      * @param   string        direction of the order
-     * @return  Database_Core        This Database object.
+     * @return  DatabaseCore        This Database object.
      */
     public function orderby($orderby, $direction = null)
     {
-        if (! is_array($orderby)) {
+        if (!is_array($orderby)) {
             $orderby = array($orderby => $direction);
         }
 
@@ -697,7 +697,7 @@ class Database_Core
             $direction = strtoupper(trim($direction));
 
             // Add a direction if the provided one isn't valid
-            if (! in_array($direction, array('ASC', 'DESC', 'RAND()', 'RANDOM()', 'NULL'))) {
+            if (!in_array($direction, array('ASC', 'DESC', 'RAND()', 'RANDOM()', 'NULL'))) {
                 $direction = 'ASC';
             }
 
@@ -717,13 +717,13 @@ class Database_Core
      *
      * @param   integer  number of rows to limit result to
      * @param   integer  offset in result to start returning rows from
-     * @return  Database_Core   This Database object.
+     * @return  DatabaseCore   This Database object.
      */
     public function limit($limit, $offset = null)
     {
-        $this->limit  = (int) $limit;
+        $this->limit = (int) $limit;
 
-        if ($offset !== null or ! is_int($this->offset)) {
+        if ($offset !== null or !is_int($this->offset)) {
             $this->offset($offset);
         }
 
@@ -734,7 +734,7 @@ class Database_Core
      * Sets the offset portion of a query.
      *
      * @param   integer  offset value
-     * @return  Database_Core   This Database object.
+     * @return  DatabaseCore   This Database object.
      */
     public function offset($value)
     {
@@ -748,11 +748,11 @@ class Database_Core
      *
      * @param   string|array  key name or array of key => value pairs
      * @param   string        value to match with key
-     * @return  Database_Core        This Database object.
+     * @return  DatabaseCore        This Database object.
      */
     public function set($key, $value = '')
     {
-        if (! is_array($key)) {
+        if (!is_array($key)) {
             $key = array($key => $value);
         }
 
@@ -774,7 +774,7 @@ class Database_Core
      * @param   string  table name
      * @param   string  limit clause
      * @param   string  offset clause
-     * @return  Database_Result
+     * @return  DatabaseResult
      */
     public function get($table = '', $limit = null, $offset = null)
     {
@@ -782,7 +782,7 @@ class Database_Core
             $this->from($table);
         }
 
-        if (! is_null($limit)) {
+        if (!is_null($limit)) {
             $this->limit($limit, $offset);
         }
 
@@ -804,7 +804,7 @@ class Database_Core
      * @param   array   where clause
      * @param   string  limit clause
      * @param   string  offset clause
-     * @return  Database_Core  This Database object.
+     * @return  DatabaseCore  This Database object.
      */
     public function getwhere($table = '', $where = null, $limit = null, $offset = null)
     {
@@ -812,11 +812,11 @@ class Database_Core
             $this->from($table);
         }
 
-        if (! is_null($where)) {
+        if (!is_null($where)) {
             $this->where($where);
         }
 
-        if (! is_null($limit)) {
+        if (!is_null($limit)) {
             $this->limit($limit, $offset);
         }
 
@@ -843,7 +843,7 @@ class Database_Core
             $this->from($table);
         }
 
-        if (! is_null($limit)) {
+        if (!is_null($limit)) {
             $this->limit($limit, $offset);
         }
 
@@ -859,21 +859,21 @@ class Database_Core
      *
      * @param   string  table name
      * @param   array   array of key/value pairs to insert
-     * @return  Database_Result  Query result
+     * @return  DatabaseResult  Query result
      */
     public function insert($table = '', $set = null)
     {
-        if (! is_null($set)) {
+        if (!is_null($set)) {
             $this->set($set);
         }
 
         if ($this->set == null) {
-            throw new Kohana_Database_Exception('database.must_use_set');
+            throw new KohanaDatabaseException('database.must_use_set');
         }
 
         if ($table == '') {
-            if (! isset($this->from[0])) {
-                throw new Kohana_Database_Exception('database.must_use_table');
+            if (!isset($this->from[0])) {
+                throw new KohanaDatabaseException('database.must_use_table');
             }
 
             $table = $this->from[0];
@@ -895,7 +895,7 @@ class Database_Core
      * @param   string  Name of the column being examined
      * @param   mixed   An array or string to match against
      * @param   bool    Generate a NOT IN clause instead
-     * @return  Database_Core  This Database object.
+     * @return  DatabaseCore  This Database object.
      */
     public function in($field, $values, $not = false)
     {
@@ -912,7 +912,7 @@ class Database_Core
         }
 
         $where = $this->driver->escape_column(((strpos($field, '.') !== false) ?
-                                               $this->config['table_prefix'] : '') . $field) . ' ' .
+            $this->config['table_prefix'] : '') . $field) . ' ' .
             ($not === true ? 'NOT ' : '') . 'IN (' . $values . ')';
         $this->where[] = $this->driver->where($where, '', 'AND ', count($this->where), -1);
 
@@ -924,7 +924,7 @@ class Database_Core
      *
      * @param   string  Name of the column being examined
      * @param   mixed   An array or string to match against
-     * @return  Database_Core  This Database object.
+     * @return  DatabaseCore  This Database object.
      */
     public function notin($field, $values)
     {
@@ -936,21 +936,21 @@ class Database_Core
      *
      * @param   string  table name
      * @param   array   array of key/value pairs to merge
-     * @return  Database_Result  Query result
+     * @return  DatabaseResult  Query result
      */
     public function merge($table = '', $set = null)
     {
-        if (! is_null($set)) {
+        if (!is_null($set)) {
             $this->set($set);
         }
 
         if ($this->set == null) {
-            throw new Kohana_Database_Exception('database.must_use_set');
+            throw new KohanaDatabaseException('database.must_use_set');
         }
 
         if ($table == '') {
-            if (! isset($this->from[0])) {
-                throw new Kohana_Database_Exception('database.must_use_table');
+            if (!isset($this->from[0])) {
+                throw new KohanaDatabaseException('database.must_use_table');
             }
 
             $table = $this->from[0];
@@ -968,7 +968,7 @@ class Database_Core
      * @param   string  table name
      * @param   array   associative array of update values
      * @param   array   where clause
-     * @return  Database_Result  Query result
+     * @return  DatabaseResult  Query result
      */
     public function update($table = '', $set = null, $where = null)
     {
@@ -976,17 +976,17 @@ class Database_Core
             $this->set($set);
         }
 
-        if (! is_null($where)) {
+        if (!is_null($where)) {
             $this->where($where);
         }
 
         if ($this->set == false) {
-            throw new Kohana_Database_Exception('database.must_use_set');
+            throw new KohanaDatabaseException('database.must_use_set');
         }
 
         if ($table == '') {
-            if (! isset($this->from[0])) {
-                throw new Kohana_Database_Exception('database.must_use_table');
+            if (!isset($this->from[0])) {
+                throw new KohanaDatabaseException('database.must_use_table');
             }
 
             $table = $this->from[0];
@@ -1003,13 +1003,13 @@ class Database_Core
      *
      * @param   string  table name
      * @param   array   where clause
-     * @return  Database_Result  Query result
+     * @return  DatabaseResult  Query result
      */
     public function delete($table = '', $where = null)
     {
         if ($table == '') {
-            if (! isset($this->from[0])) {
-                throw new Kohana_Database_Exception('database.must_use_table');
+            if (!isset($this->from[0])) {
+                throw new KohanaDatabaseException('database.must_use_table');
             }
 
             $table = $this->from[0];
@@ -1017,12 +1017,12 @@ class Database_Core
             $table = $this->config['table_prefix'] . $table;
         }
 
-        if (! is_null($where)) {
+        if (!is_null($where)) {
             $this->where($where);
         }
 
         if (count($this->where) < 1) {
-            throw new Kohana_Database_Exception('database.must_use_where');
+            throw new KohanaDatabaseException('database.must_use_where');
         }
 
         $sql = $this->driver->delete($table, $this->where);
@@ -1052,7 +1052,7 @@ class Database_Core
     {
         if (count($this->from) < 1) {
             if ($table == false) {
-                throw new Kohana_Database_Exception('database.must_use_table');
+                throw new KohanaDatabaseException('database.must_use_table');
             }
 
             $this->from($table);
@@ -1074,16 +1074,16 @@ class Database_Core
      */
     protected function reset_select()
     {
-        $this->select   = array();
-        $this->from     = array();
-        $this->join     = array();
-        $this->where    = array();
-        $this->orderby  = array();
-        $this->groupby  = array();
-        $this->having   = array();
+        $this->select = array();
+        $this->from = array();
+        $this->join = array();
+        $this->where = array();
+        $this->orderby = array();
+        $this->groupby = array();
+        $this->having = array();
         $this->distinct = false;
-        $this->limit    = false;
-        $this->offset   = false;
+        $this->limit = false;
+        $this->offset = false;
     }
 
     /**
@@ -1093,8 +1093,8 @@ class Database_Core
      */
     protected function reset_write()
     {
-        $this->set   = array();
-        $this->from  = array();
+        $this->set = array();
+        $this->from = array();
         $this->where = array();
     }
 
@@ -1239,7 +1239,7 @@ class Database_Core
      * Clears the query cache.
      *
      * @param   string|TRUE  clear cache by SQL statement or TRUE for last query
-     * @return  Database_Core       This Database object.
+     * @return  DatabaseCore       This Database object.
      */
     public function clear_cache($sql = null)
     {
@@ -1259,7 +1259,7 @@ class Database_Core
      * and pop to prevent queries from clashing before they are
      * executed
      *
-     * @return Database_Core This Databaes object
+     * @return DatabaseCore This Databaes object
      */
     public function push()
     {
@@ -1285,7 +1285,7 @@ class Database_Core
     /**
      * Pops from query stack into the current query space.
      *
-     * @return Database_Core This Databaes object
+     * @return DatabaseCore This Databaes object
      */
     public function pop()
     {
@@ -1348,7 +1348,7 @@ class Database_Core
 /**
  * Sets the code for a Database exception.
  */
-class Kohana_Database_Exception extends Kohana_Exception
+class KohanaDatabaseException extends KohanaException
 {
     protected $code = E_DATABASE_ERROR;
 }

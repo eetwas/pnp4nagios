@@ -17,7 +17,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class Image_Core
+class ImageCore
 {
     // Master Dimension
     const NONE = 1;
@@ -62,7 +62,7 @@ class Image_Core
     /**
      * Creates a new image editor instance.
      *
-     * @throws  Kohana_Exception
+     * @throws  KohanaException
      * @param   string   filename of image
      * @param   array    non-default configurations
      * @return  void
@@ -75,12 +75,12 @@ class Image_Core
         ($check === null) and $check = function_exists('getimagesize');
 
         if ($check === false) {
-            throw new Kohana_Exception('image.getimagesize_missing');
+            throw new KohanaException('image.getimagesize_missing');
         }
 
         // Check to make sure the image exists
-        if (! is_file($image)) {
-            throw new Kohana_Exception('image.file_not_found', $image);
+        if (!is_file($image)) {
+            throw new KohanaException('image.file_not_found', $image);
         }
 
         // Disable error reporting, to prevent PHP warnings
@@ -93,13 +93,13 @@ class Image_Core
         error_reporting($ER);
 
         // Make sure that the image is readable and valid
-        if (! is_array($image_info) or count($image_info) < 3) {
-            throw new Kohana_Exception('image.file_unreadable', $image);
+        if (!is_array($image_info) or count($image_info) < 3) {
+            throw new KohanaException('image.file_unreadable', $image);
         }
 
         // Check to make sure the image type is allowed
-        if (! isset(Image::$allowed_types[$image_info[2]])) {
-            throw new Kohana_Exception('image.type_not_allowed', $image);
+        if (!isset(Image::$allowed_types[$image_info[2]])) {
+            throw new KohanaException('image.type_not_allowed', $image);
         }
 
         // Image has been validated, load it
@@ -120,16 +120,16 @@ class Image_Core
         $driver = 'Image_' . ucfirst($this->config['driver']) . '_Driver';
 
         // Load the driver
-        if (! Kohana::auto_load($driver)) {
-            throw new Kohana_Exception('core.driver_not_found', $this->config['driver'], get_class($this));
+        if (!Kohana::auto_load($driver)) {
+            throw new KohanaException('core.driver_not_found', $this->config['driver'], get_class($this));
         }
 
         // Initialize the driver
         $this->driver = new $driver($this->config['params']);
 
         // Validate the driver
-        if (! ($this->driver instanceof Image_Driver)) {
-            throw new Kohana_Exception('core.driver_implements', $this->config['driver'], get_class($this), 'Image_Driver');
+        if (!($this->driver instanceof ImageDriver)) {
+            throw new KohanaException('core.driver_implements', $this->config['driver'], get_class($this), 'ImageDriver');
         }
     }
 
@@ -144,7 +144,7 @@ class Image_Core
         if (isset($this->image[$property])) {
             return $this->image[$property];
         } else {
-            throw new Kohana_Exception('core.invalid_property', $property, get_class($this));
+            throw new KohanaException('core.invalid_property', $property, get_class($this));
         }
     }
 
@@ -154,7 +154,7 @@ class Image_Core
      * wish to use height as master dim, set $image->master_dim = Image::HEIGHT
      * This method is chainable.
      *
-     * @throws  Kohana_Exception
+     * @throws  KohanaException
      * @param   integer  width
      * @param   integer  height
      * @param   integer  one of: Image::NONE, Image::AUTO, Image::WIDTH, Image::HEIGHT
@@ -162,28 +162,28 @@ class Image_Core
      */
     public function resize($width, $height, $master = null)
     {
-        if (! $this->valid_size('width', $width)) {
-            throw new Kohana_Exception('image.invalid_width', $width);
+        if (!$this->valid_size('width', $width)) {
+            throw new KohanaException('image.invalid_width', $width);
         }
 
-        if (! $this->valid_size('height', $height)) {
-            throw new Kohana_Exception('image.invalid_height', $height);
+        if (!$this->valid_size('height', $height)) {
+            throw new KohanaException('image.invalid_height', $height);
         }
 
         if (empty($width) and empty($height)) {
-            throw new Kohana_Exception('image.invalid_dimensions', __FUNCTION__);
+            throw new KohanaException('image.invalid_dimensions', __FUNCTION__);
         }
 
         if ($master === null) {
             // Maintain the aspect ratio by default
             $master = Image::AUTO;
-        } elseif (! $this->valid_size('master', $master)) {
-            throw new Kohana_Exception('image.invalid_master');
+        } elseif (!$this->valid_size('master', $master)) {
+            throw new KohanaException('image.invalid_master');
         }
 
         $this->actions['resize'] = array
         (
-            'width'  => $width,
+            'width' => $width,
             'height' => $height,
             'master' => $master,
         );
@@ -196,7 +196,7 @@ class Image_Core
      * and left offset.
      * This method is chainable.
      *
-     * @throws  Kohana_Exception
+     * @throws  KohanaException
      * @param   integer  width
      * @param   integer  height
      * @param   integer  top offset, pixel value or one of: top, center, bottom
@@ -205,32 +205,32 @@ class Image_Core
      */
     public function crop($width, $height, $top = 'center', $left = 'center')
     {
-        if (! $this->valid_size('width', $width)) {
-            throw new Kohana_Exception('image.invalid_width', $width);
+        if (!$this->valid_size('width', $width)) {
+            throw new KohanaException('image.invalid_width', $width);
         }
 
-        if (! $this->valid_size('height', $height)) {
-            throw new Kohana_Exception('image.invalid_height', $height);
+        if (!$this->valid_size('height', $height)) {
+            throw new KohanaException('image.invalid_height', $height);
         }
 
-        if (! $this->valid_size('top', $top)) {
-            throw new Kohana_Exception('image.invalid_top', $top);
+        if (!$this->valid_size('top', $top)) {
+            throw new KohanaException('image.invalid_top', $top);
         }
 
-        if (! $this->valid_size('left', $left)) {
-            throw new Kohana_Exception('image.invalid_left', $left);
+        if (!$this->valid_size('left', $left)) {
+            throw new KohanaException('image.invalid_left', $left);
         }
 
         if (empty($width) and empty($height)) {
-            throw new Kohana_Exception('image.invalid_dimensions', __FUNCTION__);
+            throw new KohanaException('image.invalid_dimensions', __FUNCTION__);
         }
 
         $this->actions['crop'] = array
         (
-            'width'  => $width,
+            'width' => $width,
             'height' => $height,
-            'top'    => $top,
-            'left'   => $left,
+            'top' => $top,
+            'left' => $left,
         );
 
         return $this;
@@ -268,14 +268,14 @@ class Image_Core
     /**
      * Flip an image horizontally or vertically.
      *
-     * @throws  Kohana_Exception
+     * @throws  KohanaException
      * @param   integer  direction
      * @return  object
      */
     public function flip($direction)
     {
         if ($direction !== Image::HORIZONTAL and $direction !== Image::VERTICAL) {
-            throw new Kohana_Exception('image.invalid_flip');
+            throw new KohanaException('image.invalid_flip');
         }
 
         $this->actions['flip'] = $direction;
@@ -312,7 +312,7 @@ class Image_Core
     /**
      * Save the image to a new image or overwrite this image.
      *
-     * @throws  Kohana_Exception
+     * @throws  KohanaException
      * @param   string   new image filename
      * @param   integer  permissions for new image
      * @param   boolean  keep or discard image process actions
@@ -324,14 +324,14 @@ class Image_Core
         empty($new_image) and $new_image = $this->image['file'];
 
         // Separate the directory and filename
-        $dir  = pathinfo($new_image, PATHINFO_DIRNAME);
+        $dir = pathinfo($new_image, PATHINFO_DIRNAME);
         $file = pathinfo($new_image, PATHINFO_BASENAME);
 
         // Normalize the path
         $dir = str_replace('\\', '/', realpath($dir)) . '/';
 
-        if (! is_writable($dir)) {
-            throw new Kohana_Exception('image.directory_unwritable', $dir);
+        if (!is_writable($dir)) {
+            throw new KohanaException('image.directory_unwritable', $dir);
         }
 
         if ($status = $this->driver->process($this->image, $this->actions, $dir, $file)) {
@@ -360,7 +360,7 @@ class Image_Core
         $new_image = $this->image['file'];
 
         // Separate the directory and filename
-        $dir  = pathinfo($new_image, PATHINFO_DIRNAME);
+        $dir = pathinfo($new_image, PATHINFO_DIRNAME);
         $file = pathinfo($new_image, PATHINFO_BASENAME);
 
         // Normalize the path
@@ -390,16 +390,16 @@ class Image_Core
             return true;
         }
 
-        if (! is_scalar($value)) {
+        if (!is_scalar($value)) {
             return false;
         }
 
         switch ($type) {
             case 'width':
             case 'height':
-                if (is_string($value) and ! ctype_digit($value)) {
+                if (is_string($value) and !ctype_digit($value)) {
                     // Only numbers and percent signs
-                    if (! preg_match('/^[0-9]++%$/D', $value)) {
+                    if (!preg_match('/^[0-9]++%$/D', $value)) {
                         return false;
                     }
                 } else {
@@ -407,8 +407,8 @@ class Image_Core
                 }
                 break;
             case 'top':
-                if (is_string($value) and ! ctype_digit($value)) {
-                    if (! in_array($value, array('top', 'bottom', 'center'))) {
+                if (is_string($value) and !ctype_digit($value)) {
+                    if (!in_array($value, array('top', 'bottom', 'center'))) {
                         return false;
                     }
                 } else {
@@ -416,8 +416,8 @@ class Image_Core
                 }
                 break;
             case 'left':
-                if (is_string($value) and ! ctype_digit($value)) {
-                    if (! in_array($value, array('left', 'right', 'center'))) {
+                if (is_string($value) and !ctype_digit($value)) {
+                    if (!in_array($value, array('left', 'right', 'center'))) {
                         return false;
                     }
                 } else {

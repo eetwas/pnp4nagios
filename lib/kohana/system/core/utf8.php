@@ -73,19 +73,19 @@ if (extension_loaded('mbstring')) {
 }
 
 // Convert all global variables to UTF-8.
-$_GET    = utf8::clean($_GET);
-$_POST   = utf8::clean($_POST);
-$_COOKIE = utf8::clean($_COOKIE);
-$_SERVER = utf8::clean($_SERVER);
+$_GET    = Utf8::clean($_GET);
+$_POST   = Utf8::clean($_POST);
+$_COOKIE = Utf8::clean($_COOKIE);
+$_SERVER = Utf8::clean($_SERVER);
 
 if (PHP_SAPI == 'cli') {
     // Convert command line arguments
-    $_SERVER['argv'] = utf8::clean($_SERVER['argv']);
+    $_SERVER['argv'] = Utf8::clean($_SERVER['argv']);
 }
 
 // phpcs:enable PSR1.Files.SideEffects
 // phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
-final class utf8
+final class Utf8
 {
     // Called methods
     private static $called = array();

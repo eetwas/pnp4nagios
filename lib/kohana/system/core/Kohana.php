@@ -55,7 +55,7 @@ final class Kohana
     (
         'error' => 1,
         'alert' => 2,
-        'info'  => 3,
+        'info' => 3,
         'debug' => 4,
     );
 
@@ -103,7 +103,7 @@ final class Kohana
 
         if (self::$cache_lifetime = self::config('core.internal_cache')) {
             // Are we using encryption for caches?
-            self::$internal_cache_encrypt   = self::config('core.internal_cache_encrypt');
+            self::$internal_cache_encrypt = self::config('core.internal_cache_encrypt');
 
             if (self::$internal_cache_encrypt === true) {
                 self::$internal_cache_key = self::config('core.internal_cache_key');
@@ -113,13 +113,13 @@ final class Kohana
             }
 
             // Set the directory to be used for the internal cache
-            if (! self::$internal_cache_path = self::config('core.internal_cache_path')) {
+            if (!self::$internal_cache_path = self::config('core.internal_cache_path')) {
                 self::$internal_cache_path = APPPATH . 'cache/';
             }
 
             // Load cached configuration and language files
             self::$internal_cache['configuration'] = self::cache('configuration', self::$cache_lifetime);
-            self::$internal_cache['language']      = self::cache('language', self::$cache_lifetime);
+            self::$internal_cache['language'] = self::cache('language', self::$cache_lifetime);
 
             // Load cached file paths
             self::$internal_cache['find_file_paths'] = self::cache('find_file_paths', self::$cache_lifetime);
@@ -129,15 +129,14 @@ final class Kohana
         }
 
         // Disable notices and "strict" errors
-        if(PHP_VERSION_ID >= 70400) {
+        if (PHP_VERSION_ID >= 70400) {
             $ER = error_reporting(~E_NOTICE);
-        }
-        else {
+        } else {
             $ER = error_reporting(~E_NOTICE);
         }
 
         // Set the user agent
-        self::$user_agent = ( ! empty($_SERVER['HTTP_USER_AGENT']) ? trim($_SERVER['HTTP_USER_AGENT']) : '');
+        self::$user_agent = (!empty($_SERVER['HTTP_USER_AGENT']) ? trim($_SERVER['HTTP_USER_AGENT']) : '');
 
         if (function_exists('date_default_timezone_set')) {
             $timezone = self::config('locale.timezone');
@@ -224,7 +223,7 @@ final class Kohana
      *
      * @return  object  instance of controller
      */
-    public static function & instance()
+    public static function &instance()
     {
         if (self::$instance === null) {
             Benchmark::start(SYSTEM_BENCHMARK . '_controller_setup');
@@ -347,7 +346,7 @@ final class Kohana
         $group = explode('.', $key, 2);
         $group = $group[0];
 
-        if (! isset(self::$configuration[$group])) {
+        if (!isset(self::$configuration[$group])) {
             // Load the configuration group
             self::$configuration[$group] = self::config_load($group, $required);
         }
@@ -416,7 +415,7 @@ final class Kohana
             // Load the application configuration file
             require APPPATH . 'config/config' . EXT;
 
-            if (! isset($config['site_domain'])) {
+            if (!isset($config['site_domain'])) {
                 // Invalid config file
                 die('Your Kohana application configuration file is not valid.');
             }
@@ -442,7 +441,7 @@ final class Kohana
             }
         }
 
-        if (! isset(self::$write_cache['configuration'])) {
+        if (!isset(self::$write_cache['configuration'])) {
             // Cache has changed
             self::$write_cache['configuration'] = true;
         }
@@ -461,7 +460,7 @@ final class Kohana
         // Remove the group from config
         unset(self::$configuration[$group], self::$internal_cache['configuration'][$group]);
 
-        if (! isset(self::$write_cache['configuration'])) {
+        if (!isset(self::$write_cache['configuration'])) {
             // Cache has changed
             self::$write_cache['configuration'] = true;
         }
@@ -500,7 +499,7 @@ final class Kohana
         // Filename of the log
         $filename = self::log_directory() . date('Y-m-d') . '.log' . EXT;
 
-        if (! is_file($filename)) {
+        if (!is_file($filename)) {
             // Write the SYSPATH checking header
             file_put_contents(
                 $filename,
@@ -516,11 +515,11 @@ final class Kohana
 
         do {
             // Load the next mess
-            list ($date, $type, $text) = array_shift(self::$log);
+            list($date, $type, $text) = array_shift(self::$log);
 
             // Add a new message line
             $messages[] = $date . ' --- ' . $type . ': ' . $text;
-        } while (! empty(self::$log));
+        } while (!empty(self::$log));
 
         // Write messages to log file
         file_put_contents($filename, implode(PHP_EOL, $messages) . PHP_EOL, FILE_APPEND);
@@ -536,7 +535,7 @@ final class Kohana
     {
         static $directory;
 
-        if (! empty($dir)) {
+        if (!empty($dir)) {
             // Get the directory path
             $dir = realpath($dir);
 
@@ -545,7 +544,7 @@ final class Kohana
                 $directory = str_replace('\\', '/', $dir) . '/';
             } else {
                 // Log directory is invalid
-                throw new Kohana_Exception('core.log_dir_unwritable', $dir);
+                throw new KohanaException('core.log_dir_unwritable', $dir);
             }
         }
 
@@ -570,14 +569,14 @@ final class Kohana
                 if ((time() - filemtime($path)) < $lifetime) {
                     // Cache is valid! Now, do we need to decrypt it?
                     if (self::$internal_cache_encrypt === true) {
-                        $data       = file_get_contents($path);
+                        $data = file_get_contents($path);
 
-                        $iv_size    = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB);
-                        $iv         = mcrypt_create_iv($iv_size, MCRYPT_RAND);
+                        $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB);
+                        $iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
 
                         $decrypted_text = mcrypt_decrypt(MCRYPT_RIJNDAEL_256, self::$internal_cache_key, $data, MCRYPT_MODE_ECB, $iv);
 
-                        $cache  = unserialize($decrypted_text);
+                        $cache = unserialize($decrypted_text);
 
                         // If the key changed, delete the cache file
                         if (!$cache) {
@@ -624,8 +623,8 @@ final class Kohana
             // Using encryption? Encrypt the data when we write it
             if (self::$internal_cache_encrypt === true) {
                 // Encrypt and write data to cache file
-                $iv_size    = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB);
-                $iv         = mcrypt_create_iv($iv_size, MCRYPT_RAND);
+                $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB);
+                $iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
 
                 // Serialize and encrypt!
                 $encrypted_text = mcrypt_encrypt(MCRYPT_RIJNDAEL_256, self::$internal_cache_key, serialize($data), MCRYPT_MODE_ECB, $iv);
@@ -647,12 +646,12 @@ final class Kohana
     public static function output_buffer($output)
     {
         // Could be flushing, so send headers first
-        if (! Event::has_run('system.send_headers')) {
+        if (!Event::has_run('system.send_headers')) {
             // Run the send_headers event
             Event::run('system.send_headers');
         }
 
-        self::$output   = $output;
+        self::$output = $output;
 
         // Set and return the final output
         return self::$output;
@@ -819,22 +818,22 @@ final class Kohana
 
             // Error handling will use exactly 5 args, every time
             if ($PHP_ERROR) {
-                $code     = $exception;
-                $type     = 'PHP Error';
+                $code = $exception;
+                $type = 'PHP Error';
                 $template = 'kohana_error_page';
             } else {
-                $code     = $exception->getCode();
-                $type     = get_class($exception);
-                $message  = $exception->getMessage();
-                $file     = $exception->getFile();
-                $line     = $exception->getLine();
-                $template = ($exception instanceof Kohana_Exception) ? $exception->getTemplate() : 'kohana_error_page';
+                $code = $exception->getCode();
+                $type = get_class($exception);
+                $message = $exception->getMessage();
+                $file = $exception->getFile();
+                $line = $exception->getLine();
+                $template = ($exception instanceof KohanaException) ? $exception->getTemplate() : 'kohana_error_page';
             }
 
             if (is_numeric($code)) {
                 $codes = self::lang('errors');
 
-                if (! empty($codes[$code])) {
+                if (!empty($codes[$code])) {
                     list($level, $error, $description) = $codes[$code];
                 } else {
                     $level = 1;
@@ -861,12 +860,12 @@ final class Kohana
                 //$description = self::lang('errors.'.E_RECOVERABLE_ERROR);
                 $description = is_array($description) ? $description[2] : '';
 
-                if (! headers_sent()) {
+                if (!headers_sent()) {
                     // Send the 500 header
                     header('HTTP/1.1 500 Internal Server Error');
                 }
             } else {
-                if (method_exists($exception, 'sendHeaders') and ! headers_sent()) {
+                if (method_exists($exception, 'sendHeaders') and !headers_sent()) {
                     // Send the headers if they have not already been sent
                     $exception->sendHeaders();
                 }
@@ -879,7 +878,7 @@ final class Kohana
 
             // Test if display_errors is on
             if (self::$configuration['core']['display_errors'] === true) {
-                if (! IN_PRODUCTION and $line != false) {
+                if (!IN_PRODUCTION and $line != false) {
                     // Remove the first entry of debug_backtrace(), it is the exception_handler call
                     $trace = $PHP_ERROR ? array_slice(debug_backtrace(), 1) : $exception->getTrace();
 
@@ -891,14 +890,14 @@ final class Kohana
                 require self::find_file('views', empty($template) ? 'kohana_error_page' : $template);
             } else {
                 // Get the i18n messages
-                $error   = self::lang('core.generic_error');
+                $error = self::lang('core.generic_error');
                 $message = self::lang('core.errors_disabled', url::site(), url::site(Router::$current_uri));
 
                 // Load the errors_disabled view
                 require self::find_file('views', 'kohana_error_disabled');
             }
 
-            if (! Event::has_run('system.shutdown')) {
+            if (!Event::has_run('system.shutdown')) {
                 // Run the shutdown even to ensure a clean exit
                 Event::run('system.shutdown');
             }
@@ -918,7 +917,7 @@ final class Kohana
     /**
      * Provides class auto-loading.
      *
-     * @throws  Kohana_Exception
+     * @throws  KohanaException
      * @param   string  name of class
      * @return  bool
      */
@@ -994,7 +993,7 @@ final class Kohana
      * to the order of the include paths. Configuration and i18n files will be
      * returned in reverse order.
      *
-     * @throws  Kohana_Exception  if file is required and not found
+     * @throws  KohanaException  if file is required and not found
      * @param   string   directory to search in
      * @param   string   filename to look for (without extension)
      * @param   boolean  file required
@@ -1056,14 +1055,14 @@ final class Kohana
                 $directory = 'core.' . inflector::singular($directory);
 
                 // If the file is required, throw an exception
-                throw new Kohana_Exception('core.resource_not_found', self::lang($directory), $filename);
+                throw new KohanaException('core.resource_not_found', self::lang($directory), $filename);
             } else {
                 // Nothing was found, return FALSE
                 $found = false;
             }
         }
 
-        if (! isset(self::$write_cache['find_file_paths'])) {
+        if (!isset(self::$write_cache['find_file_paths'])) {
             // Write cache at shutdown
             self::$write_cache['find_file_paths'] = true;
         }
@@ -1096,7 +1095,7 @@ final class Kohana
             if (is_readable($path)) {
                 $items = (array) glob($path . '*');
 
-                if (! empty($items)) {
+                if (!empty($items)) {
                     foreach ($items as $index => $item) {
                         $files[] = $item = str_replace('\\', '/', $item);
 
@@ -1132,7 +1131,7 @@ final class Kohana
         // Get locale name
         $locale = self::config('locale.language.0');
 
-        if (! isset(self::$internal_cache['language'][$locale][$group])) {
+        if (!isset(self::$internal_cache['language'][$locale][$group])) {
             // Messages for this group
             $messages = array();
 
@@ -1141,7 +1140,7 @@ final class Kohana
                     include $file;
 
                     // Merge in configuration
-                    if (! empty($lang) and is_array($lang)) {
+                    if (!empty($lang) and is_array($lang)) {
                         foreach ($lang as $k => $v) {
                             $messages[$k] = $v;
                         }
@@ -1149,7 +1148,7 @@ final class Kohana
                 }
             }
 
-            if (! isset(self::$write_cache['language'])) {
+            if (!isset(self::$write_cache['language'])) {
                 // Write language cache
                 self::$write_cache['language'] = true;
             }
@@ -1199,7 +1198,7 @@ final class Kohana
             $key = array_shift($keys);
 
             if (isset($array[$key])) {
-                if (is_array($array[$key]) and ! empty($keys)) {
+                if (is_array($array[$key]) and !empty($keys)) {
                     // Dig down to prepare the next loop
                     $array = $array[$key];
                 } else {
@@ -1210,7 +1209,7 @@ final class Kohana
                 // Requested key is not set
                 break;
             }
-        } while (! empty($keys));
+        } while (!empty($keys));
 
         return null;
     }
@@ -1232,7 +1231,7 @@ final class Kohana
             // Is an object
             $array_object = true;
         } else {
-            if (! is_array($array)) {
+            if (!is_array($array)) {
                 // Must always be an array
                 $array = (array) $array;
             }
@@ -1255,7 +1254,7 @@ final class Kohana
             // Get the current key
             $key = $keys[$i];
 
-            if (! isset($row[$key])) {
+            if (!isset($row[$key])) {
                 if (isset($keys[$i + 1])) {
                     // Make the value an array
                     $row[$key] = array();
@@ -1324,11 +1323,11 @@ final class Kohana
                 case 'is_browser':
                 case 'is_mobile':
                     // A boolean result
-                    $return = ! empty($info[substr($key, 3)]);
+                    $return = !empty($info[substr($key, 3)]);
                     break;
                 case 'languages':
                     $return = array();
-                    if (! empty($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
+                    if (!empty($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
                         if (preg_match_all('/[-a-z]{2,}/', strtolower(trim($_SERVER['HTTP_ACCEPT_LANGUAGE'])), $matches)) {
                             // Found a result
                             $return = $matches[0];
@@ -1337,7 +1336,7 @@ final class Kohana
                     break;
                 case 'charsets':
                     $return = array();
-                    if (! empty($_SERVER['HTTP_ACCEPT_CHARSET'])) {
+                    if (!empty($_SERVER['HTTP_ACCEPT_CHARSET'])) {
                         if (preg_match_all('/[-a-z0-9]{2,}/', strtolower(trim($_SERVER['HTTP_ACCEPT_CHARSET'])), $matches)) {
                             // Found a result
                             $return = $matches[0];
@@ -1345,7 +1344,7 @@ final class Kohana
                     }
                     break;
                 case 'referrer':
-                    if (! empty($_SERVER['HTTP_REFERER'])) {
+                    if (!empty($_SERVER['HTTP_REFERER'])) {
                         // Found a result
                         $return = trim($_SERVER['HTTP_REFERER']);
                     }
@@ -1356,7 +1355,7 @@ final class Kohana
             isset($return) and $info[$key] = $return;
         }
 
-        if (! empty($compare)) {
+        if (!empty($compare)) {
             // The comparison must always be lowercase
             $compare = strtolower($compare);
 
@@ -1364,15 +1363,15 @@ final class Kohana
                 case 'accept_lang':
                     // Check if the lange is accepted
                     return in_array($compare, self::user_agent('languages'));
-                break;
+                    break;
                 case 'accept_charset':
                     // Check if the charset is accepted
                     return in_array($compare, self::user_agent('charsets'));
-                break;
+                    break;
                 default:
                     // Invalid comparison
                     return false;
-                break;
+                    break;
             }
         }
 
@@ -1411,7 +1410,7 @@ final class Kohana
      */
     public static function backtrace($trace)
     {
-        if (! is_array($trace)) {
+        if (!is_array($trace)) {
             return;
         }
 
@@ -1468,7 +1467,7 @@ final class Kohana
      */
     public static function internal_cache_save()
     {
-        if (! is_array(self::$write_cache)) {
+        if (!is_array(self::$write_cache)) {
             return false;
         }
 
@@ -1496,7 +1495,7 @@ final class Kohana
 /**
  * Creates a generic i18n exception.
  */
-class Kohana_Exception extends Exception
+class KohanaException extends Exception
 {
     // Template file
     protected $template = 'kohana_error_page';
@@ -1565,7 +1564,7 @@ class Kohana_Exception extends Exception
 /**
  * Creates a custom exception.
  */
-class KohanaUserException extends Kohana_Exception
+class KohanaUserException extends KohanaException
 {
     /**
      * Set exception title and message.
@@ -1590,7 +1589,7 @@ class KohanaUserException extends Kohana_Exception
 /**
  * Creates a Page Not Found exception.
  */
-class Kohana404Exception extends Kohana_Exception
+class Kohana404Exception extends KohanaException
 {
     protected $code = E_PAGE_NOT_FOUND;
 

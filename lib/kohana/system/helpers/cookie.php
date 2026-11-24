@@ -16,7 +16,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class cookie_Core
+class CookieCore
 {
     /**
      * Sets a cookie with the given parameters.
@@ -77,7 +77,7 @@ class cookie_Core
      */
     public static function delete($name, $path = null, $domain = null)
     {
-        if (! isset($_COOKIE[$name])) {
+        if (!isset($_COOKIE[$name])) {
             return false;
         }
 

@@ -17,7 +17,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class format_Core
+class FormatCore
 {
     /**
      * Formats a phone number according to the specified format.

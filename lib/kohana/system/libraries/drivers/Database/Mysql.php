@@ -18,7 +18,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class Database_Mysql_Driver extends Database_Driver
+class DatabaseMysqlDriver extends DatabaseDriver
 {
     /**
      * Database connection link
@@ -85,12 +85,12 @@ class Database_Mysql_Driver extends Database_Driver
     public function query($sql)
     {
         // Only cache if it's turned on, and only cache if it's not a write statement
-        if ($this->db_config['cache'] and ! preg_match('#\b(?:INSERT|UPDATE|REPLACE|SET|DELETE|TRUNCATE)\b#i', $sql)) {
+        if ($this->db_config['cache'] and !preg_match('#\b(?:INSERT|UPDATE|REPLACE|SET|DELETE|TRUNCATE)\b#i', $sql)) {
             $hash = $this->query_hash($sql);
 
-            if (! isset($this->query_cache[$hash])) {
+            if (!isset($this->query_cache[$hash])) {
                 // Set the cached object
-                $this->query_cache[$hash] = new Mysql_Result(mysql_query($sql, $this->link), $this->link, $this->db_config['object'], $sql);
+                $this->query_cache[$hash] = new MysqlResult(mysql_query($sql, $this->link), $this->link, $this->db_config['object'], $sql);
             } else {
                 // Rewind cached result
                 $this->query_cache[$hash]->rewind();
@@ -100,7 +100,7 @@ class Database_Mysql_Driver extends Database_Driver
             return $this->query_cache[$hash];
         }
 
-        return new Mysql_Result(mysql_query($sql, $this->link), $this->link, $this->db_config['object'], $sql);
+        return new MysqlResult(mysql_query($sql, $this->link), $this->link, $this->db_config['object'], $sql);
     }
 
     public function set_charset($charset)
@@ -147,7 +147,7 @@ class Database_Mysql_Driver extends Database_Driver
         }
 
         // This matches any modifiers we support to SELECT.
-        if (! preg_match('/\b(?:rand|all|distinct(?:row)?|high_priority|sql_(?:small_result|b(?:ig_result|uffer_result)|no_cache|ca(?:che|lc_found_rows)))\s/i', $column)) {
+        if (!preg_match('/\b(?:rand|all|distinct(?:row)?|high_priority|sql_(?:small_result|b(?:ig_result|uffer_result)|no_cache|ca(?:che|lc_found_rows)))\s/i', $column)) {
             if (stripos($column, ' AS ') !== false) {
                 // Force 'AS' to uppercase
                 $column = str_ireplace(' AS ', ' AS ', $column);
@@ -304,7 +304,7 @@ class Database_Mysql_Driver extends Database_Driver
         }
 
         if (!isset($result)) {
-            throw new Kohana_Database_Exception('database.table_not_found', $table);
+            throw new KohanaDatabaseException('database.table_not_found', $table);
         }
 
         return $result;
@@ -317,15 +317,15 @@ class Database_Mysql_Driver extends Database_Driver
         return $result->result_array(true);
     }
 }
-// End Database_Mysql_Driver Class
+// End DatabaseMysqlDriver Class
 
 /**
  * MySQL Result
  */
-class Mysql_Result extends Database_Result
+class MysqlResult extends DatabaseResult
 {
     // Fetch function and return type
-    protected $fetch_type  = 'mysql_fetch_object';
+    protected $fetch_type = 'mysql_fetch_object';
     protected $return_type = MYSQL_ASSOC;
 
     /**
@@ -343,15 +343,15 @@ class Mysql_Result extends Database_Result
         // If the query is a resource, it was a SELECT, SHOW, DESCRIBE, EXPLAIN query
         if (is_resource($result)) {
             $this->current_row = 0;
-            $this->total_rows  = mysql_num_rows($this->result);
+            $this->total_rows = mysql_num_rows($this->result);
             $this->fetch_type = ($object === true) ? 'mysql_fetch_object' : 'mysql_fetch_array';
         } elseif (is_bool($result)) {
             if ($result == false) {
                 // SQL error
-                throw new Kohana_Database_Exception('database.error', mysql_error($link) . ' - ' . $sql);
+                throw new KohanaDatabaseException('database.error', mysql_error($link) . ' - ' . $sql);
             } else {
                 // Its an DELETE, INSERT, REPLACE, or UPDATE query
-                $this->insert_id  = mysql_insert_id($link);
+                $this->insert_id = mysql_insert_id($link);
                 $this->total_rows = mysql_affected_rows($link);
             }
         }
@@ -452,4 +452,4 @@ class Mysql_Result extends Database_Result
         }
     }
 }
-// End Mysql_Result Class
+// End MysqlResult Class

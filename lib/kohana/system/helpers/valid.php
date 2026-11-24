@@ -17,7 +17,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class valid_Core
+class ValidCore
 {
     /**
      * Validate email, commonly used characters only
@@ -28,9 +28,9 @@ class valid_Core
     public static function email($email)
     {
         return (bool) preg_match('/^[-_a-z0-9\'+*$^&%=~!?{}]++' .
-                                 '(?:\.[-_a-z0-9\'+*$^&%=~!?{}]+)*+' .
-                                 '@(?:(?![-.])[-a-z0-9.]+(?<![-.])' .
-                                 '\.[a-z]{2,6}|\d{1,3}(?:\.\d{1,3}){3})(?::\d++)?$/iD', (string) $email);
+            '(?:\.[-_a-z0-9\'+*$^&%=~!?{}]+)*+' .
+            '@(?:(?![-.])[-a-z0-9.]+(?<![-.])' .
+            '\.[a-z]{2,6}|\d{1,3}(?:\.\d{1,3}){3})(?::\d++)?$/iD', (string) $email);
     }
 
     /**
@@ -44,7 +44,7 @@ class valid_Core
     {
         // If we can't prove the domain is invalid, consider it valid
         // Note: checkdnsrr() is not implemented on Windows platforms
-        if (! function_exists('checkdnsrr')) {
+        if (!function_exists('checkdnsrr')) {
             return true;
         }
 
@@ -67,16 +67,16 @@ class valid_Core
     {
         $qtext = '[^\\x0d\\x22\\x5c\\x80-\\xff]';
         $dtext = '[^\\x0d\\x5b-\\x5d\\x80-\\xff]';
-        $atom  = '[^\\x00-\\x20\\x22\\x28\\x29\\x2c\\x2e\\x3a-\\x3c\\x3e\\x40\\x5b-\\x5d\\x7f-\\xff]+';
-        $pair  = '\\x5c[\\x00-\\x7f]';
+        $atom = '[^\\x00-\\x20\\x22\\x28\\x29\\x2c\\x2e\\x3a-\\x3c\\x3e\\x40\\x5b-\\x5d\\x7f-\\xff]+';
+        $pair = '\\x5c[\\x00-\\x7f]';
 
         $domain_literal = "\\x5b($dtext|$pair)*\\x5d";
-        $quoted_string  = "\\x22($qtext|$pair)*\\x22";
-        $sub_domain     = "($atom|$domain_literal)";
-        $word           = "($atom|$quoted_string)";
-        $domain         = "$sub_domain(\\x2e$sub_domain)*";
-        $local_part     = "$word(\\x2e$word)*";
-        $addr_spec      = "$local_part\\x40$domain";
+        $quoted_string = "\\x22($qtext|$pair)*\\x22";
+        $sub_domain = "($atom|$domain_literal)";
+        $word = "($atom|$quoted_string)";
+        $domain = "$sub_domain(\\x2e$sub_domain)*";
+        $local_part = "$word(\\x2e$word)*";
+        $addr_spec = "$local_part\\x40$domain";
 
         return (bool) preg_match('/^' . $addr_spec . '$/D', (string) $email);
     }
@@ -139,7 +139,7 @@ class valid_Core
         // Check card type
         $type = strtolower($type);
 
-        if (! isset($cards[$type])) {
+        if (!isset($cards[$type])) {
             return false;
         }
 
@@ -147,12 +147,12 @@ class valid_Core
         $length = strlen($number);
 
         // Validate the card length by the card type
-        if (! in_array($length, preg_split('/\D+/', $cards[$type]['length']))) {
+        if (!in_array($length, preg_split('/\D+/', $cards[$type]['length']))) {
             return false;
         }
 
         // Check card number prefix
-        if (! preg_match('/^' . $cards[$type]['prefix'] . '/', $number)) {
+        if (!preg_match('/^' . $cards[$type]['prefix'] . '/', $number)) {
             return false;
         }
 
@@ -189,8 +189,8 @@ class valid_Core
      */
     public static function phone($number, $lengths = null)
     {
-        if (! is_array($lengths)) {
-            $lengths = array(7,10,11);
+        if (!is_array($lengths)) {
+            $lengths = array(7, 10, 11);
         }
 
         // Remove all non-digit characters from the number
@@ -316,7 +316,7 @@ class valid_Core
         // Create the pattern
         $pattern = '/^[0-9]%s\.[0-9]%s$/';
 
-        if (! empty($format)) {
+        if (!empty($format)) {
             if (count($format) > 1) {
                 // Use the format for number and decimal length
                 $pattern = sprintf($pattern, '{' . $format[0] . '}', '{' . $format[1] . '}');

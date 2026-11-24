@@ -18,7 +18,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class ORM_Tree_Core extends ORM
+class ORMTreeCore extends ORM
 {
     // Name of the child
     protected $ORM_Tree_children;

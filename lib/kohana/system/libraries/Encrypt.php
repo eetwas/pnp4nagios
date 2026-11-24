@@ -18,7 +18,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class Encrypt_Core
+class EncryptCore
 {
     // OS-dependant RAND type to use
     protected static $rand;
@@ -30,7 +30,7 @@ class Encrypt_Core
      * Returns a singleton instance of Encrypt.
      *
      * @param   array  configuration options
-     * @return  Encrypt_Core
+     * @return  EncryptCore
      */
     public static function instance($config = null)
     {
@@ -46,12 +46,12 @@ class Encrypt_Core
      * Loads encryption configuration and validates the data.
      *
      * @param   array|string      custom configuration or config group name
-     * @throws  Kohana_Exception
+     * @throws  KohanaException
      */
     public function __construct($config = false)
     {
-        if (! defined('MCRYPT_ENCRYPT')) {
-            throw new Kohana_Exception('encrypt.requires_mcrypt');
+        if (!defined('MCRYPT_ENCRYPT')) {
+            throw new KohanaException('encrypt.requires_mcrypt');
         }
 
         if (is_string($config)) {
@@ -59,7 +59,7 @@ class Encrypt_Core
 
             // Test the config group name
             if (($config = Kohana::config('encryption.' . $config)) === null) {
-                throw new Kohana_Exception('encrypt.undefined_group', $name);
+                throw new KohanaException('encrypt.undefined_group', $name);
             }
         }
 
@@ -72,7 +72,7 @@ class Encrypt_Core
         }
 
         if (empty($config['key'])) {
-            throw new Kohana_Exception('encrypt.no_encryption_key');
+            throw new KohanaException('encrypt.no_encryption_key');
         }
 
         // Find the max length of the key, based on cipher and mode

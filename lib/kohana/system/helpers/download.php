@@ -16,7 +16,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class download_Core
+class DownloadCore
 {
     /**
      * Force a download of a file to the user's browser. This function is

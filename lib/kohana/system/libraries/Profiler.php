@@ -23,7 +23,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class Profiler_Core
+class ProfilerCore
 {
     protected $profiles = array();
     protected $show;
@@ -52,7 +52,7 @@ class Profiler_Core
      */
     public function __call($method, $args)
     {
-        if (! $this->show or (is_array($this->show) and ! in_array($args[0], $this->show))) {
+        if (!$this->show or (is_array($this->show) and !in_array($args[0], $this->show))) {
             return false;
         }
 
@@ -107,7 +107,7 @@ class Profiler_Core
         $data = array
         (
             'profiles' => $this->profiles,
-            'styles'   => $styles,
+            'styles' => $styles,
             'execution_time' => microtime(true) - $start
         );
         $view = new View('kohana_profiler', $data);
@@ -134,7 +134,7 @@ class Profiler_Core
      */
     public function benchmarks()
     {
-        if (! $table = $this->table('benchmarks')) {
+        if (!$table = $this->table('benchmarks')) {
             return;
         }
 
@@ -172,7 +172,7 @@ class Profiler_Core
      */
     public function database()
     {
-        if (! $table = $this->table('database')) {
+        if (!$table = $this->table('database')) {
             return;
         }
 
@@ -208,7 +208,7 @@ class Profiler_Core
             return;
         }
 
-        if (! $table = $this->table('session')) {
+        if (!$table = $this->table('session')) {
             return;
         }
 
@@ -239,7 +239,7 @@ class Profiler_Core
             return;
         }
 
-        if (! $table = $this->table('post')) {
+        if (!$table = $this->table('post')) {
             return;
         }
 
@@ -266,7 +266,7 @@ class Profiler_Core
             return;
         }
 
-        if (! $table = $this->table('cookies')) {
+        if (!$table = $this->table('cookies')) {
             return;
         }
 

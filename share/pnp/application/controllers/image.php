@@ -13,7 +13,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @author     Joerg Linge
  * @license    GPL
  */
-class Image_Controller extends System_Controller
+class ImageController extends SystemController
 {
     public function __construct()
     {

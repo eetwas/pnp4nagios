@@ -7,14 +7,14 @@ defined('SYSPATH') or die('No direct access allowed.');
 // phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
 
 /**
-*
-*
-*/
-class nagios_Core
+ *
+ *
+ */
+class NagiosCore
 {
     public static function SummaryLink($hostname, $start, $end)
     {
-        $config     = new Config_Model();
+        $config = new ConfigModel();
         $config->read_config();
 
         $smon = date('m', $start);
@@ -40,7 +40,7 @@ class nagios_Core
 
     public static function AvailLink($hostname, $servicedesc, $start, $end)
     {
-        $config     = new Config_Model();
+        $config = new ConfigModel();
         $config->read_config();
         $hostname = urlencode($hostname);
         $servicedesc = urlencode($servicedesc);
@@ -58,21 +58,21 @@ class nagios_Core
         $esec = date('s', $end);
         $nagios_base = $config->conf['nagios_base'];
         if ($servicedesc == "Host+Perfdata") {
-                print "<a href=\"$nagios_base/avail.cgi?show_log_entries=" .
-                    "&host=$hostname&timeperiod=custom&smon=$smon&sday=$sday" .
-                    "&syear=$syear&shour=$shour&smin=$smin&ssec=$ssec&emon=$emon" .
-                    "&eday=$eday&eyear=$eyear&ehour=$ehour&emin=$emin&esec=$esec" .
-                    "&rpttimeperiod=&assumeinitialstates=yes&assumestateretention=yes" .
-                    "&assumestatesduringnotrunning=yes&includesoftstates=yes" .
-                    "&initialassumedservicestate=6&backtrack=4\"";
+            print "<a href=\"$nagios_base/avail.cgi?show_log_entries=" .
+                "&host=$hostname&timeperiod=custom&smon=$smon&sday=$sday" .
+                "&syear=$syear&shour=$shour&smin=$smin&ssec=$ssec&emon=$emon" .
+                "&eday=$eday&eyear=$eyear&ehour=$ehour&emin=$emin&esec=$esec" .
+                "&rpttimeperiod=&assumeinitialstates=yes&assumestateretention=yes" .
+                "&assumestatesduringnotrunning=yes&includesoftstates=yes" .
+                "&initialassumedservicestate=6&backtrack=4\"";
         } else {
-                print "<a href=\"$nagios_base/avail.cgi?show_log_entries=" .
-                    "&host=$hostname&service=$servicedesc&timeperiod=custom" .
-                    "&smon=$smon&sday=$sday&syear=$syear&shour=$shour&smin=$smin" .
-                    "&ssec=$ssec&emon=$emon&eday=$eday&eyear=$eyear&ehour=$ehour" .
-                    "&emin=$emin&esec=$esec&rpttimeperiod=&assumeinitialstates=yes" .
-                    "&assumestateretention=yes&assumestatesduringnotrunning=yes" .
-                    "&includesoftstates=yes&initialassumedservicestate=6&backtrack=4\"";
+            print "<a href=\"$nagios_base/avail.cgi?show_log_entries=" .
+                "&host=$hostname&service=$servicedesc&timeperiod=custom" .
+                "&smon=$smon&sday=$sday&syear=$syear&shour=$shour&smin=$smin" .
+                "&ssec=$ssec&emon=$emon&eday=$eday&eyear=$eyear&ehour=$ehour" .
+                "&emin=$emin&esec=$esec&rpttimeperiod=&assumeinitialstates=yes" .
+                "&assumestateretention=yes&assumestatesduringnotrunning=yes" .
+                "&includesoftstates=yes&initialassumedservicestate=6&backtrack=4\"";
         }
         print " title=\"" . Kohana::lang('common.nagios-avail-link-title') . "\"><img src=\"" . url::base() . "media/images/trends.gif\" ></a>\n";
     }

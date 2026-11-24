@@ -25,7 +25,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class Session_Cache_Driver implements Session_Driver
+class SessionCacheDriver implements SessionDriver
 {
     protected $cache;
     protected $encrypt;
@@ -52,7 +52,7 @@ class Session_Cache_Driver implements Session_Driver
 
             // Test the config group name
             if (($config = Kohana::config('cache.' . $config)) === null) {
-                throw new Kohana_Exception('cache.undefined_group', $name);
+                throw new KohanaException('cache.undefined_group', $name);
             }
         }
 

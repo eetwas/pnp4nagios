@@ -18,5 +18,5 @@ function _trim($str, $charlist = null)
         return trim($str);
     }
 
-    return utf8::ltrim(utf8::rtrim($str, $charlist), $charlist);
+    return Utf8::ltrim(Utf8::rtrim($str, $charlist), $charlist);
 }

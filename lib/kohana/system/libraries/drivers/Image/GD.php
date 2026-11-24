@@ -17,7 +17,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class Image_GD_Driver extends Image_Driver
+class ImageGDDriver extends ImageDriver
 {
     // A transparent PNG as a string
     protected static $blank_png;
@@ -27,8 +27,8 @@ class Image_GD_Driver extends Image_Driver
     public function __construct()
     {
         // Make sure that GD2 is available
-        if (! function_exists('gd_info')) {
-            throw new Kohana_Exception('image.gd.requires_v2');
+        if (!function_exists('gd_info')) {
+            throw new KohanaException('image.gd.requires_v2');
         }
 
         // Get the GD information
@@ -36,7 +36,7 @@ class Image_GD_Driver extends Image_Driver
 
         // Make sure that the GD2 is installed
         if (strpos($info['GD Version'], '2.') === false) {
-            throw new Kohana_Exception('image.gd.requires_v2');
+            throw new KohanaException('image.gd.requires_v2');
         }
     }
 
@@ -70,13 +70,13 @@ class Image_GD_Driver extends Image_Driver
         }
 
         // Make sure the image type is supported for import
-        if (empty($create) or ! function_exists($create)) {
-            throw new Kohana_Exception('image.type_not_allowed', $image['file']);
+        if (empty($create) or !function_exists($create)) {
+            throw new KohanaException('image.type_not_allowed', $image['file']);
         }
 
         // Make sure the image type is supported for saving
-        if (empty($save) or ! function_exists($save)) {
-            throw new Kohana_Exception('image.type_not_allowed', $dir . $file);
+        if (empty($save) or !function_exists($save)) {
+            throw new KohanaException('image.type_not_allowed', $dir . $file);
         }
 
         // Load the image
@@ -206,7 +206,7 @@ class Image_GD_Driver extends Image_Driver
         }
 
         // Recalculate the width and height, if they are missing
-        empty($properties['width'])  and $properties['width']  = round($width * $properties['height'] / $height);
+        empty($properties['width']) and $properties['width'] = round($width * $properties['height'] / $height);
         empty($properties['height']) and $properties['height'] = round($height * $properties['width'] / $width);
 
         if ($properties['master'] === Image::AUTO) {
@@ -231,7 +231,7 @@ class Image_GD_Driver extends Image_Driver
             $pre_height = $height;
 
             // The maximum reduction is 10% greater than the final size
-            $max_reduction_width  = round($properties['width']  * 1.1);
+            $max_reduction_width = round($properties['width'] * 1.1);
             $max_reduction_height = round($properties['height'] * 1.1);
 
             // Reduce the size using an O(2n) algorithm, until it reaches the maximum reduction
@@ -250,7 +250,7 @@ class Image_GD_Driver extends Image_Driver
             }
 
             // Set the width and height to the presize
-            $width  = $pre_width;
+            $width = $pre_width;
             $height = $pre_height;
         }
 
@@ -298,8 +298,8 @@ class Image_GD_Driver extends Image_Driver
     public function sharpen($amount)
     {
         // Make sure that the sharpening function is available
-        if (! function_exists('imageconvolution')) {
-            throw new Kohana_Exception('image.unsupported_method', __FUNCTION__);
+        if (!function_exists('imageconvolution')) {
+            throw new KohanaException('image.unsupported_method', __FUNCTION__);
         }
 
         // Amount should be in the range of 18-10
@@ -308,9 +308,9 @@ class Image_GD_Driver extends Image_Driver
         // Gaussian blur matrix
         $matrix = array
         (
-            array(-1,   -1,    -1),
+            array(-1, -1, -1),
             array(-1, $amount, -1),
-            array(-1,   -1,    -1),
+            array(-1, -1, -1),
         );
 
         // Perform the sharpen

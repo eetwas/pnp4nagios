@@ -7,10 +7,10 @@ defined('SYSPATH') or die('No direct access allowed.');
 // phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
 
 /**
-*
-*
-*/
-class pnp_Core
+ *
+ *
+ */
+class PnpCore
 {
     public static function clean($string = false)
     {
@@ -35,8 +35,8 @@ class pnp_Core
         return $string;
     }
     /*
-    *
-    */
+     *
+     */
     public static function xml_version_check($string = false)
     {
         if ($string === false) {
@@ -50,8 +50,8 @@ class pnp_Core
         return $string;
     }
     /*
-    *
-    */
+     *
+     */
     public static function zoom_icon($host, $service, $start, $end, $source, $view, $graph_width, $graph_height)
     {
         $service = urlencode(urlencode($service));
@@ -63,8 +63,8 @@ class pnp_Core
     }
 
     /*
-    *
-    */
+     *
+     */
     public static function zoom_icon_special($tpl, $start, $end, $source, $view, $graph_width, $graph_height)
     {
         print "<a href=\"javascript:Gzoom('" . url::base(true) .
@@ -74,8 +74,8 @@ class pnp_Core
     }
 
     /*
-    *
-    */
+     *
+     */
     public static function add_to_basket_icon($host, $service, $source = false)
     {
         if ($source === false) {
@@ -94,8 +94,8 @@ class pnp_Core
     }
 
     /*
-    *
-    */
+     *
+     */
     public static function multisite_link($base_url = false, $site = false, $host = false, $service = false)
     {
         if ($host && $service) {
@@ -115,10 +115,10 @@ class pnp_Core
         }
         $get = $_GET;
         if ($base === true) {
-            $uri  = url::base(true);
+            $uri = url::base(true);
             $uri .= Router::$current_uri;
         } else {
-            $uri  = "";
+            $uri = "";
         }
         $uri .= '?';
         foreach ($fields as $key => $value) {
@@ -134,17 +134,17 @@ class pnp_Core
     }
 
     /* "normalize" and adjust value / unit (similar to format string %s in RRDtool)
-    *  Parameters in:
-    *     value    := number, maybe suffixed by unit string
-    *                 examples: 1234, 1.234, 1234M, 1234Kb
-    *     base     := base of value (1000, e.g. traffic or 1024, e.g. disk size)
-    *     format   := format string
-    *  Parameters out:
-    *     val_unit := formatted value (including unit)
-    *     val_fmt  := formatted value (without leading blanks and unit)
-    *     unit     := adjusted unit
-    *     divisor  := number used to "normalize" value
-    */
+     *  Parameters in:
+     *     value    := number, maybe suffixed by unit string
+     *                 examples: 1234, 1.234, 1234M, 1234Kb
+     *     base     := base of value (1000, e.g. traffic or 1024, e.g. disk size)
+     *     format   := format string
+     *  Parameters out:
+     *     val_unit := formatted value (including unit)
+     *     val_fmt  := formatted value (without leading blanks and unit)
+     *     unit     := adjusted unit
+     *     divisor  := number used to "normalize" value
+     */
     public static function adjust_unit($value, $base = 1000, $format = '%.3lf')
     {
         preg_match('/^(-?[0-9\.,]+)\s*(\S?)(\S?)/', $value, $matches);
@@ -172,11 +172,11 @@ class pnp_Core
         $val_unit = sprintf("$format %s", $value, $unit);
         $val_fmt = sprintf($format, $value);
         $val_fmt = str_replace(' ', '', $val_fmt);
-        return array ($val_unit,$val_fmt,$unit,pow($base, $mag));
+        return array($val_unit, $val_fmt, $unit, pow($base, $mag));
     }
 
     public static function print_version()
     {
-        return PNP_NAME . "-" . PNP_VERSION . " [ " .  PNP_REL_DATE  . " ]";
+        return PNP_NAME . "-" . PNP_VERSION . " [ " . PNP_REL_DATE . " ]";
     }
 }

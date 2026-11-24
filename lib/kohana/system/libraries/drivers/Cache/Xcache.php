@@ -17,12 +17,12 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class Cache_Xcache_Driver implements Cache_Driver
+class CacheXcacheDriver implements CacheDriver
 {
     public function __construct()
     {
-        if (! extension_loaded('xcache')) {
-            throw new Kohana_Exception('cache.extension_not_loaded', 'xcache');
+        if (!extension_loaded('xcache')) {
+            throw new KohanaException('cache.extension_not_loaded', 'xcache');
         }
     }
 
@@ -37,7 +37,7 @@ class Cache_Xcache_Driver implements Cache_Driver
 
     public function set($id, $data, array $tags = null, $lifetime)
     {
-        if (! empty($tags)) {
+        if (!empty($tags)) {
             Kohana::log('error', 'Cache: tags are unsupported by the Xcache driver');
         }
 
@@ -102,7 +102,7 @@ class Cache_Xcache_Driver implements Cache_Driver
             } else {
                 $value = getenv($key);
 
-                if (! empty($value)) {
+                if (!empty($value)) {
                     $backup[$key] = $value;
                 }
 

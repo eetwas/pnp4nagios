@@ -12,13 +12,13 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @author     Joerg Linge
  * @license    GPL
  */
-class Popup_Controller extends System_Controller
+class PopupController extends SystemController
 {
     public $imgwidth = 0;
     public function __construct()
     {
         parent::__construct();
-        $this->template          = $this->add_view('popup');
+        $this->template = $this->add_view('popup');
     }
 
     public function index()
@@ -33,13 +33,13 @@ class Popup_Controller extends System_Controller
 
         if (isset($this->host) && isset($this->service)) {
             $this->data->buildDataStruct($this->host, $this->service, $this->view, $this->source);
-            $this->template->host      = $this->host;
-            $this->template->srv       = $this->service;
-            $this->template->view      = $this->view;
-            $this->template->source    = $this->source;
-            $this->template->end       = $this->end;
-            $this->template->start     = $this->start;
-            $this->template->imgwidth  = $this->imgwidth;
+            $this->template->host = $this->host;
+            $this->template->srv = $this->service;
+            $this->template->view = $this->view;
+            $this->template->source = $this->source;
+            $this->template->end = $this->end;
+            $this->template->start = $this->start;
+            $this->template->imgwidth = $this->imgwidth;
         } else {
             url::redirect("/graph");
         }

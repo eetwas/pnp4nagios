@@ -19,7 +19,7 @@ function _strlen($str)
         return mb_strlen($str);
     }
 
-    if (utf8::is_ascii($str)) {
+    if (Utf8::is_ascii($str)) {
         return strlen($str);
     }
 

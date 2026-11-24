@@ -16,7 +16,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @copyright  (c) 2007-2009 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class Database_Expression_Core
+class DatabaseExpressionCore
 {
     protected $expression;
 

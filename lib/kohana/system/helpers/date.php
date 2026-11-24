@@ -16,7 +16,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class date_Core
+class DateCore
 {
     /**
      * Converts a UNIX timestamp to DOS format.
@@ -36,9 +36,9 @@ class date_Core
 
         // What voodoo is this? I have no idea... Geert can explain it though,
         // and that's good enough for me.
-        return ($timestamp['year']    << 25 | $timestamp['mon']     << 21 |
-                $timestamp['mday']    << 16 | $timestamp['hours']   << 11 |
-                $timestamp['minutes'] << 5  | $timestamp['seconds'] >> 1);
+        return ($timestamp['year'] << 25 | $timestamp['mon'] << 21 |
+            $timestamp['mday'] << 16 | $timestamp['hours'] << 11 |
+            $timestamp['minutes'] << 5 | $timestamp['seconds'] >> 1);
     }
 
     /**
@@ -49,11 +49,11 @@ class date_Core
      */
     public static function dos2unix($timestamp = false)
     {
-        $sec  = 2 * ($timestamp & 0x1f);
-        $min  = ($timestamp >>  5) & 0x3f;
-        $hrs  = ($timestamp >> 11) & 0x1f;
-        $day  = ($timestamp >> 16) & 0x1f;
-        $mon  = ($timestamp >> 21) & 0x0f;
+        $sec = 2 * ($timestamp & 0x1f);
+        $min = ($timestamp >> 5) & 0x3f;
+        $hrs = ($timestamp >> 11) & 0x1f;
+        $day = ($timestamp >> 16) & 0x1f;
+        $mon = ($timestamp >> 21) & 0x0f;
         $year = ($timestamp >> 25) & 0x7f;
 
         return mktime($hrs, $min, $sec, $mon, $day, $year + 1980);
@@ -73,7 +73,7 @@ class date_Core
 
         // Default values
         $remote = (string) $remote;
-        $local  = ($local === true) ? date_default_timezone_get() : (string) $local;
+        $local = ($local === true) ? date_default_timezone_get() : (string) $local;
 
         // Cache key name
         $cache = $remote . $local;
@@ -81,11 +81,11 @@ class date_Core
         if (empty($offsets[$cache])) {
             // Create timezone objects
             $remote = new DateTimeZone($remote);
-            $local  = new DateTimeZone($local);
+            $local = new DateTimeZone($local);
 
             // Create date objects from timezones
             $time_there = new DateTime('now', $remote);
-            $time_here  = new DateTime('now', $local);
+            $time_here = new DateTime('now', $local);
 
             // Find the offset
             $offsets[$cache] = $remote->getOffset($time_there) - $local->getOffset($time_here);
@@ -218,10 +218,10 @@ class date_Core
 
         // Always integers
         $month = (int) $month;
-        $year  = (int) $year;
+        $year = (int) $year;
 
         // Use the current year by default
-        $year  = ($year == false) ? date('Y') : $year;
+        $year = ($year == false) ? date('Y') : $year;
 
         // We use caching for months, because time functions are used
         if (empty($months[$year][$month])) {
@@ -260,7 +260,7 @@ class date_Core
     {
         // Default values
         $start = ($start === false) ? date('Y') - 5 : (int) $start;
-        $end   = ($end   === false) ? date('Y') + 5 : (int) $end;
+        $end = ($end === false) ? date('Y') + 5 : (int) $end;
 
         $years = array();
 
@@ -296,8 +296,8 @@ class date_Core
         extract(array_flip($output), EXTR_SKIP);
 
         // Default values
-        $time1  = max(0, (int) $time1);
-        $time2  = empty($time2) ? time() : max(0, (int) $time2);
+        $time1 = max(0, (int) $time1);
+        $time2 = empty($time2) ? time() : max(0, (int) $time2);
 
         // Calculate timespan (seconds)
         $timespan = abs($time1 - $time2);
@@ -335,7 +335,7 @@ class date_Core
         // Return the difference
         $difference = array();
         foreach ($output as $key) {
-            if (isset($$key) and ! isset($deny[$key])) {
+            if (isset($$key) and !isset($deny[$key])) {
                 // Add requested key to the output
                 $difference[$key] = $$key;
             }

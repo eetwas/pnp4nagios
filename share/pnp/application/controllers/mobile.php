@@ -13,13 +13,13 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @author     Joerg Linge
  * @license    GPL
  */
-class Mobile_Controller extends System_Controller
+class MobileController extends SystemController
 {
     public function __construct()
     {
         parent::__construct();
         $this->session->set('classic-ui', 0);
-        $this->template  = $this->add_view('mobile');
+        $this->template = $this->add_view('mobile');
     }
 
     public function index()
@@ -38,7 +38,7 @@ class Mobile_Controller extends System_Controller
     public function host($host = null)
     {
         $this->template->host = $this->add_view('mobile_host');
-        $this->is_authorized  = $this->auth->is_authorized($host);
+        $this->is_authorized = $this->auth->is_authorized($host);
         $this->template->host->hostname = $host;
         $this->template->host->services = $this->data->getServices($host);
     }
@@ -51,8 +51,8 @@ class Mobile_Controller extends System_Controller
     public function search()
     {
         $this->template->query = $this->add_view('mobile_search');
-        $query     = pnp::clean($this->input->post('term'));
-        $result    = array();
+        $query = pnp::clean($this->input->post('term'));
+        $result = array();
         if (strlen($query) >= 1) {
             $hosts = $this->data->getHosts();
             foreach ($hosts as $host) {

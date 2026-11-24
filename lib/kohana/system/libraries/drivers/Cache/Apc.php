@@ -17,12 +17,12 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class Cache_Apc_Driver implements Cache_Driver
+class CacheApcDriver implements CacheDriver
 {
     public function __construct()
     {
-        if (! extension_loaded('apc')) {
-            throw new Kohana_Exception('cache.extension_not_loaded', 'apc');
+        if (!extension_loaded('apc')) {
+            throw new KohanaException('cache.extension_not_loaded', 'apc');
         }
     }
 
@@ -33,7 +33,7 @@ class Cache_Apc_Driver implements Cache_Driver
 
     public function set($id, $data, array $tags = null, $lifetime)
     {
-        if (! empty($tags)) {
+        if (!empty($tags)) {
             Kohana::log('error', 'Cache: tags are unsupported by the APC driver');
         }
 

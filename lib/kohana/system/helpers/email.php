@@ -16,7 +16,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class email_Core
+class EmailCore
 {
     // SwiftMailer instance
     protected static $mail;
@@ -29,7 +29,7 @@ class email_Core
      */
     public static function connect($config = null)
     {
-        if (! class_exists('Swift', false)) {
+        if (!class_exists('Swift', false)) {
             // Load SwiftMailer
             require Kohana::find_file('vendor', 'swift/Swift');
 
@@ -67,9 +67,9 @@ class email_Core
                 empty($config['options']['username']) or $connection->setUsername($config['options']['username']);
                 empty($config['options']['password']) or $connection->setPassword($config['options']['password']);
 
-                if (! empty($config['options']['auth'])) {
+                if (!empty($config['options']['auth'])) {
                     // Get the class name and params
-                    list ($class, $params) = arr::callback_string($config['options']['auth']);
+                    list($class, $params) = arr::callback_string($config['options']['auth']);
 
                     if ($class === 'PopB4Smtp') {
                         // Load the PopB4Smtp class manually, due to its odd filename
@@ -139,7 +139,7 @@ class email_Core
             $recipients = new Swift_RecipientList();
 
             foreach ($to as $method => $set) {
-                if (! in_array($method, array('to', 'cc', 'bcc'))) {
+                if (!in_array($method, array('to', 'cc', 'bcc'))) {
                     // Use To: by default
                     $method = 'to';
                 }

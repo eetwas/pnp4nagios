@@ -17,7 +17,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class arr_Core
+class ArrCore
 {
     /**
      * Return a callback array from a string, eg: limit[10,20] would become
@@ -78,7 +78,7 @@ class arr_Core
      */
     public static function remove($key, &$array)
     {
-        if (! array_key_exists($key, $array)) {
+        if (!array_key_exists($key, $array)) {
             return null;
         }
 

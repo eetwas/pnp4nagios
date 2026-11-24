@@ -17,7 +17,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-abstract class Image_Driver
+abstract class ImageDriver
 {
     // Reference to the current image
     protected $image;
@@ -37,7 +37,7 @@ abstract class Image_Driver
     public function execute($actions)
     {
         foreach ($actions as $func => $args) {
-            if (! $this->$func($args)) {
+            if (!$this->$func($args)) {
                 return false;
             }
         }
@@ -60,7 +60,7 @@ abstract class Image_Driver
         $reporting = error_reporting(0);
 
         // Width and height cannot exceed current image size
-        $geometry['width']  = min($geometry['width'], $width);
+        $geometry['width'] = min($geometry['width'], $width);
         $geometry['height'] = min($geometry['height'], $height);
 
         // Set standard coordinates if given, otherwise use pixel values

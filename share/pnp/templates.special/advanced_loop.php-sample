@@ -37,7 +37,7 @@ foreach ($services as $key => $val) {
     # Throw an exception to debug the content of $a
     # Just to get Infos about the Array Structure
     #
-    #throw new Kohana_exception(print_r($a,TRUE));
+    #throw new KohanaException(print_r($a,TRUE));
     $def[0]    .= rrd::def("a$key", $a['DS'][0]['RRDFILE'], $a['DS'][0]['DS'], "AVERAGE");
     $def[0]    .= rrd::area("a$key", rrd::color($key), $a['MACRO']['HOSTNAME'], "STACK");
     $def[0]    .= rrd::gprint("a$key", array("MIN", "MAX", "LAST"), "%.2lf%s");

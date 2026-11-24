@@ -7,23 +7,63 @@ defined('SYSPATH') or die('No direct access allowed.');
 $lang = array
 (
     'file_not_found' => 'Le fichier spécifié, %s, est introuvable. Merci de vérifier que les fichiers existent, grâce à la fontion file_exists, avant de les utiliser.',
-    'requires_GD2'   => 'La librairie Captcha requiert GD2 avec le support FreeType installé. Voir http://php.net/gd_info pour de plus amples renseignements, merci.',
+    'requires_GD2' => 'La librairie Captcha requiert GD2 avec le support FreeType installé. Voir http://php.net/gd_info pour de plus amples renseignements, merci.',
 
-    // Words of varying length for the Captcha_Word_Driver to pick from
+    // Words of varying length for the CaptchaWordDriver to pick from
     // Note: use only alphanumeric characters
     'words' => array
     (
-        'cd', 'tv', 'le', 'il', 'ou', 'an',
-        'moi', 'age', 'coq', 'ici', 'bob', 'eau',
-        'cake', 'agir', 'bain', 'dodo', 'elle', 'faux',
-        'hello', 'monde', 'terre', 'adore', 'baton', 'chats',
-        'absent', 'cendre', 'banane', 'cirque', 'violet', 'disque',
-        'abricot', 'billets', 'cendres', 'frisson', 'nations', 'respect',
-        'accepter', 'batterie', 'collines', 'desserts', 'feuilles', 'sandwich',
-        'acheteurs', 'tellement', 'renverser', 'histoires', 'dimanches', 'cinquante',
+        'cd',
+        'tv',
+        'le',
+        'il',
+        'ou',
+        'an',
+        'moi',
+        'age',
+        'coq',
+        'ici',
+        'bob',
+        'eau',
+        'cake',
+        'agir',
+        'bain',
+        'dodo',
+        'elle',
+        'faux',
+        'hello',
+        'monde',
+        'terre',
+        'adore',
+        'baton',
+        'chats',
+        'absent',
+        'cendre',
+        'banane',
+        'cirque',
+        'violet',
+        'disque',
+        'abricot',
+        'billets',
+        'cendres',
+        'frisson',
+        'nations',
+        'respect',
+        'accepter',
+        'batterie',
+        'collines',
+        'desserts',
+        'feuilles',
+        'sandwich',
+        'acheteurs',
+        'tellement',
+        'renverser',
+        'histoires',
+        'dimanches',
+        'cinquante',
     ),
 
-    // Riddles for the Captcha_Riddle_Driver to pick from
+    // Riddles for the CaptchaRiddleDriver to pick from
     // Note: use only alphanumeric characters
     'riddles' => array
     (

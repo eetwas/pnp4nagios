@@ -17,7 +17,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class request_Core
+class RequestCore
 {
     // Possible HTTP methods
     protected static $http_methods = array('get', 'head', 'options', 'post', 'put', 'delete');
@@ -33,7 +33,7 @@ class request_Core
      */
     public static function referrer($default = false)
     {
-        if (! empty($_SERVER['HTTP_REFERER'])) {
+        if (!empty($_SERVER['HTTP_REFERER'])) {
             // Set referrer
             $ref = $_SERVER['HTTP_REFERER'];
 
@@ -56,7 +56,7 @@ class request_Core
     {
         if (PHP_SAPI === 'cli') {
             return null;
-        } elseif (! empty($_SERVER['HTTPS']) and $_SERVER['HTTPS'] === 'on') {
+        } elseif (!empty($_SERVER['HTTPS']) and $_SERVER['HTTPS'] === 'on') {
             return 'https';
         } else {
             return 'http';
@@ -77,15 +77,15 @@ class request_Core
     /**
      * Returns current request method.
      *
-     * @throws  Kohana_Exception in case of an unknown request method
+     * @throws  KohanaException in case of an unknown request method
      * @return  string
      */
     public static function method()
     {
         $method = strtolower($_SERVER['REQUEST_METHOD']);
 
-        if (! in_array($method, request::$http_methods)) {
-            throw new Kohana_Exception('request.unknown_method', $method);
+        if (!in_array($method, request::$http_methods)) {
+            throw new KohanaException('request.unknown_method', $method);
         }
 
         return $method;
@@ -222,7 +222,7 @@ class request_Core
             $type = explode('/', $accept_entry[0], 2);
 
             // Skip invalid content types
-            if (! isset($type[1])) {
+            if (!isset($type[1])) {
                 continue;
             }
 
@@ -230,7 +230,7 @@ class request_Core
             $q = (isset($accept_entry[1]) and preg_match('~\bq\s*+=\s*+([.0-9]+)~', $accept_entry[1], $match)) ? (float) $match[1] : 1;
 
             // Populate accept_types array
-            if (! isset(request::$accept_types[$type[0]][$type[1]]) or $q > request::$accept_types[$type[0]][$type[1]]) {
+            if (!isset(request::$accept_types[$type[0]][$type[1]]) or $q > request::$accept_types[$type[0]][$type[1]]) {
                 request::$accept_types[$type[0]][$type[1]] = $q;
             }
         }

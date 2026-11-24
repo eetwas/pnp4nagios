@@ -187,8 +187,8 @@ install:
 	$(INSTALL) -m 644 $(INSTALL_OPTS) kohana/system/libraries/Encrypt.php $(DESTDIR)$(DATAROOTDIR)/kohana/system/libraries/Encrypt.php
 	$(INSTALL) -m 644 $(INSTALL_OPTS) kohana/system/libraries/Calendar.php $(DESTDIR)$(DATAROOTDIR)/kohana/system/libraries/Calendar.php
 	$(INSTALL) -m 644 $(INSTALL_OPTS) kohana/system/libraries/Database_Expression.php $(DESTDIR)$(DATAROOTDIR)/kohana/system/libraries/Database_Expression.php
-	$(INSTALL) -m 644 $(INSTALL_OPTS) kohana/system/libraries/Event_Observer.php $(DESTDIR)$(DATAROOTDIR)/kohana/system/libraries/Event_Observer.php
-	$(INSTALL) -m 644 $(INSTALL_OPTS) kohana/system/libraries/Event_Subject.php $(DESTDIR)$(DATAROOTDIR)/kohana/system/libraries/Event_Subject.php
+	$(INSTALL) -m 644 $(INSTALL_OPTS) kohana/system/libraries/EventObserver.php $(DESTDIR)$(DATAROOTDIR)/kohana/system/libraries/EventObserver.php
+	$(INSTALL) -m 644 $(INSTALL_OPTS) kohana/system/libraries/EventSubject.php $(DESTDIR)$(DATAROOTDIR)/kohana/system/libraries/EventSubject.php
 	$(INSTALL) -m 644 $(INSTALL_OPTS) kohana/system/libraries/Captcha.php $(DESTDIR)$(DATAROOTDIR)/kohana/system/libraries/Captcha.php
 	$(INSTALL) -m 644 $(INSTALL_OPTS) kohana/system/libraries/Cache.php $(DESTDIR)$(DATAROOTDIR)/kohana/system/libraries/Cache.php
 	$(INSTALL) -m 644 $(INSTALL_OPTS) kohana/system/libraries/Session.php $(DESTDIR)$(DATAROOTDIR)/kohana/system/libraries/Session.php

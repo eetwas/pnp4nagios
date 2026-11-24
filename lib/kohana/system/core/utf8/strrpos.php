@@ -20,16 +20,16 @@ function _strrpos($str, $search, $offset = 0)
         return mb_strrpos($str, $search, $offset);
     }
 
-    if (utf8::is_ascii($str) and utf8::is_ascii($search)) {
+    if (Utf8::is_ascii($str) and Utf8::is_ascii($search)) {
         return strrpos($str, $search, $offset);
     }
 
     if ($offset == 0) {
         $array = explode($search, $str, -1);
-        return isset($array[0]) ? utf8::strlen(implode($search, $array)) : false;
+        return isset($array[0]) ? Utf8::strlen(implode($search, $array)) : false;
     }
 
-    $str = utf8::substr($str, $offset);
-    $pos = utf8::strrpos($str, $search);
+    $str = Utf8::substr($str, $offset);
+    $pos = Utf8::strrpos($str, $search);
     return ($pos === false) ? false : $pos + $offset;
 }

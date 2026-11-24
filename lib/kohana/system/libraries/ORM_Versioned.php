@@ -14,7 +14,7 @@
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class ORM_Versioned_Core extends ORM
+class ORMVersionedCore extends ORM
 {
     protected $last_version = null;
 
@@ -56,7 +56,7 @@ class ORM_Versioned_Core extends ORM
      */
     public function previous()
     {
-        if (! $this->loaded) {
+        if (!$this->loaded) {
             return $this;
         }
 
@@ -84,7 +84,7 @@ class ORM_Versioned_Core extends ORM
      */
     public function restore($version)
     {
-        if (! $this->loaded) {
+        if (!$this->loaded) {
             return $this;
         }
 

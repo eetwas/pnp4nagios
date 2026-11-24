@@ -17,7 +17,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class Session_Core
+class SessionCore
 {
     // Session singleton
     protected static $instance;
@@ -119,16 +119,16 @@ class Session_Core
             $driver = 'Session_' . ucfirst(Session::$config['driver']) . '_Driver';
 
             // Load the driver
-            if (! Kohana::auto_load($driver)) {
-                throw new Kohana_Exception('core.driver_not_found', Session::$config['driver'], get_class($this));
+            if (!Kohana::auto_load($driver)) {
+                throw new KohanaException('core.driver_not_found', Session::$config['driver'], get_class($this));
             }
 
             // Initialize the driver
             Session::$driver = new $driver();
 
             // Validate the driver
-            if (! (Session::$driver instanceof Session_Driver)) {
-                throw new Kohana_Exception('core.driver_implements', Session::$config['driver'], get_class($this), 'Session_Driver');
+            if (!(Session::$driver instanceof SessionDriver)) {
+                throw new KohanaException('core.driver_implements', Session::$config['driver'], get_class($this), 'SessionDriver');
             }
 
             // Register non-native driver as the session handler
@@ -143,8 +143,8 @@ class Session_Core
         }
 
         // Validate the session name
-        if (! preg_match('~^(?=.*[a-z])[a-z0-9_]++$~iD', Session::$config['name'])) {
-            throw new Kohana_Exception('session.invalid_session_name', Session::$config['name']);
+        if (!preg_match('~^(?=.*[a-z])[a-z0-9_]++$~iD', Session::$config['name'])) {
+            throw new KohanaException('session.invalid_session_name', Session::$config['name']);
         }
 
         // Name the session, this will also be the name of the cookie
@@ -165,7 +165,7 @@ class Session_Core
         $_SESSION['session_id'] = session_id();
 
         // Set defaults
-        if (! isset($_SESSION['_kf_flash_'])) {
+        if (!isset($_SESSION['_kf_flash_'])) {
             $_SESSION['total_hits'] = 0;
             $_SESSION['_kf_flash_'] = array();
 
@@ -304,7 +304,7 @@ class Session_Core
             return false;
         }
 
-        if (! is_array($keys)) {
+        if (!is_array($keys)) {
             $keys = array($keys => $val);
         }
 
@@ -331,7 +331,7 @@ class Session_Core
             return false;
         }
 
-        if (! is_array($keys)) {
+        if (!is_array($keys)) {
             $keys = array($keys => $val);
         }
 
@@ -376,7 +376,7 @@ class Session_Core
             return;
         }
 
-        if (! empty(Session::$flash)) {
+        if (!empty(Session::$flash)) {
             foreach (Session::$flash as $key => $state) {
                 if ($state === 'old') {
                     // Flash has expired

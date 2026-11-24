@@ -14,7 +14,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  */
 function _strrev($str)
 {
-    if (utf8::is_ascii($str)) {
+    if (Utf8::is_ascii($str)) {
         return strrev($str);
     }
 

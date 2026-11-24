@@ -16,7 +16,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class Input_Core
+class InputCore
 {
     // Enable or disable automatic XSS cleaning
     protected $use_xss_clean = false;
@@ -190,7 +190,7 @@ class Input_Core
             return $array;
         }
 
-        if (! isset($array[$key])) {
+        if (!isset($array[$key])) {
             return $default;
         }
 
@@ -232,7 +232,7 @@ class Input_Core
             $this->ip_address = substr($this->ip_address, $comma + 1);
         }
 
-        if (! valid::ip($this->ip_address)) {
+        if (!valid::ip($this->ip_address)) {
             // Use an empty IP
             $this->ip_address = '0.0.0.0';
         }
@@ -281,7 +281,7 @@ class Input_Core
                 /**
                  * @todo License should go here, http://htmlpurifier.org/
                  */
-                if (! class_exists('HTMLPurifier_Config', false)) {
+                if (!class_exists('HTMLPurifier_Config', false)) {
                     // Load HTMLPurifier
                     require Kohana::find_file('vendor', 'htmlpurifier/HTMLPurifier.auto', true);
                     require 'HTMLPurifier.func.php';
@@ -326,7 +326,7 @@ class Input_Core
                 //   * Made some quantifiers possessive
 
                 // Fix &entity\n;
-                $data = str_replace(array('&amp;','&lt;','&gt;'), array('&amp;amp;','&amp;lt;','&amp;gt;'), $data);
+                $data = str_replace(array('&amp;', '&lt;', '&gt;'), array('&amp;amp;', '&amp;lt;', '&amp;gt;'), $data);
                 $data = preg_replace('/(&#*\w+)[\x00-\x20]+;/u', '$1;', $data);
                 $data = preg_replace('/(&#x*[0-9A-F]+);*/iu', '$1;', $data);
                 $data = html_entity_decode($data, ENT_COMPAT, 'UTF-8');
@@ -337,23 +337,23 @@ class Input_Core
                 // Remove javascript: and vbscript: protocols
                 $data = preg_replace(
                     '#([a-z]*)[\x00-\x20]*=' .
-                        '[\x00-\x20]*([`\'"]*)' .
-                        '[\x00-\x20]*j[\x00-\x20]*a' .
-                        '[\x00-\x20]*v[\x00-\x20]*a' .
-                        '[\x00-\x20]*s[\x00-\x20]*c' .
-                        '[\x00-\x20]*r[\x00-\x20]*i' .
-                        '[\x00-\x20]*p[\x00-\x20]*t' .
-                        '[\x00-\x20]*:#iu',
+                    '[\x00-\x20]*([`\'"]*)' .
+                    '[\x00-\x20]*j[\x00-\x20]*a' .
+                    '[\x00-\x20]*v[\x00-\x20]*a' .
+                    '[\x00-\x20]*s[\x00-\x20]*c' .
+                    '[\x00-\x20]*r[\x00-\x20]*i' .
+                    '[\x00-\x20]*p[\x00-\x20]*t' .
+                    '[\x00-\x20]*:#iu',
                     '$1=$2nojavascript...',
                     $data
                 );
                 $data = preg_replace(
                     '#([a-z]*)[\x00-\x20]*=' .
-                        '([\'"]*)[\x00-\x20]*v' .
-                        '[\x00-\x20]*b[\x00-\x20]*s' .
-                        '[\x00-\x20]*c[\x00-\x20]*r' .
-                        '[\x00-\x20]*i[\x00-\x20]*p' .
-                        '[\x00-\x20]*t[\x00-\x20]*:#iu',
+                    '([\'"]*)[\x00-\x20]*v' .
+                    '[\x00-\x20]*b[\x00-\x20]*s' .
+                    '[\x00-\x20]*c[\x00-\x20]*r' .
+                    '[\x00-\x20]*i[\x00-\x20]*p' .
+                    '[\x00-\x20]*t[\x00-\x20]*:#iu',
                     '$1=$2novbscript...',
                     $data
                 );
@@ -366,8 +366,8 @@ class Input_Core
                 // Only works in IE: <span style="width: expression(alert('Ping!'));"></span>
                 $data = preg_replace(
                     '#(<[^>]+?)style[\x00-\x20]*=' .
-                        '[\x00-\x20]*[`\'"]*.*?' .
-                        'expression[\x00-\x20]*\([^>]*+>#i',
+                    '[\x00-\x20]*[`\'"]*.*?' .
+                    'expression[\x00-\x20]*\([^>]*+>#i',
                     '$1>',
                     $data
                 );
@@ -378,9 +378,9 @@ class Input_Core
                 );
                 $data = preg_replace(
                     '#(<[^>]+?)style[\x00-\x20]*=' .
-                        '[\x00-\x20]*[`\'"]*.*?s[\x00-\x20]*c' .
-                        '[\x00-\x20]*r[\x00-\x20]*i[\x00-\x20]*p' .
-                        '[\x00-\x20]*t[\x00-\x20]*:*[^>]*+>#iu',
+                    '[\x00-\x20]*[`\'"]*.*?s[\x00-\x20]*c' .
+                    '[\x00-\x20]*r[\x00-\x20]*i[\x00-\x20]*p' .
+                    '[\x00-\x20]*t[\x00-\x20]*:*[^>]*+>#iu',
                     '$1>',
                     $data
                 );
@@ -393,8 +393,8 @@ class Input_Core
                     $old_data = $data;
                     $data = preg_replace(
                         '#</*(?:applet|b(?:ase|gsound|link)' .
-                            '|embed|frame(?:set)?|i(?:frame|layer)' .
-                            '|l(?:ayer|ink)|meta|object|s(?:cript|tyle)|title|xml)[^>]*+>#i',
+                        '|embed|frame(?:set)?|i(?:frame|layer)' .
+                        '|l(?:ayer|ink)|meta|object|s(?:cript|tyle)|title|xml)[^>]*+>#i',
                         '',
                         $data
                     );
@@ -416,7 +416,7 @@ class Input_Core
     {
         $chars = PCRE_UNICODE_PROPERTIES ? '\pL' : 'a-zA-Z';
 
-        if (! preg_match('#^[' . $chars . '0-9:_.\-]++$#uD', $str)) {
+        if (!preg_match('#^[' . $chars . '0-9:_.\-]++$#uD', $str)) {
             exit('Disallowed key characters in global data.');
         }
 
@@ -427,7 +427,7 @@ class Input_Core
     {
         $chars = PCRE_UNICODE_PROPERTIES ? '\pL' : 'a-zA-Z';
 
-        if (! preg_match('#^[\%' . $chars . '0-9:_.\-\$\@]++$#uD', $str)) {
+        if (!preg_match('#^[\%' . $chars . '0-9:_.\-\$\@]++$#uD', $str)) {
             exit("Disallowed key characters in global data.");
         }
 

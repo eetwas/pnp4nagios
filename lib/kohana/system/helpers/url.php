@@ -17,7 +17,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class url_Core
+class UrlCore
 {
     /**
      * Fetches the current URI.
@@ -98,7 +98,7 @@ class url_Core
 
         if ($fragment = parse_url($uri, PHP_URL_FRAGMENT)) {
             // #fragment
-            $fragment =  '#' . $fragment;
+            $fragment = '#' . $fragment;
         }
 
         // Concat the URL
@@ -154,7 +154,7 @@ class url_Core
         $separator = ($separator === '-') ? '-' : '_';
 
         // Replace accented characters by their unaccented equivalents
-        $title = utf8::transliterate_to_ascii($title);
+        $title = Utf8::transliterate_to_ascii($title);
 
         // Remove all characters that are not the separator, a-z, 0-9, or whitespace
         $title = preg_replace('/[^' . $separator . 'a-z0-9\s]+/', '', strtolower($title));

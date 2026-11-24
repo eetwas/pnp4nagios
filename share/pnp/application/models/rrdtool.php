@@ -9,7 +9,7 @@ defined('SYSPATH') or die('No direct access allowed.');
 /**
  * Retrieves and manipulates current status of hosts (and services?)
  */
-class Rrdtool_Model extends System_Model
+class RrdtoolModel extends SystemModel
 {
     private $RRD_CMD = false;
 
@@ -18,11 +18,11 @@ class Rrdtool_Model extends System_Model
 
     public function __construct()
     {
-        $this->config = new Config_Model();
+        $this->config = new ConfigModel();
         $this->config->read_config();
         // print Kohana::debug($this->config->views);
     }
-//end __construct()
+    //end __construct()
 
 
     private function rrdtool_execute()
@@ -32,17 +32,17 @@ class Rrdtool_Model extends System_Model
                 'pipe',
                 'r',
             ],
-// stdin is a pipe that the child will read from
+            // stdin is a pipe that the child will read from
             1 => [
                 'pipe',
                 'w',
             ],
-// stdout is a pipe that the child will write to
+            // stdout is a pipe that the child will write to
             2 => [
                 'pipe',
                 'w',
             ],
-// stderr is a pipe that the child will write to
+            // stderr is a pipe that the child will write to
         ];
 
         if (!isset($this->config->conf['rrdtool'])) {
@@ -56,11 +56,11 @@ class Rrdtool_Model extends System_Model
 
         $rrdtool = $this->config->conf['rrdtool'] . ' - ';
 
-    /*
-        this is needed by Fontconfig, used by pango, used by rrdtool graph
-     ** it's automatically set up for 'interactive' sessions, but  web servers
-     ** don't have it (usually?). If there are 'red screens' instead of graphs,
-    ** there's a good chance this is why */
+        /*
+            this is needed by Fontconfig, used by pango, used by rrdtool graph
+         ** it's automatically set up for 'interactive' sessions, but  web servers
+         ** don't have it (usually?). If there are 'red screens' instead of graphs,
+        ** there's a good chance this is why */
 
         $fc_cache = $this->config->conf['fontconfig_cache'];
 
@@ -80,15 +80,15 @@ class Rrdtool_Model extends System_Model
 
         $command = $this->RRD_CMD;
         $process = proc_open($rrdtool, $descriptorspec, $pipes);
-        $debug   = [];
-        $data    = '';
+        $debug = [];
+        $data = '';
         if (is_resource($process)) {
             fwrite($pipes[0], $command);
             fclose($pipes[0]);
             stream_set_timeout($pipes[1], 1);
             $data = stream_get_contents($pipes[1]);
             stream_set_timeout($pipes[2], 1);
-            $stderr      = stream_get_contents($pipes[2]);
+            $stderr = stream_get_contents($pipes[2]);
             $stdout_meta = stream_get_meta_data($pipes[1]);
             if ($stdout_meta['timed_out'] == 1) {
                 $data = "ERROR: Timeout while reading rrdtool data.\n\n";
@@ -109,10 +109,10 @@ class Rrdtool_Model extends System_Model
         } else {
             $data = 'ERROR: proc_open(' . $rrdtool . ' ... failed';
         }
-//end if
+        //end if
         return $data;
     }
-//end rrdtool_execute()
+    //end rrdtool_execute()
 
 
     public function doImage($RRD_CMD, $out = 'STDOUT')
@@ -125,7 +125,7 @@ class Rrdtool_Model extends System_Model
             $command = ' graph - ';
         }
 
-        $width  = 0;
+        $width = 0;
         $height = 0;
         if ($out == 'PDF') {
             if ($conf['pdf_graph_opt']) {
@@ -148,7 +148,7 @@ class Rrdtool_Model extends System_Model
                 $height = abs($conf['graph_height']);
             }
         }
-//end if
+        //end if
 
         if ($width > 0) {
             $command .= " --width=$width";
@@ -164,20 +164,20 @@ class Rrdtool_Model extends System_Model
 
         $command .= $RRD_CMD;
 
-    // Force empty vertical label
-        if (! preg_match_all('/(-l|--vertical-label)/i', $command, $match)) {
+        // Force empty vertical label
+        if (!preg_match_all('/(-l|--vertical-label)/i', $command, $match)) {
             $command .= " --vertical-label=' ' ";
         }
 
         $this->RRD_CMD = $command;
-        $data          = $this->rrdtool_execute();
+        $data = $this->rrdtool_execute();
         if ($data) {
             return $data;
         } else {
             return false;
         }
     }
-//end doImage()
+    //end doImage()
 
 
     public function doXport($RRD_CMD)
@@ -188,17 +188,17 @@ class Rrdtool_Model extends System_Model
         } else {
             $command = ' xport ';
         }
-        $command      .= $RRD_CMD;
+        $command .= $RRD_CMD;
         $this->RRD_CMD = $command;
-        $data          = $this->rrdtool_execute();
-        $data          = preg_replace('/OK.*/', '', $data);
+        $data = $this->rrdtool_execute();
+        $data = preg_replace('/OK.*/', '', $data);
         if ($data) {
             return $data;
         } else {
             return false;
         }
     }
-//end doXport()
+    //end doXport()
 
 
     public function streamImage($data = false)
@@ -224,7 +224,7 @@ class Rrdtool_Model extends System_Model
                 // Set font size
                 $font_size = 2;
             }
-            $ts    = explode("\n", $data);
+            $ts = explode("\n", $data);
             $width = 0;
             foreach ($ts as $k => $string) {
                 $width = max($width, strlen($string));
@@ -256,13 +256,13 @@ class Rrdtool_Model extends System_Model
                 $xpos_offset = 5;
                 // Loop through the string
                 for ($i = 0; $i < $len; $i++) {
-                      // Position of the character horizontally
-                      $xpos = ($i * $em + $ypos_offset);
-                      $ypos = ($k * $el + $xpos_offset);
-                      // Draw character
-                      imagechar($img, $font_size, $xpos, $ypos, $string, $color);
-                      // Remove character from string
-                      $string = substr($string, 1);
+                    // Position of the character horizontally
+                    $xpos = ($i * $em + $ypos_offset);
+                    $ypos = ($k * $el + $xpos_offset);
+                    // Draw character
+                    imagechar($img, $font_size, $xpos, $ypos, $string, $color);
+                    // Remove character from string
+                    $string = substr($string, 1);
                 }
             }
             header('Content-type: image/png');
@@ -272,30 +272,30 @@ class Rrdtool_Model extends System_Model
             header('Content-type: image/png');
             echo $data;
         }
-//end if
+        //end if
     }
-//end streamImage()
+    //end streamImage()
 
 
     public function saveImage($data = false)
     {
-        $img         = [];
+        $img = [];
         $img['file'] = tempnam($this->config->conf['temp'], 'PNP');
         if (!$fh = fopen($img['file'], 'w')) {
-            throw new Kohana_Exception('save-rrd-image', $img['file']);
+            throw new KohanaException('save-rrd-image', $img['file']);
         }
         fwrite($fh, $data);
         fclose($fh);
         if (function_exists('imagecreatefrompng')) {
             $image = imagecreatefrompng($img['file']);
             imagepng($image, $img['file']);
-            list ($img['width'], $img['height'], $img['type'], $img['attr']) = getimagesize($img['file']);
+            list($img['width'], $img['height'], $img['type'], $img['attr']) = getimagesize($img['file']);
         } else {
-            throw new Kohana_Exception('error.gd-missing');
+            throw new KohanaException('error.gd-missing');
         }
         return $img;
     }
-//end saveImage()
+    //end saveImage()
 
 
     private function format_rrd_debug($data)
@@ -303,6 +303,6 @@ class Rrdtool_Model extends System_Model
         $data = preg_replace('/(HRULE|VDEF|DEF|CDEF|GPRINT|LINE|AREA|COMMENT)/', "\n\${1}", $data);
         return $data;
     }
-//end format_rrd_debug()
+    //end format_rrd_debug()
 }
 //end class

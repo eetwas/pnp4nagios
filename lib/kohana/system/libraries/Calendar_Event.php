@@ -16,7 +16,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class Calendar_Event_Core extends Event_Observer
+class CalendarEventCore extends EventObserver
 {
     // Boolean conditions
     protected $booleans = array
@@ -136,7 +136,7 @@ class Calendar_Event_Core extends Event_Observer
     public function notify($data)
     {
         // Split the date and current status
-        list ($month, $day, $year, $week, $current) = $data;
+        list($month, $day, $year, $week, $current) = $data;
 
         // Get a timestamp for the day
         $timestamp = mktime(0, 0, 0, $month, $day, $year);
@@ -144,13 +144,13 @@ class Calendar_Event_Core extends Event_Observer
         // Date conditionals
         $condition = array
         (
-            'timestamp'   => (int) $timestamp,
-            'day'         => (int) date('j', $timestamp),
-            'week'        => (int) $week,
-            'month'       => (int) date('n', $timestamp),
-            'year'        => (int) date('Y', $timestamp),
+            'timestamp' => (int) $timestamp,
+            'day' => (int) date('j', $timestamp),
+            'week' => (int) $week,
+            'month' => (int) date('n', $timestamp),
+            'year' => (int) date('Y', $timestamp),
             'day_of_week' => (int) date('w', $timestamp),
-            'current'     => (bool) $current,
+            'current' => (bool) $current,
         );
 
         // Tested conditions
@@ -167,7 +167,7 @@ class Calendar_Event_Core extends Event_Observer
                     return false;
                 }
             } elseif (isset($this->conditions[$key]) and $this->conditions[$key] !== $value) {
-            // Test basic conditions first
+                // Test basic conditions first
                 return false;
             }
 
@@ -254,7 +254,7 @@ class Calendar_Event_Core extends Event_Observer
         $this->caller->add_data(array
         (
             'classes' => $this->classes,
-            'output'  => $this->output,
+            'output' => $this->output,
         ));
     }
 

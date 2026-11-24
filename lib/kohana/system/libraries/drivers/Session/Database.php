@@ -17,7 +17,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class Session_Database_Driver implements Session_Driver
+class SessionDatabaseDriver implements SessionDriver
 {
     /*
     CREATE TABLE sessions
@@ -45,18 +45,18 @@ class Session_Database_Driver implements Session_Driver
         // Load configuration
         $config = Kohana::config('session');
 
-        if (! empty($config['encryption'])) {
+        if (!empty($config['encryption'])) {
             // Load encryption
             $this->encrypt = Encrypt::instance();
         }
 
         if (is_array($config['storage'])) {
-            if (! empty($config['storage']['group'])) {
+            if (!empty($config['storage']['group'])) {
                 // Set the group name
                 $this->db = $config['storage']['group'];
             }
 
-            if (! empty($config['storage']['table'])) {
+            if (!empty($config['storage']['table'])) {
                 // Set the table name
                 $this->table = $config['storage']['table'];
             }

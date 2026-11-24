@@ -16,7 +16,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class Calendar_Core extends Event_Subject
+class CalendarCore extends EventSubject
 {
     // Start the calendar on Sunday by default
     public static $start_monday = false;
@@ -61,7 +61,7 @@ class Calendar_Core extends Event_Subject
         if (is_int($length) or ctype_digit($length)) {
             foreach ($days as $i => $day) {
                 // Shorten the days to the expected length
-                $days[$i] = utf8::substr($day, 0, $length);
+                $days[$i] = Utf8::substr($day, 0, $length);
             }
         }
 
@@ -92,11 +92,11 @@ class Calendar_Core extends Event_Subject
     public function __construct($month = null, $year = null)
     {
         empty($month) and $month = date('n'); // Current month
-        empty($year)  and $year  = date('Y'); // Current year
+        empty($year) and $year = date('Y'); // Current year
 
         // Set the month and year
         $this->month = (int) $month;
-        $this->year  = (int) $year;
+        $this->year = (int) $year;
 
         if (Calendar::$start_monday === true) {
             // Week starts on Monday
@@ -215,7 +215,7 @@ class Calendar_Core extends Event_Subject
         $total = (int) date('t', $first);
 
         // Last day of the month as a timestamp
-        $last  = mktime(1, 0, 0, $this->month, $total, $this->year);
+        $last = mktime(1, 0, 0, $this->month, $total, $this->year);
 
         // Make the month and week empty arrays
         $month = $week = array();
@@ -276,7 +276,7 @@ class Calendar_Core extends Event_Subject
             }
         }
 
-        if (! empty($week)) {
+        if (!empty($week)) {
             // Append the remaining days
             $month[] = $week;
         }
@@ -296,7 +296,7 @@ class Calendar_Core extends Event_Subject
         // Add new classes
         $this->observed_data['classes'] += $data['classes'];
 
-        if (! empty($data['output'])) {
+        if (!empty($data['output'])) {
             // Only add output if it's not empty
             $this->observed_data['output'][] = $data['output'];
         }
@@ -328,11 +328,11 @@ class Calendar_Core extends Event_Subject
      */
     public function render()
     {
-        $view =  new View('kohana_calendar', array
+        $view = new View('kohana_calendar', array
         (
-            'month'  => $this->month,
-            'year'   => $this->year,
-            'weeks'  => $this->weeks(),
+            'month' => $this->month,
+            'year' => $this->year,
+            'weeks' => $this->weeks(),
         ));
 
         return $view->render();

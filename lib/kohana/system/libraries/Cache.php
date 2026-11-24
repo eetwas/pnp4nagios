@@ -18,7 +18,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class Cache_Core
+class CacheCore
 {
     protected static $instances = array();
 
@@ -35,11 +35,11 @@ class Cache_Core
      * Returns a singleton instance of Cache.
      *
      * @param   string  configuration
-     * @return  Cache_Core
+     * @return  CacheCore
      */
-    public static function & instance($config = false)
+    public static function &instance($config = false)
     {
-        if (! isset(Cache::$instances[$config])) {
+        if (!isset(Cache::$instances[$config])) {
             // Create a new instance
             Cache::$instances[$config] = new Cache($config);
         }
@@ -60,7 +60,7 @@ class Cache_Core
 
             // Test the config group name
             if (($config = Kohana::config('cache.' . $config)) === null) {
-                throw new Kohana_Exception('cache.undefined_group', $name);
+                throw new KohanaException('cache.undefined_group', $name);
             }
         }
 
@@ -79,16 +79,16 @@ class Cache_Core
         $driver = 'Cache_' . ucfirst($this->config['driver']) . '_Driver';
 
         // Load the driver
-        if (! Kohana::auto_load($driver)) {
-            throw new Kohana_Exception('core.driver_not_found', $this->config['driver'], get_class($this));
+        if (!Kohana::auto_load($driver)) {
+            throw new KohanaException('core.driver_not_found', $this->config['driver'], get_class($this));
         }
 
         // Initialize the driver
         $this->driver = new $driver($this->config['params']);
 
         // Validate the driver
-        if (! ($this->driver instanceof Cache_Driver)) {
-            throw new Kohana_Exception('core.driver_implements', $this->config['driver'], get_class($this), 'Cache_Driver');
+        if (!($this->driver instanceof CacheDriver)) {
+            throw new KohanaException('core.driver_implements', $this->config['driver'], get_class($this), 'CacheDriver');
         }
 
         Kohana::log('debug', 'Cache Library initialized');
@@ -147,7 +147,7 @@ class Cache_Core
     private function set($id, $data, $tags = null, $lifetime = null)
     {
         if (is_resource($data)) {
-            throw new Kohana_Exception('cache.resources');
+            throw new KohanaException('cache.resources');
         }
 
         // Sanitize the ID

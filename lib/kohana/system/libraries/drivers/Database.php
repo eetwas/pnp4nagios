@@ -17,7 +17,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-abstract class Database_Driver
+abstract class DatabaseDriver
 {
     protected $query_cache;
 
@@ -33,7 +33,7 @@ abstract class Database_Driver
      * Perform a query based on a manually written query.
      *
      * @param  string  SQL query to execute
-     * @return Database_Result
+     * @return DatabaseResult
      */
     abstract public function query($sql);
 
@@ -72,7 +72,7 @@ abstract class Database_Driver
      */
     public function set_charset($charset)
     {
-        throw new Kohana_Database_Exception('database.not_implemented', __FUNCTION__);
+        throw new KohanaDatabaseException('database.not_implemented', __FUNCTION__);
     }
 
     /**
@@ -109,19 +109,19 @@ abstract class Database_Driver
             $value = '';
         } else {
             if ($value === null) {
-                if (! $this->has_operator($key)) {
+                if (!$this->has_operator($key)) {
                     $key .= ' IS';
                 }
 
                 $value = ' NULL';
             } elseif (is_bool($value)) {
-                if (! $this->has_operator($key)) {
+                if (!$this->has_operator($key)) {
                     $key .= ' =';
                 }
 
                 $value = ($value == true) ? ' 1' : ' 0';
             } else {
-                if (! $this->has_operator($key) and ! empty($key)) {
+                if (!$this->has_operator($key) and !empty($key)) {
                     $key = $this->escape_column($key) . ' =';
                 } else {
                     preg_match('/^(.+?)([<>!=]+|\bIS(?:\s+NULL))\s*$/i', $key, $matches);
@@ -195,7 +195,7 @@ abstract class Database_Driver
      */
     public function regex($field, $match, $type, $num_regexs)
     {
-        throw new Kohana_Database_Exception('database.not_implemented', __FUNCTION__);
+        throw new KohanaDatabaseException('database.not_implemented', __FUNCTION__);
     }
 
     /**
@@ -209,7 +209,7 @@ abstract class Database_Driver
      */
     public function notregex($field, $match, $type, $num_regexs)
     {
-        throw new Kohana_Database_Exception('database.not_implemented', __FUNCTION__);
+        throw new KohanaDatabaseException('database.not_implemented', __FUNCTION__);
     }
 
     /**
@@ -239,7 +239,7 @@ abstract class Database_Driver
      */
     public function merge($table, $keys, $values)
     {
-        throw new Kohana_Database_Exception('database.not_implemented', __FUNCTION__);
+        throw new KohanaDatabaseException('database.not_implemented', __FUNCTION__);
     }
 
     /**
@@ -259,7 +259,7 @@ abstract class Database_Driver
      */
     public function stmt_prepare($sql = '')
     {
-        throw new Kohana_Database_Exception('database.not_implemented', __FUNCTION__);
+        throw new KohanaDatabaseException('database.not_implemented', __FUNCTION__);
     }
 
     /**
@@ -291,7 +291,7 @@ abstract class Database_Driver
      */
     public function escape($value)
     {
-        if (! $this->db_config['escape']) {
+        if (!$this->db_config['escape']) {
             return $value;
         }
 
@@ -369,7 +369,7 @@ abstract class Database_Driver
 
         $str = strtolower(trim($str));
 
-        if (($open  = strpos($str, '(')) !== false) {
+        if (($open = strpos($str, '(')) !== false) {
             // Find closing bracket
             $close = strpos($str, ')', $open) - 1;
 
@@ -436,10 +436,10 @@ abstract class Database_Driver
 // End Database Driver Interface
 
 /**
- * Database_Result
+ * DatabaseResult
  *
  */
-abstract class Database_Result implements ArrayAccess, Iterator, Countable
+abstract class DatabaseResult implements ArrayAccess, Iterator, Countable
 {
     // Result resource, insert id, and SQL
     protected $result;
@@ -448,7 +448,7 @@ abstract class Database_Result implements ArrayAccess, Iterator, Countable
 
     // Current and total rows
     protected $current_row = 0;
-    protected $total_rows  = 0;
+    protected $total_rows = 0;
 
     // Fetch function and return type
     protected $fetch_type;
@@ -479,7 +479,7 @@ abstract class Database_Result implements ArrayAccess, Iterator, Countable
      *
      * @param   boolean   return rows as objects
      * @param   mixed     type
-     * @return  Database_Result
+     * @return  DatabaseResult
      */
     abstract public function result($object = true, $type = false);
 
@@ -523,7 +523,7 @@ abstract class Database_Result implements ArrayAccess, Iterator, Countable
             $min = 0;
             $max = $this->total_rows - 1;
 
-            return ! ($offset < $min or $offset > $max);
+            return !($offset < $min or $offset > $max);
         }
 
         return false;
@@ -534,7 +534,7 @@ abstract class Database_Result implements ArrayAccess, Iterator, Countable
      */
     public function offsetGet($offset)
     {
-        if (! $this->seek($offset)) {
+        if (!$this->seek($offset)) {
             return false;
         }
 
@@ -545,21 +545,21 @@ abstract class Database_Result implements ArrayAccess, Iterator, Countable
     /**
      * ArrayAccess: offsetSet
      *
-     * @throws  Kohana_Database_Exception
+     * @throws  KohanaDatabaseException
      */
     final public function offsetSet($offset, $value)
     {
-        throw new Kohana_Database_Exception('database.result_read_only');
+        throw new KohanaDatabaseException('database.result_read_only');
     }
 
     /**
      * ArrayAccess: offsetUnset
      *
-     * @throws  Kohana_Database_Exception
+     * @throws  KohanaDatabaseException
      */
     final public function offsetUnset($offset)
     {
-        throw new Kohana_Database_Exception('database.result_read_only');
+        throw new KohanaDatabaseException('database.result_read_only');
     }
 
     /**

@@ -13,13 +13,13 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @author     Joerg Linge
  * @license    GPL
  */
-class Debug_Controller extends System_Controller
+class DebugController extends SystemController
 {
     public function __construct()
     {
         parent::__construct();
-        $this->template          = $this->add_view('template');
-        $this->template->debug   = $this->add_view('debug');
+        $this->template = $this->add_view('template');
+        $this->template->debug = $this->add_view('debug');
     }
 
     public function index()
@@ -28,7 +28,7 @@ class Debug_Controller extends System_Controller
         $this->data->getTimeRange($this->start, $this->end, $this->view);
 
         if (isset($this->host) && isset($this->service)) {
-            $this->url      = "?host=" . $this->host . "&srv=" . $this->service;
+            $this->url = "?host=" . $this->host . "&srv=" . $this->service;
             if ($this->start) {
                 $this->url .= "&start=" . $this->start;
                 $this->session->set("start", $this->start);
@@ -37,7 +37,7 @@ class Debug_Controller extends System_Controller
                 $this->url .= "&end=" . $this->end;
                 $this->session->set("end", $this->end);
             }
-            $services      = $this->data->getServices($this->host);
+            $services = $this->data->getServices($this->host);
             $this->data->buildDataStruct($this->host, $this->service, $this->view);
             $this->is_authorized = $this->auth->is_authorized($this->data->MACRO['AUTH_HOSTNAME'], $this->data->MACRO['AUTH_SERVICEDESC']);
             $this->title = "Service Details " . $this->host . " -> " . $this->data->MACRO['DISP_SERVICEDESC'];
@@ -54,7 +54,7 @@ class Debug_Controller extends System_Controller
                 $this->url .= "&end=" . $this->end;
                 $this->session->set("end", $this->end);
             }
-            $this->title   = "Start $this->host";
+            $this->title = "Start $this->host";
             $services = $this->data->getServices($this->host);
             $this->title = "Service Overview for $this->host";
             foreach ($services as $service) {
@@ -66,7 +66,7 @@ class Debug_Controller extends System_Controller
             if (isset($this->host)) {
                 url::redirect("/graph");
             } else {
-                throw new Kohana_Exception('error.get-first-host');
+                throw new KohanaException('error.get-first-host');
             }
         }
     }

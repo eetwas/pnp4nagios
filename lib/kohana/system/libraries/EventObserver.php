@@ -9,14 +9,14 @@ defined('SYSPATH') or die('No direct access allowed.');
 /**
  * Kohana event observer. Uses the SPL observer pattern.
  *
- * $Id: Event_Observer.php 3769 2008-12-15 00:48:56Z zombor $
+ * $Id: EventObserver.php 3769 2008-12-15 00:48:56Z zombor $
  *
  * @package    Core
  * @author     Kohana Team
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-abstract class Event_Observer implements SplObserver
+abstract class EventObserver implements SplObserver
 {
     // Calling object
     protected $caller;
@@ -24,7 +24,7 @@ abstract class Event_Observer implements SplObserver
     /**
      * Initializes a new observer and attaches the subject as the caller.
      *
-     * @param   object  Event_Subject
+     * @param   object  EventSubject
      * @return  void
      */
     public function __construct(SplSubject $caller)
@@ -37,13 +37,13 @@ abstract class Event_Observer implements SplObserver
      * Updates the observer subject with a new caller.
      *
      * @chainable
-     * @param   object  Event_Subject
+     * @param   object  EventSubject
      * @return  object
      */
     public function update(SplSubject $caller)
     {
-        if (! ($caller instanceof Event_Subject)) {
-            throw new Kohana_Exception('event.invalid_subject', get_class($caller), get_class($this));
+        if (!($caller instanceof EventSubject)) {
+            throw new KohanaException('event.invalid_subject', get_class($caller), get_class($this));
         }
 
         // Update the caller

@@ -17,7 +17,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class URI_Core extends Router
+class URICore extends Router
 {
     /**
      * Returns a singleton instance of URI.
@@ -161,7 +161,7 @@ class URI_Core extends Router
         }
 
         $associative = array();
-        $pairs       = array_chunk($array, 2);
+        $pairs = array_chunk($array, 2);
 
         foreach ($pairs as $pair) {
             // Add the key/value pair to the associative array
