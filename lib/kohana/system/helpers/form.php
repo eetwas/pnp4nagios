@@ -17,7 +17,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class form_Core
+class FormCore
 {
     /**
      * Generates an opening HTML form tag.
@@ -118,7 +118,7 @@ class form_Core
      */
     public static function hidden($data, $value = '')
     {
-        if (! is_array($data)) {
+        if (!is_array($data)) {
             $data = array
             (
                 $data => $value
@@ -129,8 +129,8 @@ class form_Core
         foreach ($data as $name => $value) {
             $attr = array
             (
-                'type'  => 'hidden',
-                'name'  => $name,
+                'type' => 'hidden',
+                'name' => $name,
                 'value' => $value
             );
 
@@ -150,14 +150,14 @@ class form_Core
      */
     public static function input($data, $value = '', $extra = '')
     {
-        if (! is_array($data)) {
+        if (!is_array($data)) {
             $data = array('name' => $data);
         }
 
         // Type and value are required attributes
         $data += array
         (
-            'type'  => 'text',
+            'type' => 'text',
             'value' => $value
         );
 
@@ -174,7 +174,7 @@ class form_Core
      */
     public static function password($data, $value = '', $extra = '')
     {
-        if (! is_array($data)) {
+        if (!is_array($data)) {
             $data = array('name' => $data);
         }
 
@@ -193,7 +193,7 @@ class form_Core
      */
     public static function upload($data, $value = '', $extra = '')
     {
-        if (! is_array($data)) {
+        if (!is_array($data)) {
             $data = array('name' => $data);
         }
 
@@ -213,7 +213,7 @@ class form_Core
      */
     public static function textarea($data, $value = '', $extra = '', $double_encode = true)
     {
-        if (! is_array($data)) {
+        if (!is_array($data)) {
             $data = array('name' => $data);
         }
 
@@ -237,7 +237,7 @@ class form_Core
      */
     public static function dropdown($data, $options = null, $selected = null, $extra = '')
     {
-        if (! is_array($data)) {
+        if (!is_array($data)) {
             $data = array('name' => $data);
         } else {
             if (isset($data['options'])) {
@@ -295,7 +295,7 @@ class form_Core
      */
     public static function checkbox($data, $value = '', $checked = false, $extra = '')
     {
-        if (! is_array($data)) {
+        if (!is_array($data)) {
             $data = array('name' => $data);
         }
 
@@ -321,7 +321,7 @@ class form_Core
      */
     public static function radio($data = '', $value = '', $checked = false, $extra = '')
     {
-        if (! is_array($data)) {
+        if (!is_array($data)) {
             $data = array('name' => $data);
         }
 
@@ -346,7 +346,7 @@ class form_Core
      */
     public static function submit($data = '', $value = '', $extra = '')
     {
-        if (! is_array($data)) {
+        if (!is_array($data)) {
             $data = array('name' => $data);
         }
 
@@ -370,7 +370,7 @@ class form_Core
      */
     public static function button($data = '', $value = '', $extra = '')
     {
-        if (! is_array($data)) {
+        if (!is_array($data)) {
             $data = array('name' => $data);
         }
 
@@ -407,7 +407,7 @@ class form_Core
      */
     public static function label($data = '', $text = null, $extra = '')
     {
-        if (! is_array($data)) {
+        if (!is_array($data)) {
             if (is_string($data)) {
                 // Specify the input this label is for
                 $data = array('for' => $data);
@@ -439,7 +439,7 @@ class form_Core
         }
 
         if (isset($attr['name']) and empty($attr['id']) and strpos($attr['name'], '[') === false) {
-            if ($type === null and ! empty($attr['type'])) {
+            if ($type === null and !empty($attr['type'])) {
                 // Set the type by the attributes
                 $type = $attr['type'];
             }

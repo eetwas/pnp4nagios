@@ -14,7 +14,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @author  Joerg Linge
  * @license GPL
  */
-class Page_Controller extends SystemController
+class PageController extends SystemController
 {
     public $is_authorized = '';
 

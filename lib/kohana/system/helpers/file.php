@@ -17,7 +17,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class file_Core
+class FileCore
 {
     /**
      * Attempt to get the mime type from a file. This method is horribly
@@ -31,7 +31,7 @@ class file_Core
     public static function mime($filename)
     {
         // Make sure the file is readable
-        if (! (is_file($filename) and is_readable($filename))) {
+        if (!(is_file($filename) and is_readable($filename))) {
             return false;
         }
 
@@ -57,7 +57,7 @@ class file_Core
         if (function_exists('finfo_open')) {
             // Use the fileinfo extension
             $finfo = finfo_open(FILEINFO_MIME);
-            $mime  = finfo_file($finfo, $filename);
+            $mime = finfo_file($finfo, $filename);
             finfo_close($finfo);
 
             // Return the mime type
@@ -69,14 +69,14 @@ class file_Core
             return mime_content_type($filename);
         }
 
-        if (! KOHANA_IS_WIN) {
+        if (!KOHANA_IS_WIN) {
             // Attempt to locate use the file command, checking the return value
             if ($command = trim(exec('which file', $output, $return)) and $return === 0) {
                 return trim(exec($command . ' -bi ' . escapeshellarg($filename)));
             }
         }
 
-        if (! empty($extension) and is_array($mime = Kohana::config('mimes.' . $extension))) {
+        if (!empty($extension) and is_array($mime = Kohana::config('mimes.' . $extension))) {
             // Return the mime-type guess, based on the extension
             return $mime[0];
         }
@@ -106,12 +106,12 @@ class file_Core
         $piece_size = 1024 * 1024 * (int) $piece_size; // Size in bytes
 
         // Set up reading variables
-        $read  = 0; // Number of bytes read
+        $read = 0; // Number of bytes read
         $piece = 1; // Current piece
         $chunk = 1024 * 8; // Chunk size to read
 
         // Split the file
-        while (! feof($input_file)) {
+        while (!feof($input_file)) {
             // Open a new piece
             $piece_name = $filename . '.' . str_pad($piece, 3, '0', STR_PAD_LEFT);
             $piece_open = @fopen($piece_name, 'wb+') or die('Could not write piece ' . $piece_name);
@@ -163,7 +163,7 @@ class file_Core
         // Read each piece
         while ($piece_open = @fopen(($piece_name = $filename . '.' . str_pad($piece, 3, '0', STR_PAD_LEFT)), 'rb')) {
             // Write the piece into the output file
-            while (! feof($piece_open)) {
+            while (!feof($piece_open)) {
                 fwrite($output_file, fread($piece_open, $chunk));
             }
 

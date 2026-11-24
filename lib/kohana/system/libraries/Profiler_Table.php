@@ -17,7 +17,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class Profiler_Table_Core
+class ProfilerTableCore
 {
     protected $columns = array();
     protected $rows = array();
@@ -31,7 +31,7 @@ class Profiler_Table_Core
     {
         static $styles_output;
 
-        if (! $styles_output) {
+        if (!$styles_output) {
             $styles_output = true;
             return file_get_contents(Kohana::find_file('views', 'kohana_profiler_table', false, 'css'));
         }

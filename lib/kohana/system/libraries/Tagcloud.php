@@ -19,7 +19,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @copyright  (c) 2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class Tagcloud_Core
+class TagcloudCore
 {
     /**
      * Creates a new Tagcloud instance and returns it.
@@ -35,10 +35,10 @@ class Tagcloud_Core
         return new Tagcloud($elements, $min_size, $max_size, $shuffle);
     }
 
-    public $min_size   = 80;
-    public $max_size   = 140;
+    public $min_size = 80;
+    public $max_size = 140;
     public $attributes = array('class' => 'tag');
-    public $shuffle    = false;
+    public $shuffle = false;
 
     // Tag elements, biggest and smallest values
     protected $elements;
@@ -69,7 +69,7 @@ class Tagcloud_Core
         }
 
         // Find the biggest and smallest values of the elements
-        $this->biggest  = max($counts);
+        $this->biggest = max($counts);
         $this->smallest = min($counts);
 
         if ($min_size !== null) {
@@ -103,7 +103,7 @@ class Tagcloud_Core
         }
 
         // Minimum values must be 1 to prevent divide by zero errors
-        $range = max($this->biggest  - $this->smallest, 1);
+        $range = max($this->biggest - $this->smallest, 1);
         $scale = max($this->max_size - $this->min_size, 1);
 
         // Import the attributes locally to prevent overwrites

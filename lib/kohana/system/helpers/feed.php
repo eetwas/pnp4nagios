@@ -16,7 +16,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class feed_Core
+class FeedCore
 {
     /**
      * Parses a remote feed into an array.
@@ -28,7 +28,7 @@ class feed_Core
     public static function parse($feed, $limit = 0)
     {
         // Check if SimpleXML is installed
-        if (! function_exists('simplexml_load_file')) {
+        if (!function_exists('simplexml_load_file')) {
             throw new Kohana_User_Exception('Feed Error', 'SimpleXML must be installed!');
         }
 

@@ -17,7 +17,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class html_Core
+class HtmlCore
 {
     // Enable or disable automatic setting of target="_blank"
     public static $windowed_urls = false;
@@ -91,12 +91,12 @@ class html_Core
         }
 
         return
-        // Parsed URL
-        '<a href="' . html::specialurlencode($site_url, false) . '"'
-        // Attributes empty? Use an empty string
-        . (is_array($attributes) ? html::attributes($attributes) : '') . '>'
-        // Title empty? Use the parsed URL
-        . ($escape_title ? html::specialchars((($title === null) ? $site_url : $title), false) : (($title === null) ? $site_url : $title)) . '</a>';
+            // Parsed URL
+            '<a href="' . html::specialurlencode($site_url, false) . '"'
+            // Attributes empty? Use an empty string
+            . (is_array($attributes) ? html::attributes($attributes) : '') . '>'
+            // Title empty? Use the parsed URL
+            . ($escape_title ? html::specialchars((($title === null) ? $site_url : $title), false) : (($title === null) ? $site_url : $title)) . '</a>';
     }
 
     /**
@@ -111,12 +111,12 @@ class html_Core
     public static function file_anchor($file, $title = null, $attributes = null, $protocol = null)
     {
         return
-        // Base URL + URI = full URL
-        '<a href="' . html::specialurlencode(url::base(false, $protocol) . $file, false) . '"'
-        // Attributes empty? Use an empty string
-        . (is_array($attributes) ? html::attributes($attributes) : '') . '>'
-        // Title empty? Use the filename part of the URI
-        . (($title === null) ? end(explode('/', $file)) : $title) . '</a>';
+            // Base URL + URI = full URL
+            '<a href="' . html::specialurlencode(url::base(false, $protocol) . $file, false) . '"'
+            // Attributes empty? Use an empty string
+            . (is_array($attributes) ? html::attributes($attributes) : '') . '>'
+            // Title empty? Use the filename part of the URI
+            . (($title === null) ? end(explode('/', $file)) : $title) . '</a>';
     }
 
     /**
@@ -194,7 +194,7 @@ class html_Core
         // Remove the subject or other parameters that do not need to be encoded
         if (strpos($email, '?') !== false) {
             // Extract the parameters from the email address
-            list ($email, $params) = explode('?', $email, 2);
+            list($email, $params) = explode('?', $email, 2);
 
             // Make the params into a query string, replacing spaces
             $params = '?' . str_replace(' ', '%20', $params);
@@ -296,8 +296,8 @@ class html_Core
 
         if (is_array($href)) {
             foreach ($href as $_href) {
-                $_rel   = is_array($rel) ? array_shift($rel) : $rel;
-                $_type  = is_array($type) ? array_shift($type) : $type;
+                $_rel = is_array($rel) ? array_shift($rel) : $rel;
+                $_type = is_array($type) ? array_shift($type) : $type;
                 $_media = is_array($media) ? array_shift($media) : $media;
 
                 $compiled .= html::link($_href, $_rel, $_type, $suffix, $_media, $index);
@@ -322,7 +322,7 @@ class html_Core
                 'href' => $href,
             );
 
-            if (! empty($media)) {
+            if (!empty($media)) {
                 // Add the media type to the attributes
                 $attr['media'] = $media;
             }
@@ -380,7 +380,7 @@ class html_Core
 
         if (is_array($alt)) {
             $attributes += $alt;
-        } elseif (! empty($alt)) {
+        } elseif (!empty($alt)) {
             // Add alt to attributes
             $attributes['alt'] = $alt;
         }

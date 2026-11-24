@@ -982,7 +982,7 @@ final class Kohana
 
             // Transparent class extensions are handled using eval. This is
             // a disgusting hack, but it gets the job done.
-            eval ($extension);
+            eval($extension);
         }
 
         return true;

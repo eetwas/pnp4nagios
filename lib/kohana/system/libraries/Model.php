@@ -17,7 +17,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @copyright  (c) 2007-2009 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class Model_Core
+class ModelCore
 {
     // Database object
     protected $db = 'default';
@@ -29,7 +29,7 @@ class Model_Core
      */
     public function __construct()
     {
-        if (! is_object($this->db)) {
+        if (!is_object($this->db)) {
             // Load the default database
             $this->db = Database::instance($this->db);
         }

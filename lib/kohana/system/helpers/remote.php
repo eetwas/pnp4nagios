@@ -17,11 +17,11 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class remote_Core
+class RemoteCore
 {
     public static function status($url)
     {
-        if (! valid::url($url, 'http')) {
+        if (!valid::url($url, 'http')) {
             return false;
         }
 
@@ -36,7 +36,7 @@ class remote_Core
         // Open a remote connection
         $remote = fsockopen($url['host'], 80, $errno, $errstr, 5);
 
-        if (! is_resource($remote)) {
+        if (!is_resource($remote)) {
             return false;
         }
 
@@ -52,7 +52,7 @@ class remote_Core
         // Send one more CRLF to terminate the headers
         fwrite($remote, $CRLF);
 
-        while (! feof($remote)) {
+        while (!feof($remote)) {
             // Get the line
             $line = trim(fgets($remote, 512));
 
