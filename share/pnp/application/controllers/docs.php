@@ -13,7 +13,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @author  Joerg Linge
  * @license GPL
  */
-class Docs_Controller extends System_Controller
+class DocsController extends SystemController
 {
     public $doc_language = '';
 
@@ -31,12 +31,12 @@ class Docs_Controller extends System_Controller
     public function __construct()
     {
         parent::__construct();
-        $this->template                   = $this->add_view('template');
-        $this->template->docs             = $this->add_view('docs');
+        $this->template = $this->add_view('template');
+        $this->template->docs = $this->add_view('docs');
         $this->template->docs->search_box = $this->add_view('search_box');
-        $this->template->docs->docs_box   = $this->add_view('docs_box');
-        $this->template->docs->logo_box   = $this->add_view('logo_box');
-        $this->doc_language               = $this->config->conf['doc_language'];
+        $this->template->docs->docs_box = $this->add_view('docs_box');
+        $this->template->docs->logo_box = $this->add_view('logo_box');
+        $this->doc_language = $this->config->conf['doc_language'];
     }
     //end __construct()
 
@@ -70,18 +70,18 @@ class Docs_Controller extends System_Controller
         }
 
         $this->page = $page;
-        $file       = sprintf('documents/%s/%s.html', $this->lang, $this->page);
-        $file_toc   = sprintf('documents/%s/start.html', $this->lang);
+        $file = sprintf('documents/%s/%s.html', $this->lang, $this->page);
+        $file_toc = sprintf('documents/%s/start.html', $this->lang);
         if (!file_exists($file)) {
             url::redirect('docs/view/start');
         }
         $this->content = file_get_contents($file);
-        $toc           = file($file_toc);
-        $this->toc     = '';
-        $in            = false;
+        $toc = file($file_toc);
+        $this->toc = '';
+        $in = false;
         foreach ($toc as $t) {
             if (preg_match('/SECTION/', $t)) {
-                $in = ! $in;
+                $in = !$in;
                 continue;
             }
             if ($in == true) {
@@ -91,16 +91,16 @@ class Docs_Controller extends System_Controller
         #
         # some string replacements
         #
-        $this->toc         = str_replace("/de/pnp-0.6/", "", $this->toc);
-        $this->toc         = str_replace("/pnp-0.6/", "", $this->toc);
-        $this->toc         = preg_replace("/<h2>.*<\/h2>/", "", $this->toc);
-        $this->content     = str_replace("/templates/", url::base() . "documents/templates/", $this->content);
-        $this->content     = str_replace("/de/pnp-0.6/", "", $this->content);
-        $this->content     = str_replace("/pnp-0.6/", "", $this->content);
-        $this->content     = str_replace("/_media", url::base() . "documents/_media", $this->content);
-        $this->content     = str_replace("gallery", "", $this->content);
-        $this->content     = str_replace("/_detail", url::base() . "documents/_media", $this->content);
-        $this->content     = str_replace("/lib/images", url::base() . "documents/images", $this->content);
+        $this->toc = str_replace("/de/pnp-0.6/", "", $this->toc);
+        $this->toc = str_replace("/pnp-0.6/", "", $this->toc);
+        $this->toc = preg_replace("/<h2>.*<\/h2>/", "", $this->toc);
+        $this->content = str_replace("/templates/", url::base() . "documents/templates/", $this->content);
+        $this->content = str_replace("/de/pnp-0.6/", "", $this->content);
+        $this->content = str_replace("/pnp-0.6/", "", $this->content);
+        $this->content = str_replace("/_media", url::base() . "documents/_media", $this->content);
+        $this->content = str_replace("gallery", "", $this->content);
+        $this->content = str_replace("/_detail", url::base() . "documents/_media", $this->content);
+        $this->content = str_replace("/lib/images", url::base() . "documents/images", $this->content);
         $this->graph_width = ($this->config->conf['graph_width'] + 140);
     }
     //end view()

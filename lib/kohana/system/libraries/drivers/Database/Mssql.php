@@ -16,7 +16,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class Database_Mssql_Driver extends Database_Driver
+class DatabaseMssqlDriver extends DatabaseDriver
 {
     /**
      * Database connection link
@@ -94,12 +94,12 @@ class Database_Mssql_Driver extends Database_Driver
     public function query($sql)
     {
         // Only cache if it's turned on, and only cache if it's not a write statement
-        if ($this->db_config['cache'] and ! preg_match('#\b(?:INSERT|UPDATE|REPLACE|SET)\b#i', $sql)) {
+        if ($this->db_config['cache'] and !preg_match('#\b(?:INSERT|UPDATE|REPLACE|SET)\b#i', $sql)) {
             $hash = $this->query_hash($sql);
 
-            if (! isset($this->query_cache[$hash])) {
+            if (!isset($this->query_cache[$hash])) {
                 // Set the cached object
-                $this->query_cache[$hash] = new Mssql_Result(mssql_query($sql, $this->link), $this->link, $this->db_config['object'], $sql);
+                $this->query_cache[$hash] = new MssqlResult(mssql_query($sql, $this->link), $this->link, $this->db_config['object'], $sql);
             } else {
                 // Rewind cached result
                 $this->query_cache[$hash]->rewind();
@@ -109,7 +109,7 @@ class Database_Mssql_Driver extends Database_Driver
             return $this->query_cache[$hash];
         }
 
-        return new Mssql_Result(mssql_query($sql, $this->link), $this->link, $this->db_config['object'], $sql);
+        return new MssqlResult(mssql_query($sql, $this->link), $this->link, $this->db_config['object'], $sql);
     }
 
     public function escape_table($table)
@@ -147,7 +147,7 @@ class Database_Mssql_Driver extends Database_Driver
         }
 
         // This matches any modifiers we support to SELECT.
-        if (! preg_match('/\b(?:rand|all|distinct(?:row)?|high_priority|sql_(?:small_result|b(?:ig_result|uffer_result)|no_cache|ca(?:che|lc_found_rows)))\s/i', $column)) {
+        if (!preg_match('/\b(?:rand|all|distinct(?:row)?|high_priority|sql_(?:small_result|b(?:ig_result|uffer_result)|no_cache|ca(?:che|lc_found_rows)))\s/i', $column)) {
             if (stripos($column, ' AS ') !== false) {
                 // Force 'AS' to uppercase
                 $column = str_ireplace(' AS ', ' AS ', $column);
@@ -251,13 +251,13 @@ class Database_Mssql_Driver extends Database_Driver
         //mssql_real_escape_string($str, $this->link); <-- this function doesn't exist
 
         $characters = array('/\x00/', '/\x1a/', '/\n/', '/\r/', '/\\\/', '/\'/');
-        $replace    = array('\\\x00', '\\x1a', '\\n', '\\r', '\\\\', "''");
+        $replace = array('\\\x00', '\\x1a', '\\n', '\\r', '\\\\', "''");
         return preg_replace($characters, $replace, $str);
     }
 
     public function list_tables()
     {
-        $sql    = 'SHOW TABLES FROM [' . $this->db_config['connection']['database'] . ']';
+        $sql = 'SHOW TABLES FROM [' . $this->db_config['connection']['database'] . ']';
         $result = $this->query($sql)->result(false, MSSQL_ASSOC);
 
         $retval = array();
@@ -289,7 +289,7 @@ class Database_Mssql_Driver extends Database_Driver
     {
         $query = $this->query(
             "SELECT COLUMN_NAME AS Field, DATA_TYPE as Type  FROM INFORMATION_SCHEMA.Columns WHERE TABLE_NAME = '" .
-                $this->escape_table($table) . "'",
+            $this->escape_table($table) . "'",
             $this->link
         );
 
@@ -300,10 +300,10 @@ class Database_Mssql_Driver extends Database_Driver
 /**
  * MSSQL Result
  */
-class Mssql_Result extends Database_Result
+class MssqlResult extends DatabaseResult
 {
     // Fetch function and return type
-    protected $fetch_type  = 'mssql_fetch_object';
+    protected $fetch_type = 'mssql_fetch_object';
     protected $return_type = MSSQL_ASSOC;
 
     /**
@@ -321,17 +321,17 @@ class Mssql_Result extends Database_Result
         // If the query is a resource, it was a SELECT, SHOW, DESCRIBE, EXPLAIN query
         if (is_resource($result)) {
             $this->current_row = 0;
-            $this->total_rows  = mssql_num_rows($this->result);
+            $this->total_rows = mssql_num_rows($this->result);
             $this->fetch_type = ($object === true) ? 'mssql_fetch_object' : 'mssql_fetch_array';
         } elseif (is_bool($result)) {
             if ($result == false) {
                 // SQL error
-                throw new Kohana_Database_Exception('database.error', mssql_get_last_message($link) . ' - ' . $sql);
+                throw new KohanaDatabaseException('database.error', mssql_get_last_message($link) . ' - ' . $sql);
             } else {
                 // Its an DELETE, INSERT, REPLACE, or UPDATE querys
-                $last_id          = mssql_query('SELECT @@IDENTITY AS last_id', $link);
-                $result           = mssql_fetch_assoc($last_id);
-                $this->insert_id  = $result['last_id'];
+                $last_id = mssql_query('SELECT @@IDENTITY AS last_id', $link);
+                $result = mssql_fetch_assoc($last_id);
+                $this->insert_id = $result['last_id'];
                 $this->total_rows = mssql_rows_affected($link);
             }
         }
@@ -424,11 +424,11 @@ class Mssql_Result extends Database_Result
 
     public function seek($offset)
     {
-        if (! $this->offsetExists($offset)) {
+        if (!$this->offsetExists($offset)) {
             return false;
         }
 
         return mssql_data_seek($this->result, $offset);
     }
 }
-// End mssql_Result Class
+// End MssqlResult Class

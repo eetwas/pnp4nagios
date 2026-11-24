@@ -14,13 +14,13 @@ defined('SYSPATH') or die('No direct access allowed.');
  */
 function _str_ireplace($search, $replace, $str, &$count = null)
 {
-    if (utf8::is_ascii($search) and utf8::is_ascii($replace) and utf8::is_ascii($str)) {
+    if (Utf8::is_ascii($search) and Utf8::is_ascii($replace) and Utf8::is_ascii($str)) {
         return str_ireplace($search, $replace, $str, $count);
     }
 
     if (is_array($str)) {
         foreach ($str as $key => $val) {
-            $str[$key] = utf8::str_ireplace($search, $replace, $val, $count);
+            $str[$key] = Utf8::str_ireplace($search, $replace, $val, $count);
         }
         return $str;
     }
@@ -31,19 +31,19 @@ function _str_ireplace($search, $replace, $str, &$count = null)
         foreach ($keys as $k) {
             if (is_array($replace)) {
                 if (array_key_exists($k, $replace)) {
-                    $str = utf8::str_ireplace($search[$k], $replace[$k], $str, $count);
+                    $str = Utf8::str_ireplace($search[$k], $replace[$k], $str, $count);
                 } else {
-                    $str = utf8::str_ireplace($search[$k], '', $str, $count);
+                    $str = Utf8::str_ireplace($search[$k], '', $str, $count);
                 }
             } else {
-                $str = utf8::str_ireplace($search[$k], $replace, $str, $count);
+                $str = Utf8::str_ireplace($search[$k], $replace, $str, $count);
             }
         }
         return $str;
     }
 
-    $search = utf8::strtolower($search);
-    $str_lower = utf8::strtolower($str);
+    $search = Utf8::strtolower($search);
+    $str_lower = Utf8::strtolower($str);
 
     $total_matched_strlen = 0;
     $i = 0;

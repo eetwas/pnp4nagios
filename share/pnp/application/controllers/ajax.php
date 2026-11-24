@@ -15,7 +15,7 @@ defined('SYSPATH') or die('No direct access allowed.');
 // phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
 
 
-class Ajax_Controller extends System_Controller
+class AjaxController extends SystemController
 {
     public function __construct()
     {
@@ -31,8 +31,8 @@ class Ajax_Controller extends System_Controller
 
     public function search()
     {
-        $query     = pnp::clean($this->input->get('term'));
-        $result    = array();
+        $query = pnp::clean($this->input->get('term'));
+        $result = array();
         if (strlen($query) >= 1) {
             $hosts = $this->data->getHosts();
             foreach ($hosts as $host) {
@@ -76,9 +76,9 @@ class Ajax_Controller extends System_Controller
     {
         // Disable auto-rendering
         $this->auto_render = false;
-        $host     = false;
-        $service  = false;
-        $basket   = array();
+        $host = false;
+        $service = false;
+        $basket = array();
 
         if ($action == "list") {
             $basket = $this->session->get("basket");
@@ -163,7 +163,7 @@ class Ajax_Controller extends System_Controller
             $item_to_remove = htmlspecialchars($_POST['item']);
             $new_basket = array();
             foreach ($basket as $item) {
-                if ($item ==  $item_to_remove) {
+                if ($item == $item_to_remove) {
                     continue;
                 }
                 $new_basket[] = $item;

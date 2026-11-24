@@ -13,7 +13,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  * can be overloaded.
  *
  * To use it, declare your controller to extend this class:
- * `class Your_Controller extends Template_Controller`
+ * `class Your_Controller extends TemplateController`
  *
  * $Id: template.php 3769 2008-12-15 00:48:56Z zombor $
  *
@@ -22,7 +22,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-abstract class Template_Controller extends Controller
+abstract class TemplateController extends Controller
 {
     // Template view name
     public $template = 'template';
@@ -57,4 +57,4 @@ abstract class Template_Controller extends Controller
         }
     }
 }
-// End Template_Controller
+// End TemplateController

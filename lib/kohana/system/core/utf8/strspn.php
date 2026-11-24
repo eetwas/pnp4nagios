@@ -18,12 +18,12 @@ function _strspn($str, $mask, $offset = null, $length = null)
         return 0;
     }
 
-    if (utf8::is_ascii($str) and utf8::is_ascii($mask)) {
+    if (Utf8::is_ascii($str) and Utf8::is_ascii($mask)) {
         return ($offset === null) ? strspn($str, $mask) : (($length === null) ? strspn($str, $mask, $offset) : strspn($str, $mask, $offset, $length));
     }
 
     if ($offset !== null or $length !== null) {
-        $str = utf8::substr($str, $offset, $length);
+        $str = Utf8::substr($str, $offset, $length);
     }
 
     // Escape these characters:  - [ ] . : \ ^ /
@@ -31,5 +31,5 @@ function _strspn($str, $mask, $offset = null, $length = null)
     $mask = preg_replace('#[-[\].:\\\\^/]#', '\\\\$0', $mask);
     preg_match('/^[^' . $mask . ']+/u', $str, $matches);
 
-    return isset($matches[0]) ? utf8::strlen($matches[0]) : 0;
+    return isset($matches[0]) ? Utf8::strlen($matches[0]) : 0;
 }

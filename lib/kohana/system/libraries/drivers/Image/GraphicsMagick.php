@@ -15,7 +15,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class Image_GraphicsMagick_Driver extends Image_Driver
+class ImageGraphicsMagickDriver extends ImageDriver
 {
     // Directory that GM is installed in
     protected $dir = '';
@@ -29,7 +29,7 @@ class Image_GraphicsMagick_Driver extends Image_Driver
     /**
      * Attempts to detect the GraphicsMagick installation directory.
      *
-     * @throws  Kohana_Exception
+     * @throws  KohanaException
      * @param   array   configuration
      * @return  void
      */
@@ -37,8 +37,8 @@ class Image_GraphicsMagick_Driver extends Image_Driver
     {
         if (empty($config['directory'])) {
             // Attempt to locate GM by using "which" (only works for *nix!)
-            if (! is_file($path = exec('which gm'))) {
-                throw new Kohana_Exception('image.graphicsmagick.not_found');
+            if (!is_file($path = exec('which gm'))) {
+                throw new KohanaException('image.graphicsmagick.not_found');
             }
 
             $config['directory'] = dirname($path);
@@ -48,8 +48,8 @@ class Image_GraphicsMagick_Driver extends Image_Driver
         $this->ext = (PHP_SHLIB_SUFFIX === 'dll') ? '.exe' : '';
 
         // Check to make sure the provided path is correct
-        if (! is_file(realpath($config['directory']) . '/gm' . $this->ext)) {
-            throw new Kohana_Exception('image.graphicsmagick.not_found', 'gm' . $this->ext);
+        if (!is_file(realpath($config['directory']) . '/gm' . $this->ext)) {
+            throw new KohanaException('image.graphicsmagick.not_found', 'gm' . $this->ext);
         }
 
 
@@ -175,10 +175,10 @@ class Image_GraphicsMagick_Driver extends Image_Driver
     {
         if (
             $error = exec(escapeshellcmd($this->dir . 'gm' . $this->ext . ' convert') .
-                          ' -rotate ' . escapeshellarg($amt) .
-                          ' -background transparent ' .
-                          $this->cmd_image .
-                          ' ' . $this->cmd_image)
+                ' -rotate ' . escapeshellarg($amt) .
+                ' -background transparent ' .
+                $this->cmd_image .
+                ' ' . $this->cmd_image)
         ) {
             $this->errors[] = $error;
             return false;
@@ -191,7 +191,7 @@ class Image_GraphicsMagick_Driver extends Image_Driver
     {
         // Set the sigma, radius, and amount. The amount formula allows a nice
         // spread between 1 and 100 without pixelizing the image badly.
-        $sigma  = 0.5;
+        $sigma = 0.5;
         $radius = $sigma * 2;
         $amount = round(($amount / 80) * 3.14, 2);
 

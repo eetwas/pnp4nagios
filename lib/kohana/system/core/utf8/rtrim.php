@@ -18,7 +18,7 @@ function _rtrim($str, $charlist = null)
         return rtrim($str);
     }
 
-    if (utf8::is_ascii($charlist)) {
+    if (Utf8::is_ascii($charlist)) {
         return rtrim($str, $charlist);
     }
 

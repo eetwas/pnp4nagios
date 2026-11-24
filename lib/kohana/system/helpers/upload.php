@@ -18,7 +18,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class upload_Core
+class UploadCore
 {
     /**
      * Save an uploaded file to a new location.
@@ -52,13 +52,13 @@ class upload_Core
         // Make sure the directory ends with a slash
         $directory = rtrim($directory, '/') . '/';
 
-        if (! is_dir($directory) and Kohana::config('upload.create_directories') === true) {
+        if (!is_dir($directory) and Kohana::config('upload.create_directories') === true) {
             // Create the upload directory
             mkdir($directory, 0777, true);
         }
 
-        if (! is_writable($directory)) {
-            throw new Kohana_Exception('upload.not_writable', $directory);
+        if (!is_writable($directory)) {
+            throw new KohanaException('upload.not_writable', $directory);
         }
 
         if (is_uploaded_file($file['tmp_name']) and move_uploaded_file($file['tmp_name'], $filename = $directory . $filename)) {
@@ -126,7 +126,7 @@ class upload_Core
         $mime_types = Kohana::config('mimes.' . $extension);
 
         // Make sure there is an extension, that the extension is allowed, and that mime types exist
-        return ( ! empty($extension) and in_array($extension, $allowed_types) and is_array($mime_types));
+        return (!empty($extension) and in_array($extension, $allowed_types) and is_array($mime_types));
     }
 
     /**
@@ -148,7 +148,7 @@ class upload_Core
         // Only one size is allowed
         $size = strtoupper($size[0]);
 
-        if (! preg_match('/[0-9]++[BKMG]/', $size)) {
+        if (!preg_match('/[0-9]++[BKMG]/', $size)) {
             return false;
         }
 

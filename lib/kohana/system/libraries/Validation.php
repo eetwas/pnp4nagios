@@ -17,7 +17,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class Validation_Core extends ArrayObject
+class ValidationCore extends ArrayObject
 {
     // Filters
     protected $pre_filters = array();
@@ -61,7 +61,7 @@ class Validation_Core extends ArrayObject
     public function __construct(array $array)
     {
         // The array is submitted if the array is not empty
-        $this->submitted = ! empty($array);
+        $this->submitted = !empty($array);
 
         parent::__construct($array, ArrayObject::ARRAY_AS_PROPS | ArrayObject::STD_PROP_LIST);
     }
@@ -218,7 +218,7 @@ class Validation_Core extends ArrayObject
             }
         }
 
-        if (! is_callable($callback, false)) {
+        if (!is_callable($callback, false)) {
             if (is_array($callback)) {
                 if (is_object($callback[0])) {
                     // Object instance syntax
@@ -232,7 +232,7 @@ class Validation_Core extends ArrayObject
                 $name = $callback;
             }
 
-            throw new Kohana_Exception('validation.not_callable', $name);
+            throw new KohanaException('validation.not_callable', $name);
         }
 
         return $callback;
@@ -410,7 +410,7 @@ class Validation_Core extends ArrayObject
                 continue;
             }
 
-            if (! isset($array[$field])) {
+            if (!isset($array[$field])) {
                 if (isset($this->array_fields[$field])) {
                     // This field must be an array
                     $array[$field] = array();
@@ -445,7 +445,7 @@ class Validation_Core extends ArrayObject
         foreach ($this->rules as $field => $callbacks) {
             foreach ($callbacks as $callback) {
                 // Separate the callback and arguments
-                list ($callback, $args) = $callback;
+                list($callback, $args) = $callback;
 
                 // Function or method name of the rule
                 $rule = is_array($callback) ? $callback[1] : $callback;
@@ -461,20 +461,20 @@ class Validation_Core extends ArrayObject
                             continue;
                         }
 
-                        if (empty($this[$f]) and ! in_array($rule, $this->empty_rules)) {
+                        if (empty($this[$f]) and !in_array($rule, $this->empty_rules)) {
                             // This rule does not need to be processed on empty fields
                             continue;
                         }
 
                         if ($args === null) {
-                            if (! call_user_func($callback, $this[$f])) {
+                            if (!call_user_func($callback, $this[$f])) {
                                 $this->errors[$f] = $rule;
 
                                 // Stop validating this field when an error is found
                                 continue;
                             }
                         } else {
-                            if (! call_user_func($callback, $this[$f], $args)) {
+                            if (!call_user_func($callback, $this[$f], $args)) {
                                 $this->errors[$f] = $rule;
 
                                 // Stop validating this field when an error is found
@@ -488,20 +488,20 @@ class Validation_Core extends ArrayObject
                         break;
                     }
 
-                    if (! in_array($rule, $this->empty_rules) and ! $this->required($this[$field])) {
+                    if (!in_array($rule, $this->empty_rules) and !$this->required($this[$field])) {
                         // This rule does not need to be processed on empty fields
                         continue;
                     }
 
                     if ($args === null) {
-                        if (! call_user_func($callback, $this[$field])) {
+                        if (!call_user_func($callback, $this[$field])) {
                             $this->errors[$field] = $rule;
 
                             // Stop validating this field when an error is found
                             break;
                         }
                     } else {
-                        if (! call_user_func($callback, $this[$field], $args)) {
+                        if (!call_user_func($callback, $this[$field], $args)) {
                             $this->errors[$field] = $rule;
 
                             // Stop validating this field when an error is found
@@ -582,7 +582,7 @@ class Validation_Core extends ArrayObject
         if ($message === null) {
             if ($input === null) {
                 $messages = array();
-                $keys     = array_keys($this->messages);
+                $keys = array_keys($this->messages);
 
                 foreach ($keys as $input) {
                     $messages[] = $this->message($input);
@@ -645,9 +645,9 @@ class Validation_Core extends ArrayObject
         }
 
         if (is_array($str)) {
-            return ! empty($str);
+            return !empty($str);
         } else {
-            return ! ($str === '' or $str === null or $str === false);
+            return !($str === '' or $str === null or $str === false);
         }
     }
 
@@ -679,15 +679,15 @@ class Validation_Core extends ArrayObject
      */
     public function length($str, array $length)
     {
-        if (! is_string($str)) {
+        if (!is_string($str)) {
             return false;
         }
 
-        $size = utf8::strlen($str);
+        $size = Utf8::strlen($str);
         $status = false;
 
         if (count($length) > 1) {
-            list ($min, $max) = $length;
+            list($min, $max) = $length;
 
             if ($size >= $min and $size <= $max) {
                 $status = true;
@@ -710,7 +710,7 @@ class Validation_Core extends ArrayObject
     public function depends_on($field, array $fields)
     {
         foreach ($fields as $depends_on) {
-            if (! isset($this[$depends_on]) or $this[$depends_on] == null) {
+            if (!isset($this[$depends_on]) or $this[$depends_on] == null) {
                 return false;
             }
         }
@@ -727,7 +727,7 @@ class Validation_Core extends ArrayObject
      */
     public function chars($value, array $chars)
     {
-        return ! preg_match('![^' . implode('', $chars) . ']!u', $value);
+        return !preg_match('![^' . implode('', $chars) . ']!u', $value);
     }
 }
 // End Validation

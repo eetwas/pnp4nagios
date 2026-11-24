@@ -18,7 +18,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class Database_Pgsql_Driver extends Database_Driver
+class DatabasePgsqlDriver extends DatabaseDriver
 {
     // Database connection link
     protected $link;
@@ -72,12 +72,12 @@ class Database_Pgsql_Driver extends Database_Driver
     public function query($sql)
     {
         // Only cache if it's turned on, and only cache if it's not a write statement
-        if ($this->db_config['cache'] and ! preg_match('#\b(?:INSERT|UPDATE|SET)\b#i', $sql)) {
+        if ($this->db_config['cache'] and !preg_match('#\b(?:INSERT|UPDATE|SET)\b#i', $sql)) {
             $hash = $this->query_hash($sql);
 
-            if (! isset($this->query_cache[$hash])) {
+            if (!isset($this->query_cache[$hash])) {
                 // Set the cached object
-                $this->query_cache[$hash] = new Pgsql_Result(pg_query($this->link, $sql), $this->link, $this->db_config['object'], $sql);
+                $this->query_cache[$hash] = new PgsqlResult(pg_query($this->link, $sql), $this->link, $this->db_config['object'], $sql);
             } else {
                 // Rewind cached result
                 $this->query_cache[$hash]->rewind();
@@ -87,7 +87,7 @@ class Database_Pgsql_Driver extends Database_Driver
         }
 
         // Suppress warning triggered when a database error occurs (e.g., a constraint violation)
-        return new Pgsql_Result(@pg_query($this->link, $sql), $this->link, $this->db_config['object'], $sql);
+        return new PgsqlResult(@pg_query($this->link, $sql), $this->link, $this->db_config['object'], $sql);
     }
 
     public function set_charset($charset)
@@ -124,7 +124,7 @@ class Database_Pgsql_Driver extends Database_Driver
         }
 
         // This matches any modifiers we support to SELECT.
-        if (! preg_match('/\b(?:all|distinct)\s/i', $column)) {
+        if (!preg_match('/\b(?:all|distinct)\s/i', $column)) {
             if (stripos($column, ' AS ') !== false) {
                 // Force 'AS' to uppercase
                 $column = str_ireplace(' AS ', ' AS ', $column);
@@ -231,7 +231,7 @@ class Database_Pgsql_Driver extends Database_Driver
 
     public function list_tables()
     {
-        $sql    = 'SELECT table_schema || \'.\' || table_name FROM information_schema.tables WHERE table_schema NOT IN (\'pg_catalog\', \'information_schema\')';
+        $sql = 'SELECT table_schema || \'.\' || table_name FROM information_schema.tables WHERE table_schema NOT IN (\'pg_catalog\', \'information_schema\')';
         $result = $this->query($sql)->result(false, PGSQL_ASSOC);
 
         $retval = array();
@@ -265,7 +265,7 @@ class Database_Pgsql_Driver extends Database_Driver
         }
 
         if (!isset($result)) {
-            throw new Kohana_Database_Exception('database.table_not_found', $table);
+            throw new KohanaDatabaseException('database.table_not_found', $table);
         }
 
         return $result;
@@ -285,15 +285,15 @@ class Database_Pgsql_Driver extends Database_Driver
         return $result->result_array(true);
     }
 }
-// End Database_Pgsql_Driver Class
+// End DatabasePgsqlDriver Class
 
 /**
  * PostgreSQL Result
  */
-class Pgsql_Result extends Database_Result
+class PgsqlResult extends DatabaseResult
 {
     // Data fetching types
-    protected $fetch_type  = 'pgsql_fetch_object';
+    protected $fetch_type = 'pgsql_fetch_object';
     protected $return_type = PGSQL_ASSOC;
 
     /**
@@ -313,15 +313,15 @@ class Pgsql_Result extends Database_Result
         if (is_resource($result)) {
             // Its an DELETE, INSERT, REPLACE, or UPDATE query
             if (preg_match('/^(?:delete|insert|replace|update)\b/iD', trim($sql), $matches)) {
-                $this->insert_id  = (strtolower($matches[0]) == 'insert') ? $this->insert_id() : false;
+                $this->insert_id = (strtolower($matches[0]) == 'insert') ? $this->insert_id() : false;
                 $this->total_rows = pg_affected_rows($this->result);
             } else {
                 $this->current_row = 0;
-                $this->total_rows  = pg_num_rows($this->result);
+                $this->total_rows = pg_num_rows($this->result);
                 $this->fetch_type = ($object === true) ? 'pg_fetch_object' : 'pg_fetch_array';
             }
         } else {
-            throw new Kohana_Database_Exception('database.error', pg_last_error() . ' - ' . $sql);
+            throw new KohanaDatabaseException('database.error', pg_last_error() . ' - ' . $sql);
         }
 
         // Set result type
@@ -449,7 +449,7 @@ class Pgsql_Result extends Database_Result
      */
     public function offsetGet($offset)
     {
-        if (! $this->seek($offset)) {
+        if (!$this->seek($offset)) {
             return false;
         }
 
@@ -458,12 +458,12 @@ class Pgsql_Result extends Database_Result
         return $fetch($this->result, null, $this->return_type);
     }
 }
-// End Pgsql_Result Class
+// End PgsqlResult Class
 
 /**
  * PostgreSQL Prepared Statement (experimental)
  */
-class Kohana_Pgsql_Statement
+class KohanaPgsqlStatement
 {
     protected $link = null;
     protected $stmt;

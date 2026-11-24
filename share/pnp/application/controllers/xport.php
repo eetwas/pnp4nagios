@@ -13,7 +13,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @author     Joerg Linge
  * @license    GPL
  */
-class Xport_Controller extends System_Controller
+class XportController extends SystemController
 {
     public function __construct()
     {
@@ -35,11 +35,11 @@ class Xport_Controller extends System_Controller
                 print "</NAGIOS>\n";
                 exit;
             }
-            $data    = $this->rrdtool->doXport($this->data->XPORT);
+            $data = $this->rrdtool->doXport($this->data->XPORT);
             header('Content-Type: application/xml');
             print $data;
         } else {
-            throw new Kohana_Exception('error.xport-host-service');
+            throw new KohanaException('error.xport-host-service');
         }
     }
 
@@ -52,12 +52,12 @@ class Xport_Controller extends System_Controller
                 print json_encode("not authorized");
                 exit;
             }
-            $data    = $this->rrdtool->doXport($this->data->XPORT);
-            $json    = json_encode(simplexml_load_string($data));
+            $data = $this->rrdtool->doXport($this->data->XPORT);
+            $json = json_encode(simplexml_load_string($data));
             header('Content-type: application/json');
             print $json;
         } else {
-            throw new Kohana_Exception('error.xport-host-service');
+            throw new KohanaException('error.xport-host-service');
         }
     }
 
@@ -75,7 +75,7 @@ class Xport_Controller extends System_Controller
             header("Content-Type: text/plain; charset=UTF-8");
             print $csv;
         } else {
-            throw new Kohana_Exception('error.xport-host-service');
+            throw new KohanaException('error.xport-host-service');
         }
     }
 }

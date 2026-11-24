@@ -13,7 +13,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @author     Joerg Linge
  * @license    GPL
  */
-class Start_Controller extends System_Controller
+class StartController extends SystemController
 {
     public function __construct()
     {
@@ -22,6 +22,6 @@ class Start_Controller extends System_Controller
 
     public function index()
     {
-            url::redirect("graph", 302);
+        url::redirect("graph", 302);
     }
 }

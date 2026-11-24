@@ -17,7 +17,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class Captcha_Black_Driver extends Captcha_Driver
+class CaptchaBlackDriver extends CaptchaDriver
 {
     /**
      * Generates a new Captcha challenge.
@@ -84,10 +84,10 @@ class Captcha_Black_Driver extends Captcha_Driver
 
         // Add more shadows for lower complexities
         (Captcha::$config['complexity'] < 10) and imagefttext($this->image, $size, $angle, $x - 1, $y - 1, $color, $font, $this->response);
-        (Captcha::$config['complexity'] < 8)  and imagefttext($this->image, $size, $angle, $x - 2, $y + 2, $color, $font, $this->response);
-        (Captcha::$config['complexity'] < 6)  and imagefttext($this->image, $size, $angle, $x + 2, $y - 2, $color, $font, $this->response);
-        (Captcha::$config['complexity'] < 4)  and imagefttext($this->image, $size, $angle, $x + 3, $y + 3, $color, $font, $this->response);
-        (Captcha::$config['complexity'] < 2)  and imagefttext($this->image, $size, $angle, $x - 3, $y - 3, $color, $font, $this->response);
+        (Captcha::$config['complexity'] < 8) and imagefttext($this->image, $size, $angle, $x - 2, $y + 2, $color, $font, $this->response);
+        (Captcha::$config['complexity'] < 6) and imagefttext($this->image, $size, $angle, $x + 2, $y - 2, $color, $font, $this->response);
+        (Captcha::$config['complexity'] < 4) and imagefttext($this->image, $size, $angle, $x + 3, $y + 3, $color, $font, $this->response);
+        (Captcha::$config['complexity'] < 2) and imagefttext($this->image, $size, $angle, $x - 3, $y - 3, $color, $font, $this->response);
 
         // Finally draw the foreground characters
         $color = imagecolorallocate($this->image, 0, 0, 0);

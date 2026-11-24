@@ -9,7 +9,7 @@ defined('SYSPATH') or die('No direct access allowed.');
 /**
  * Retrieves the PNP config files
  */
-class Auth_Model extends System_Model
+class AuthModel extends SystemModel
 {
     public $SOCKET = null;
 
@@ -36,11 +36,11 @@ class Auth_Model extends System_Model
 
     public function __construct()
     {
-        $this->config = new Config_Model();
+        $this->config = new ConfigModel();
         $this->config->read_config();
         if ($this->config->conf['auth_enabled'] == 1) {
             $this->AUTH_ENABLED = true;
-            $this->socketPath   = $this->config->conf['livestatus_socket'];
+            $this->socketPath = $this->config->conf['livestatus_socket'];
         }
 
         // Try to get the login of the user
@@ -48,7 +48,7 @@ class Auth_Model extends System_Model
             $this->REMOTE_USER = $_SERVER['REMOTE_USER'];
         }
         if ($this->REMOTE_USER === null && $this->config->conf['auth_multisite_enabled'] == 1) {
-            $MSAUTH            = new Auth_Multisite_Model(
+            $MSAUTH = new AuthMultisiteModel(
                 $this->config->conf['auth_multisite_htpasswd'],
                 $this->config->conf['auth_multisite_serials'],
                 $this->config->conf['auth_multisite_secret'],
@@ -61,7 +61,7 @@ class Auth_Model extends System_Model
         }
 
         if ($this->AUTH_ENABLED === true && $this->REMOTE_USER === null) {
-            throw new Kohana_exception('error.remote_user_missing');
+            throw new KohanaException('error.remote_user_missing');
         }
     }
     //end __construct()
@@ -82,7 +82,7 @@ class Auth_Model extends System_Model
         $this->getSocketDetails($this->socketPath);
         $this->SOCKET = socket_create($this->socketDOMAIN, $this->socketTYPE, $this->socketPROTO);
         if ($this->SOCKET === false) {
-            throw new Kohana_exception('error.livestatus_socket_error', socket_strerror(socket_last_error($this->SOCKET)), $this->socketPath);
+            throw new KohanaException('error.livestatus_socket_error', socket_strerror(socket_last_error($this->SOCKET)), $this->socketPath);
         }
         if ($this->socketDOMAIN === AF_UNIX) {
             $result = @socket_connect($this->SOCKET, $this->socketPATH);
@@ -90,7 +90,7 @@ class Auth_Model extends System_Model
             $result = @socket_connect($this->SOCKET, $this->socketHOST, $this->socketPORT);
         }
         if (!$result) {
-            throw new Kohana_exception('error.livestatus_socket_error', socket_strerror(socket_last_error($this->SOCKET)), $this->socketPath);
+            throw new KohanaException('error.livestatus_socket_error', socket_strerror(socket_last_error($this->SOCKET)), $this->socketPath);
         }
     }
     //end connect()
@@ -105,12 +105,12 @@ class Auth_Model extends System_Model
         // Read 16 bytes to get the status code and body size
         $read = @socket_read($this->SOCKET, 2048);
         if (!$read) {
-            throw new Kohana_exception('error.livestatus_socket_error', socket_strerror(socket_last_error($this->SOCKET)));
+            throw new KohanaException('error.livestatus_socket_error', socket_strerror(socket_last_error($this->SOCKET)));
         }
         // print Kohana::debug("read ". $read);
         // Catch problem while reading
         if ($read === false) {
-            throw new Kohana_exception('error.livestatus_socket_error', socket_strerror(socket_last_error($this->SOCKET)));
+            throw new KohanaException('error.livestatus_socket_error', socket_strerror(socket_last_error($this->SOCKET)));
         }
 
         // Decode the json response
@@ -137,14 +137,14 @@ class Auth_Model extends System_Model
             if (in_array($this->REMOTE_USER, $users)) {
                 return true;
             }
-            $query  = "GET hosts\nColumns: name\nFilter: name = $host\nAuthUser: " . $this->REMOTE_USER;
+            $query = "GET hosts\nColumns: name\nFilter: name = $host\nAuthUser: " . $this->REMOTE_USER;
             $result = $this->queryLivestatus($query);
         } else {
             $users = explode(',', $this->config->conf['allowed_for_all_services']);
             if (in_array($this->REMOTE_USER, $users)) {
                 return true;
             }
-            $query  = "GET services\nColumns: host_name description\nFilter: host_name = $host\nFilter: description = $service\nAuthUser: " . $this->REMOTE_USER;
+            $query = "GET services\nColumns: host_name description\nFilter: host_name = $host\nFilter: description = $service\nAuthUser: " . $this->REMOTE_USER;
             $result = $this->queryLivestatus($query);
         }
 
@@ -157,25 +157,25 @@ class Auth_Model extends System_Model
     {
         if (preg_match('/^unix:(.*)$/', $string, $match)) {
             $this->socketDOMAIN = AF_UNIX;
-            $this->socketTYPE   = SOCK_STREAM;
-            $this->socketPATH   = $match[1];
-            $this->socketPROTO  = 0;
+            $this->socketTYPE = SOCK_STREAM;
+            $this->socketPATH = $match[1];
+            $this->socketPROTO = 0;
             return;
         }
         if (preg_match('/^tcp:([a-zA-Z0-9-\.]+):([0-9]+)$/', $string, $match)) {
             $this->socketDOMAIN = AF_INET;
-            $this->socketTYPE   = SOCK_STREAM;
-            $this->socketHOST   = $match[1];
-            $this->socketPORT   = $match[2];
-            $this->socketPROTO  = SOL_TCP;
+            $this->socketTYPE = SOCK_STREAM;
+            $this->socketHOST = $match[1];
+            $this->socketPORT = $match[2];
+            $this->socketPROTO = SOL_TCP;
             return;
         }
         // Fallback
         if (preg_match('/^\/.*$/', $string, $match)) {
             $this->socketDOMAIN = AF_UNIX;
-            $this->socketTYPE   = SOCK_STREAM;
-            $this->socketPATH   = $string;
-            $this->socketPROTO  = 0;
+            $this->socketTYPE = SOCK_STREAM;
+            $this->socketPATH = $string;
+            $this->socketPROTO = 0;
             return;
         }
         return false;

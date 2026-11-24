@@ -16,7 +16,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-abstract class Captcha_Driver
+abstract class CaptchaDriver
 {
     // The correct Captcha challenge answer
     protected $response;
@@ -106,22 +106,22 @@ abstract class Captcha_Driver
      * Creates an image resource with the dimensions specified in config.
      * If a background image is supplied, the image dimensions are used.
      *
-     * @throws  Kohana_Exception  if no GD2 support
+     * @throws  KohanaException  if no GD2 support
      * @param   string  path to the background image file
      * @return  void
      */
     public function image_create($background = null)
     {
         // Check for GD2 support
-        if (! function_exists('imagegd2')) {
-            throw new Kohana_Exception('captcha.requires_GD2');
+        if (!function_exists('imagegd2')) {
+            throw new KohanaException('captcha.requires_GD2');
         }
 
         // Create a new image (black)
         $this->image = imagecreatetruecolor(Captcha::$config['width'], Captcha::$config['height']);
 
         // Use a background image
-        if (! empty($background)) {
+        if (!empty($background)) {
             // Create the image using the right function for the filetype
             $function = 'imagecreatefrom' . $this->image_type($background);
             $this->background_image = $function($background);
@@ -163,7 +163,7 @@ abstract class Captcha_Driver
         $directions = array('horizontal', 'vertical');
 
         // Pick a random direction if needed
-        if (! in_array($direction, $directions)) {
+        if (!in_array($direction, $directions)) {
             $direction = $directions[array_rand($directions)];
 
             // Switch colors

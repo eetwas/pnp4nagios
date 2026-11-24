@@ -16,7 +16,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class Captcha_Core
+class CaptchaCore
 {
     // Captcha singleton
     protected static $instance;
@@ -27,14 +27,14 @@ class Captcha_Core
     // Config values
     public static $config = array
     (
-        'style'      => 'basic',
-        'width'      => 150,
-        'height'     => 50,
+        'style' => 'basic',
+        'width' => 150,
+        'height' => 50,
         'complexity' => 4,
         'background' => '',
-        'fontpath'   => '',
-        'fonts'      => array(),
-        'promote'    => false,
+        'fontpath' => '',
+        'fonts' => array(),
+        'promote' => false,
     );
 
     /**
@@ -64,7 +64,7 @@ class Captcha_Core
     /**
      * Constructs a new Captcha object.
      *
-     * @throws  Kohana_Exception
+     * @throws  KohanaException
      * @param   string  config group name
      * @return  void
      */
@@ -74,20 +74,20 @@ class Captcha_Core
         empty(Captcha::$instance) and Captcha::$instance = $this;
 
         // No config group name given
-        if (! is_string($group)) {
+        if (!is_string($group)) {
             $group = 'default';
         }
 
         // Load and validate config group
-        if (! is_array($config = Kohana::config('captcha.' . $group))) {
-            throw new Kohana_Exception('captcha.undefined_group', $group);
+        if (!is_array($config = Kohana::config('captcha.' . $group))) {
+            throw new KohanaException('captcha.undefined_group', $group);
         }
 
         // All captcha config groups inherit default config group
         if ($group !== 'default') {
             // Load and validate default config group
-            if (! is_array($default = Kohana::config('captcha.default'))) {
-                throw new Kohana_Exception('captcha.undefined_group', 'default');
+            if (!is_array($default = Kohana::config('captcha.default'))) {
+                throw new KohanaException('captcha.undefined_group', 'default');
             }
 
             // Merge config group with default config group
@@ -105,21 +105,21 @@ class Captcha_Core
         Captcha::$config['group'] = $group;
 
         // If using a background image, check if it exists
-        if (! empty($config['background'])) {
+        if (!empty($config['background'])) {
             Captcha::$config['background'] = str_replace('\\', '/', realpath($config['background']));
 
-            if (! is_file(Captcha::$config['background'])) {
-                throw new Kohana_Exception('captcha.file_not_found', Captcha::$config['background']);
+            if (!is_file(Captcha::$config['background'])) {
+                throw new KohanaException('captcha.file_not_found', Captcha::$config['background']);
             }
         }
 
         // If using any fonts, check if they exist
-        if (! empty($config['fonts'])) {
+        if (!empty($config['fonts'])) {
             Captcha::$config['fontpath'] = str_replace('\\', '/', realpath($config['fontpath'])) . '/';
 
             foreach ($config['fonts'] as $font) {
-                if (! is_file(Captcha::$config['fontpath'] . $font)) {
-                    throw new Kohana_Exception('captcha.file_not_found', Captcha::$config['fontpath'] . $font);
+                if (!is_file(Captcha::$config['fontpath'] . $font)) {
+                    throw new KohanaException('captcha.file_not_found', Captcha::$config['fontpath'] . $font);
                 }
             }
         }
@@ -128,16 +128,16 @@ class Captcha_Core
         $driver = 'Captcha_' . ucfirst($config['style']) . '_Driver';
 
         // Load the driver
-        if (! Kohana::auto_load($driver)) {
-            throw new Kohana_Exception('core.driver_not_found', $config['style'], get_class($this));
+        if (!Kohana::auto_load($driver)) {
+            throw new KohanaException('core.driver_not_found', $config['style'], get_class($this));
         }
 
         // Initialize the driver
         $this->driver = new $driver();
 
         // Validate the driver
-        if (! ($this->driver instanceof Captcha_Driver)) {
-            throw new Kohana_Exception('core.driver_implements', $config['style'], get_class($this), 'Captcha_Driver');
+        if (!($this->driver instanceof CaptchaDriver)) {
+            throw new KohanaException('core.driver_implements', $config['style'], get_class($this), 'CaptchaDriver');
         }
 
         Kohana::log('debug', 'Captcha Library initialized');
@@ -170,7 +170,7 @@ class Captcha_Core
             if ($result === true) {
                 Captcha::instance()->valid_count(Session::instance()->get('captcha_valid_count') + 1);
             } else {
-            // Invalid response
+                // Invalid response
                 Captcha::instance()->invalid_count(Session::instance()->get('captcha_invalid_count') + 1);
             }
         }
@@ -198,7 +198,7 @@ class Captcha_Core
             if ($new_count < 1) {
                 Session::instance()->delete($session);
             } else {
-            // Set counter to new value
+                // Set counter to new value
                 Session::instance()->set($session, (int) $new_count);
             }
 

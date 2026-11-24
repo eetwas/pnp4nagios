@@ -18,7 +18,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class Captcha_Controller extends Controller
+class CaptchaController extends Controller
 {
     public function __call($method, $args)
     {
@@ -27,4 +27,4 @@ class Captcha_Controller extends Controller
         Captcha::factory($this->uri->segment(2))->render(false);
     }
 }
-// End Captcha_Controller
+// End CaptchaController

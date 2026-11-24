@@ -7,10 +7,10 @@ defined('SYSPATH') or die('No direct access allowed.');
 // phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
 
 /*
-*
-* RRDTool Helper Class
-*/
-class rrd_Core
+ *
+ * RRDTool Helper Class
+ */
+class RrdCore
 {
     public static function color_inverse($color)
     {
@@ -18,13 +18,13 @@ class rrd_Core
         if (strlen($color) != 6) {
             return '000000';
         }
-            $rgb = '';
+        $rgb = '';
         for ($x = 0; $x < 3; $x++) {
             $c = 255 - hexdec(substr($color, (2 * $x), 2));
             $c = ($c < 0) ? 0 : dechex($c);
             $rgb .= (strlen($c) < 2) ? '0' . $c : $c;
         }
-            return '#' . $rgb;
+        return '#' . $rgb;
     }
 
     /*
@@ -34,8 +34,8 @@ class rrd_Core
     public static function color($num = 0, $alpha = 'FF', $scheme = '')
     {
         $colors = array();
-        $value = array('cc','ff','99','66');
-        $num   = intval($num);
+        $value = array('cc', 'ff', '99', '66');
+        $num = intval($num);
 
         # check if colour scheme entry exists
         # fall back to old method if not found
@@ -87,14 +87,14 @@ class rrd_Core
     public static function gradient($vname = false, $start_color = '#0000a0', $end_color = '#f0f0f0', $label = false, $steps = 20, $lower = false)
     {
         if ($vname === false) {
-            throw new Kohana_exception("rrd::" . __FUNCTION__ . "() First Parameter 'vname' is missing");
+            throw new KohanaException("rrd::" . __FUNCTION__ . "() First Parameter 'vname' is missing");
         }
         if (preg_match('/^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})/i', $start_color, $matches)) {
             $r1 = hexdec($matches[1]);
             $g1 = hexdec($matches[2]);
             $b1 = hexdec($matches[3]);
         } else {
-            throw new Kohana_exception("rrd::" . __FUNCTION__ . "() Wrong Color Format: '" . $start_color . "'");
+            throw new KohanaException("rrd::" . __FUNCTION__ . "() Wrong Color Format: '" . $start_color . "'");
         }
 
         if (preg_match('/^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})/i', $end_color, $matches)) {
@@ -102,34 +102,34 @@ class rrd_Core
             $g2 = hexdec($matches[2]);
             $b2 = hexdec($matches[3]);
         } else {
-            throw new Kohana_exception("rrd::" . __FUNCTION__ . "() Wrong Color Format: '" . $end_color . "'");
+            throw new KohanaException("rrd::" . __FUNCTION__ . "() Wrong Color Format: '" . $end_color . "'");
         }
 
         $diff_r = $r2 - $r1;
         $diff_g = $g2 - $g1;
         $diff_b = $b2 - $b1;
-        $spline =  "";
+        $spline = "";
         $spline_vname = "var" . substr(sha1(rand()), 1, 4);
         if (preg_match('/^([0-9]{1,3})%$/', $lower, $matches)) {
             if ($matches[1] > 100) {
-                throw new Kohana_exception("rrd::" . __FUNCTION__ . "() Lower gradient start > 100% is not allowed: '" . $lower . "'");
+                throw new KohanaException("rrd::" . __FUNCTION__ . "() Lower gradient start > 100% is not allowed: '" . $lower . "'");
             }
 
-            $lower   = $matches[1];
+            $lower = $matches[1];
             $spline .= sprintf("CDEF:%sminimum=%s,100,/,%d,* ", $vname, $vname, $lower);
         } elseif (preg_match('/^([0-9]+)$/', $lower, $matches)) {
-            $lower   = $matches[1];
+            $lower = $matches[1];
             $spline .= sprintf("CDEF:%sminimum=%s,%d,- ", $vname, $vname, $lower);
         } else {
-            $lower   = 0;
+            $lower = 0;
             $spline .= sprintf("CDEF:%sminimum=%s,%s,- ", $vname, $vname, $vname);
         }
         # debug
-    # $spline .= sprintf("GPRINT:%sminimum:MAX:\"minumum %%lf\\n\" ",$vname);
+        # $spline .= sprintf("GPRINT:%sminimum:MAX:\"minumum %%lf\\n\" ",$vname);
         for ($i = $steps; $i > 0; $i--) {
-            $spline .=  sprintf("CDEF:%s%d=%s,%sminimum,-,%d,/,%d,*,%sminimum,+ ", $spline_vname, $i, $vname, $vname, $steps, $i, $vname);
+            $spline .= sprintf("CDEF:%s%d=%s,%sminimum,-,%d,/,%d,*,%sminimum,+ ", $spline_vname, $i, $vname, $vname, $steps, $i, $vname);
             # debug
-        # $spline .= sprintf("GPRINT:%s%d:MAX:\"%22d %%lf\\n\" ",$spline_vname,$i,$i);
+            # $spline .= sprintf("GPRINT:%s%d:MAX:\"%22d %%lf\\n\" ",$spline_vname,$i,$i);
         }
         for ($i = $steps; $i > 0; $i--) {
             $factor = $i / $steps;
@@ -137,9 +137,9 @@ class rrd_Core
             $g = round($g1 + $diff_g * $factor);
             $b = round($b1 + $diff_b * $factor);
             if (($i == $steps) and ($label != false)) {
-                $spline .=  sprintf("AREA:%s%d#%02X%02X%02X:\"%s\" ", $spline_vname, $i, $r, $g, $b, $label);
+                $spline .= sprintf("AREA:%s%d#%02X%02X%02X:\"%s\" ", $spline_vname, $i, $r, $g, $b, $label);
             } else {
-                $spline .=  sprintf("AREA:%s%d#%02X%02X%02X ", $spline_vname, $i, $r, $g, $b);
+                $spline .= sprintf("AREA:%s%d#%02X%02X%02X ", $spline_vname, $i, $r, $g, $b);
             }
         }
         return $spline;
@@ -164,12 +164,12 @@ class rrd_Core
     {
         $line = "";
         if ($vname === false) {
-            throw new Kohana_exception("rrd::" . __FUNCTION__ . "() First Parameter 'vname' is missing");
+            throw new KohanaException("rrd::" . __FUNCTION__ . "() First Parameter 'vname' is missing");
         } else {
             $line .= "AREA:" . $vname;
         }
         if ($color === false) {
-            throw new Kohana_exception("rrd::" . __FUNCTION__ . "() Second Parameter 'color' is missing");
+            throw new KohanaException("rrd::" . __FUNCTION__ . "() Second Parameter 'color' is missing");
         } else {
             $line .= $color;
         }
@@ -185,12 +185,12 @@ class rrd_Core
     {
         $line = "";
         if ($vname === false) {
-            throw new Kohana_exception("rrd::" . __FUNCTION__ . "() First Parameter 'vname' is missing");
+            throw new KohanaException("rrd::" . __FUNCTION__ . "() First Parameter 'vname' is missing");
         } else {
             $line .= "LINE" . $type . ":" . $vname;
         }
         if ($color === false) {
-            throw new Kohana_exception("rrd::" . __FUNCTION__ . "() Second Parameter 'color' is missing");
+            throw new KohanaException("rrd::" . __FUNCTION__ . "() Second Parameter 'color' is missing");
         } else {
             $line .= $color;
         }
@@ -221,7 +221,7 @@ class rrd_Core
     {
         $line = "";
         if ($vname === false) {
-            throw new Kohana_exception("rrd::" . __FUNCTION__ . "() First Parameter 'vname' is missing");
+            throw new KohanaException("rrd::" . __FUNCTION__ . "() First Parameter 'vname' is missing");
         }
 
         if (is_array($cf)) {
@@ -241,13 +241,13 @@ class rrd_Core
     }
 
     /*
-    * Function to modify alignment of gprint
-    */
+     * Function to modify alignment of gprint
+     */
     public static function gprinta($vname = false, $cf = "AVERAGE", $text = "%6.2lf %s", $align = "")
     {
         $line = "";
         if ($vname === false) {
-            throw new Kohana_exception("rrd::" . __FUNCTION__ . "() First Parameter 'vname' is missing");
+            throw new KohanaException("rrd::" . __FUNCTION__ . "() First Parameter 'vname' is missing");
         }
         if ($align != "") {
             $align = '\\' . $align;
@@ -272,13 +272,13 @@ class rrd_Core
     {
         $line = "";
         if ($vname === false) {
-            throw new Kohana_exception("rrd::" . __FUNCTION__ . "() First Parameter 'vname' is missing");
+            throw new KohanaException("rrd::" . __FUNCTION__ . "() First Parameter 'vname' is missing");
         }
         if ($rrdfile === false) {
-            throw new Kohana_exception("rrd::" . __FUNCTION__ . "() Second Parameter 'rrdfile' is missing");
+            throw new KohanaException("rrd::" . __FUNCTION__ . "() Second Parameter 'rrdfile' is missing");
         }
         if ($rrdfile === false) {
-            throw new Kohana_exception("rrd::" . __FUNCTION__ . "() Third Parameter 'ds' is missing");
+            throw new KohanaException("rrd::" . __FUNCTION__ . "() Third Parameter 'ds' is missing");
         }
         $line = sprintf("DEF:%s=%s:%s:%s ", $vname, $rrdfile, $ds, $cf);
         return $line;
@@ -288,10 +288,10 @@ class rrd_Core
     {
         $line = "";
         if ($vname === false) {
-            throw new Kohana_exception("rrd::" . __FUNCTION__ . "() First Parameter 'vname' is missing");
+            throw new KohanaException("rrd::" . __FUNCTION__ . "() First Parameter 'vname' is missing");
         }
         if ($rpn === false) {
-            throw new Kohana_exception("rrd::" . __FUNCTION__ . "() Second Parameter 'rpn' is missing");
+            throw new KohanaException("rrd::" . __FUNCTION__ . "() Second Parameter 'rpn' is missing");
         }
         $line = sprintf("CDEF:%s=%s ", $vname, $rpn);
         return $line;
@@ -301,10 +301,10 @@ class rrd_Core
     {
         $line = "";
         if ($vname === false) {
-            throw new Kohana_exception("rrd::" . __FUNCTION__ . "() First Parameter 'vname' is missing");
+            throw new KohanaException("rrd::" . __FUNCTION__ . "() First Parameter 'vname' is missing");
         }
         if ($rpn === false) {
-            throw new Kohana_exception("rrd::" . __FUNCTION__ . "() Second Parameter 'rpn' is missing");
+            throw new KohanaException("rrd::" . __FUNCTION__ . "() Second Parameter 'rpn' is missing");
         }
         $line = sprintf("VDEF:%s=%s ", $vname, $rpn);
         return $line;
@@ -314,10 +314,10 @@ class rrd_Core
     {
         $line = "";
         if ($value === false) {
-            throw new Kohana_exception("rrd::" . __FUNCTION__ . "() First Parameter 'value' is missing");
+            throw new KohanaException("rrd::" . __FUNCTION__ . "() First Parameter 'value' is missing");
         }
         if ($color === false) {
-            throw new Kohana_exception("rrd::" . __FUNCTION__ . "() Second Parameter 'color' is missing");
+            throw new KohanaException("rrd::" . __FUNCTION__ . "() Second Parameter 'color' is missing");
         }
         if ($value == "~") {
             return "";
@@ -335,10 +335,10 @@ class rrd_Core
     public static function tick($vname = false, $color = false, $fraction = false, $label = false)
     {
         if ($vname === false) {
-            throw new Kohana_exception("rrd::" . __FUNCTION__ . "() First Parameter 'value' is missing");
+            throw new KohanaException("rrd::" . __FUNCTION__ . "() First Parameter 'value' is missing");
         }
         if ($color === false) {
-            throw new Kohana_exception("rrd::" . __FUNCTION__ . "() Second Parameter 'color' is missing");
+            throw new KohanaException("rrd::" . __FUNCTION__ . "() Second Parameter 'color' is missing");
         }
         $line = sprintf("TICK:%s%s", $vname, $color);
         if ($fraction != false) {
@@ -367,16 +367,16 @@ class rrd_Core
     ) {
 
         if ($vname === false) {
-            throw new Kohana_exception("rrd::" . __FUNCTION__ . "() First Parameter 'vname' is missing");
+            throw new KohanaException("rrd::" . __FUNCTION__ . "() First Parameter 'vname' is missing");
         }
         if ($label === false) {
-            throw new Kohana_exception("rrd::" . __FUNCTION__ . "() Second Parameter 'label' is missing");
+            throw new KohanaException("rrd::" . __FUNCTION__ . "() Second Parameter 'label' is missing");
         }
         if ($warning === false) {
-            throw new Kohana_exception("rrd::" . __FUNCTION__ . "() Third Parameter 'warning' is missing");
+            throw new KohanaException("rrd::" . __FUNCTION__ . "() Third Parameter 'warning' is missing");
         }
         if ($critical === false) {
-            throw new Kohana_exception("rrd::" . __FUNCTION__ . "() Fourth Parameter 'critical' is missing");
+            throw new KohanaException("rrd::" . __FUNCTION__ . "() Fourth Parameter 'critical' is missing");
         }
         $line = "";
         $green_vname = "var" . substr(sha1(rand()), 1, 4);
@@ -418,16 +418,16 @@ class rrd_Core
     ) {
 
         if ($vname === false) {
-            throw new Kohana_exception("rrd::" . __FUNCTION__ . "() First Parameter 'vname' is missing");
+            throw new KohanaException("rrd::" . __FUNCTION__ . "() First Parameter 'vname' is missing");
         }
         if ($label === false) {
-            throw new Kohana_exception("rrd::" . __FUNCTION__ . "() Second Parameter 'label' is missing");
+            throw new KohanaException("rrd::" . __FUNCTION__ . "() Second Parameter 'label' is missing");
         }
         if ($warning === false) {
-            throw new Kohana_exception("rrd::" . __FUNCTION__ . "() Third Parameter 'warning' is missing");
+            throw new KohanaException("rrd::" . __FUNCTION__ . "() Third Parameter 'warning' is missing");
         }
         if ($critical === false) {
-            throw new Kohana_exception("rrd::" . __FUNCTION__ . "() Fourth Parameter 'critical' is missing");
+            throw new KohanaException("rrd::" . __FUNCTION__ . "() Fourth Parameter 'critical' is missing");
         }
         $line = "";
         $green_vname = "var" . substr(sha1(rand()), 1, 4);
@@ -465,13 +465,13 @@ class rrd_Core
     ) {
 
         if ($vname === false) {
-            throw new Kohana_exception("rrd::" . __FUNCTION__ . "() First Parameter 'vname' is missing");
+            throw new KohanaException("rrd::" . __FUNCTION__ . "() First Parameter 'vname' is missing");
         }
         if ($warning === false) {
-            throw new Kohana_exception("rrd::" . __FUNCTION__ . "() Second Parameter 'warning' is missing");
+            throw new KohanaException("rrd::" . __FUNCTION__ . "() Second Parameter 'warning' is missing");
         }
         if ($critical === false) {
-            throw new Kohana_exception("rrd::" . __FUNCTION__ . "() Third Parameter 'critical' is missing");
+            throw new KohanaException("rrd::" . __FUNCTION__ . "() Third Parameter 'critical' is missing");
         }
         $line = "";
         $green_vname = "var" . substr(sha1(rand()), 1, 4);
@@ -510,10 +510,10 @@ class rrd_Core
     public static function colbright($hex, $steps)
     {
         if ($hex === false) {
-            throw new Kohana_exception("rrd::" . __FUNCTION__ . "() First Parameter 'hex' is missing");
+            throw new KohanaException("rrd::" . __FUNCTION__ . "() First Parameter 'hex' is missing");
         }
         if ($steps === false) {
-            throw new Kohana_exception("rrd::" . __FUNCTION__ . "() Second Parameter 'steps' is missing");
+            throw new KohanaException("rrd::" . __FUNCTION__ . "() Second Parameter 'steps' is missing");
         }
         // Steps should be between -255 and 255. Negative = darker, positive = lighter
         $steps = max(-255, min(255, $steps));
@@ -529,8 +529,8 @@ class rrd_Core
         $return = '#';
 
         foreach ($color_parts as $color) {
-            $color   = hexdec($color); // Convert to decimal
-            $color   = max(0, min(255, $color + $steps)); // Adjust color
+            $color = hexdec($color); // Convert to decimal
+            $color = max(0, min(255, $color + $steps)); // Adjust color
             $return .= str_pad(dechex($color), 2, '0', STR_PAD_LEFT); // Make two char hex code
         }
         return $return;
@@ -545,7 +545,7 @@ class rrd_Core
             $var_dump = ob_get_contents();
             $var_dump = preg_replace('/(HRULE|VDEF|DEF|CDEF|GPRINT|LINE|AREA|COMMENT)/', "\n\${1}", $var_dump);
             ob_end_clean();
-            throw new Kohana_exception("<pre>" . $var_dump . "</pre>");
+            throw new KohanaException("<pre>" . $var_dump . "</pre>");
         }
     }
 }

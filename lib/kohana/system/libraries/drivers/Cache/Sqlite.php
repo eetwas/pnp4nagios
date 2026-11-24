@@ -17,7 +17,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class Cache_Sqlite_Driver implements Cache_Driver
+class CacheSqliteDriver implements CacheDriver
 {
     // SQLite database instance
     protected $db;
@@ -46,29 +46,29 @@ class Cache_Sqlite_Driver implements Cache_Driver
         $filename = $directory . basename($filename);
 
         // Make sure the cache directory is writable
-        if (! is_dir($directory) or ! is_writable($directory)) {
-            throw new Kohana_Exception('cache.unwritable', $directory);
+        if (!is_dir($directory) or !is_writable($directory)) {
+            throw new KohanaException('cache.unwritable', $directory);
         }
 
         // Make sure the cache database is writable
-        if (is_file($filename) and ! is_writable($filename)) {
-            throw new Kohana_Exception('cache.unwritable', $filename);
+        if (is_file($filename) and !is_writable($filename)) {
+            throw new KohanaException('cache.unwritable', $filename);
         }
 
         // Open up an instance of the database
         $this->db = new SQLiteDatabase($filename, '0666', $error);
 
         // Throw an exception if there's an error
-        if (! empty($error)) {
-            throw new Kohana_Exception('cache.driver_error', sqlite_error_string($error));
+        if (!empty($error)) {
+            throw new KohanaException('cache.driver_error', sqlite_error_string($error));
         }
 
-        $query  = "SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'caches'";
+        $query = "SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'caches'";
         $tables = $this->db->query($query, SQLITE_BOTH, $error);
 
         // Throw an exception if there's an error
-        if (! empty($error)) {
-            throw new Kohana_Exception('cache.driver_error', sqlite_error_string($error));
+        if (!empty($error)) {
+            throw new KohanaException('cache.driver_error', sqlite_error_string($error));
         }
 
         if ($tables->numRows() == 0) {
@@ -107,7 +107,7 @@ class Cache_Sqlite_Driver implements Cache_Driver
         // Serialize and escape the data
         $data = sqlite_escape_string(serialize($data));
 
-        if (! empty($tags)) {
+        if (!empty($tags)) {
             // Escape the tags, adding brackets so the tag can be explicitly matched
             $tags = sqlite_escape_string('<' . implode('>,<', $tags) . '>');
         }
@@ -124,7 +124,7 @@ class Cache_Sqlite_Driver implements Cache_Driver
         // Run the query
         $this->db->unbufferedQuery($query, SQLITE_BOTH, $error);
 
-        if (! empty($error)) {
+        if (!empty($error)) {
             self::log_error($error);
             return false;
         } else {
@@ -146,7 +146,7 @@ class Cache_Sqlite_Driver implements Cache_Driver
         // An array will always be returned
         $result = array();
 
-        if (! empty($error)) {
+        if (!empty($error)) {
             self::log_error($error);
         } elseif ($query->numRows() > 0) {
             // Disable notices for unserializing
@@ -176,7 +176,7 @@ class Cache_Sqlite_Driver implements Cache_Driver
         $query = "SELECT id, expiration, cache FROM caches WHERE id = '$id' LIMIT 0, 1";
         $query = $this->db->query($query, SQLITE_BOTH, $error);
 
-        if (! empty($error)) {
+        if (!empty($error)) {
             self::log_error($error);
         } elseif ($cache = $query->fetchObject()) {
             // Make sure the expiration is valid and that the hash matches
@@ -221,7 +221,7 @@ class Cache_Sqlite_Driver implements Cache_Driver
 
         $this->db->unbufferedQuery('DELETE FROM caches WHERE ' . $where, SQLITE_BOTH, $error);
 
-        if (! empty($error)) {
+        if (!empty($error)) {
             self::log_error($error);
             return false;
         } else {

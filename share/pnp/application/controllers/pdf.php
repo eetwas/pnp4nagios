@@ -15,7 +15,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @author     Joerg Linge
  * @license    GPL
  */
-class Pdf_Controller extends System_Controller
+class PdfController extends SystemController
 {
     public $use_bg = '';
     public $bg = '';
@@ -29,11 +29,11 @@ class Pdf_Controller extends System_Controller
     {
         parent::__construct();
 
-        $this->use_bg           = 0;
-        $this->bg               = $this->config->conf['background_pdf'];
-        $this->pdf_page_size    = $this->config->conf['pdf_page_size'];
-        $this->pdf_margin_left  = $this->config->conf['pdf_margin_left'];
-        $this->pdf_margin_top   = $this->config->conf['pdf_margin_top'];
+        $this->use_bg = 0;
+        $this->bg = $this->config->conf['background_pdf'];
+        $this->pdf_page_size = $this->config->conf['pdf_page_size'];
+        $this->pdf_margin_left = $this->config->conf['pdf_margin_left'];
+        $this->pdf_margin_top = $this->config->conf['pdf_margin_top'];
         $this->pdf_margin_right = $this->config->conf['pdf_margin_right'];
 
         // Define PDF background per url option
@@ -53,15 +53,15 @@ class Pdf_Controller extends System_Controller
     public function index()
     {
 
-        $this->tpl       = pnp::clean($this->input->get('tpl'));
-        $this->type      = "normal";
+        $this->tpl = pnp::clean($this->input->get('tpl'));
+        $this->type = "normal";
 
         $this->data->getTimeRange($this->start, $this->end, $this->view);
 
         // Service Details
         if ($this->host != "" && $this->service != "") {
             $this->data->buildDataStruct($this->host, $this->service, $this->view);
-        // Host Overview
+            // Host Overview
         } elseif ($this->host != "") {
             if ($this->view == "") {
                 $this->view = $this->config->conf['overview-range'];
@@ -69,10 +69,10 @@ class Pdf_Controller extends System_Controller
             $services = $this->data->getServices($this->host);
             foreach ($services as $service) {
                 if ($service['state'] == 'active') {
-                       $this->data->buildDataStruct($this->host, $service['name'], $this->view);
+                    $this->data->buildDataStruct($this->host, $service['name'], $this->view);
                 }
             }
-        // Special Templates
+            // Special Templates
         } elseif ($this->tpl != "") {
             $this->data->buildDataStruct('__special', $this->tpl, $this->view);
             $this->type = 'special';
@@ -84,19 +84,19 @@ class Pdf_Controller extends System_Controller
                 throw new Kohana_User_Exception('Hostname not set ;-)', "RTFM my Friend, RTFM!");
             }
         }
-        #throw new Kohana_Exception(print_r($this->data->STRUCT,TRUE));
+        #throw new KohanaException(print_r($this->data->STRUCT,TRUE));
         /*
-        * PDF Output
-        */
+         * PDF Output
+         */
         $pdf = new PDF("P", "mm", $this->pdf_page_size);
         $pdf->AliasNbPages();
         $pdf->SetAutoPageBreak('off');
         $pdf->SetMargins($this->pdf_margin_left, $this->pdf_margin_top, $this->pdf_margin_right);
         $pdf->AddPage();
         if ($this->use_bg) {
-                $pdf->setSourceFile($this->bg);
-                $tplIdx = $pdf->importPage(1, '/MediaBox');
-                $pdf->useTemplate($tplIdx);
+            $pdf->setSourceFile($this->bg);
+            $tplIdx = $pdf->importPage(1, '/MediaBox');
+            $pdf->useTemplate($tplIdx);
         }
         $pdf->SetCreator('Created with PNP');
         $pdf->SetFont('Arial', '', 10);
@@ -153,9 +153,9 @@ class Pdf_Controller extends System_Controller
 
     public function page($page)
     {
-        $this->start     = $this->input->get('start');
-        $this->end       = $this->input->get('end');
-        $this->view      = "";
+        $this->start = $this->input->get('start');
+        $this->end = $this->input->get('end');
+        $this->view = "";
 
         if (isset($_GET['view']) && $_GET['view'] != "") {
             $this->view = pnp::clean($_GET['view']);
@@ -170,17 +170,17 @@ class Pdf_Controller extends System_Controller
             }
         }
         /*
-        * PDF Output
-        */
+         * PDF Output
+         */
         $pdf = new PDF("P", "mm", $this->pdf_page_size);
         $pdf->AliasNbPages();
         $pdf->SetAutoPageBreak('off');
         $pdf->SetMargins($this->pdf_margin_left, $this->pdf_margin_top, $this->pdf_margin_right);
         $pdf->AddPage();
         if ($this->use_bg) {
-                $pdf->setSourceFile($this->bg);
-                $tplIdx = $pdf->importPage(1, '/MediaBox');
-                $pdf->useTemplate($tplIdx);
+            $pdf->setSourceFile($this->bg);
+            $tplIdx = $pdf->importPage(1, '/MediaBox');
+            $pdf->useTemplate($tplIdx);
         }
 
         $pdf->SetCreator('Created with PNP');
@@ -218,30 +218,30 @@ class Pdf_Controller extends System_Controller
 
     public function basket()
     {
-        $this->start     = $this->input->get('start');
-        $this->end       = $this->input->get('end');
-        $this->view      = "";
+        $this->start = $this->input->get('start');
+        $this->end = $this->input->get('end');
+        $this->view = "";
         if (isset($_GET['view']) && $_GET['view'] != "") {
             $this->view = pnp::clean($_GET['view']);
         }
         $this->data->getTimeRange($this->start, $this->end, $this->view);
         $basket = $this->session->get("basket");
         if (is_array($basket) && (!empty($basket))) {
-             $this->data->buildBasketStruct($basket, $this->view);
+            $this->data->buildBasketStruct($basket, $this->view);
         }
         //echo Kohana::debug($this->data->STRUCT);
         /*
-        * PDF Output
-        */
+         * PDF Output
+         */
         $pdf = new PDF("P", "mm", $this->pdf_page_size);
         $pdf->AliasNbPages();
         $pdf->SetAutoPageBreak('off');
         $pdf->SetMargins($this->pdf_margin_left, $this->pdf_margin_top, $this->pdf_margin_right);
         $pdf->AddPage();
         if ($this->use_bg) {
-                $pdf->setSourceFile($this->config->conf['background_pdf']);
-                $tplIdx = $pdf->importPage(1, '/MediaBox');
-                $pdf->useTemplate($tplIdx);
+            $pdf->setSourceFile($this->config->conf['background_pdf']);
+            $tplIdx = $pdf->importPage(1, '/MediaBox');
+            $pdf->useTemplate($tplIdx);
         }
 
         $pdf->SetCreator('Created with PNP');
@@ -291,14 +291,14 @@ require Kohana::find_file('vendor/fpdf', 'fpdi');
 
 class PDF extends FPDI
 {
-        //Page header
+    //Page header
     public function Header()
     {
         //Arial bold 10
         $this->SetFont('Arial', 'B', 10);
     }
 
-        //Page footer
+    //Page footer
     public function Footer()
     {
         //Position at 1.5 cm from bottom

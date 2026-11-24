@@ -7,16 +7,16 @@ defined('SYSPATH') or die('No direct access allowed.');
 // phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
 
 /**
-* Object Relational Mapping (ORM) result iterator.
-*
-* $Id: ORM_Iterator.php 3769 2008-12-15 00:48:56Z zombor $
-*
-* @package    ORM
-* @author     Kohana Team
-* @copyright  (c) 2007-2008 Kohana Team
-* @license    http://kohanaphp.com/license.html
-*/
-class ORM_Iterator_Core implements Iterator, ArrayAccess, Countable
+ * Object Relational Mapping (ORM) result iterator.
+ *
+ * $Id: ORM_Iterator.php 3769 2008-12-15 00:48:56Z zombor $
+ *
+ * @package    ORM
+ * @author     Kohana Team
+ * @copyright  (c) 2007-2008 Kohana Team
+ * @license    http://kohanaphp.com/license.html
+ */
+class ORMIteratorCore implements Iterator, ArrayAccess, Countable
 {
     // Class attributes
     protected $class_name;
@@ -26,10 +26,10 @@ class ORM_Iterator_Core implements Iterator, ArrayAccess, Countable
     // Database result object
     protected $result;
 
-    public function __construct(ORM $model, Database_Result $result)
+    public function __construct(ORM $model, DatabaseResult $result)
     {
         // Class attributes
-        $this->class_name  = get_class($model);
+        $this->class_name = get_class($model);
         $this->primary_key = $model->primary_key;
         $this->primary_val = $model->primary_val;
 
@@ -205,21 +205,21 @@ class ORM_Iterator_Core implements Iterator, ArrayAccess, Countable
     /**
      * ArrayAccess: offsetSet
      *
-     * @throws  Kohana_Database_Exception
+     * @throws  KohanaDatabaseException
      */
     public function offsetSet($offset, $value)
     {
-        throw new Kohana_Database_Exception('database.result_read_only');
+        throw new KohanaDatabaseException('database.result_read_only');
     }
 
     /**
      * ArrayAccess: offsetUnset
      *
-     * @throws  Kohana_Database_Exception
+     * @throws  KohanaDatabaseException
      */
     public function offsetUnset($offset)
     {
-        throw new Kohana_Database_Exception('database.result_read_only');
+        throw new KohanaDatabaseException('database.result_read_only');
     }
 }
 // End ORM Iterator

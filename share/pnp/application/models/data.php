@@ -10,7 +10,7 @@ defined('SYSPATH') or die('No direct access allowed.');
 /**
  * Retrieves and manipulates current status of hosts (and services?)
  */
-class Data_Model extends System_Model
+class DataModel extends SystemModel
 {
     private $XML = [];
 
@@ -41,11 +41,11 @@ class Data_Model extends System_Model
 
     public function __construct()
     {
-        $this->config = new Config_Model();
+        $this->config = new ConfigModel();
         $this->config->read_config();
-        $this->auth = new Auth_Model();
+        $this->auth = new AuthModel();
     }
-//end __construct()
+    //end __construct()
 
 
     /*
@@ -54,7 +54,7 @@ class Data_Model extends System_Model
      */
     public function getSpecialTemplates()
     {
-        $conf      = $this->config->conf;
+        $conf = $this->config->conf;
         $templates = [];
         if (is_dir($conf['special_template_dir'])) {
             if ($dh = opendir($conf['special_template_dir'])) {
@@ -76,7 +76,7 @@ class Data_Model extends System_Model
             return $templates;
         }
     }
-//end getSpecialTemplates()
+    //end getSpecialTemplates()
 
 
     public function getFirstSpecialTemplate()
@@ -88,14 +88,14 @@ class Data_Model extends System_Model
             return $templates[0];
         }
     }
-//end getFirstSpecialTemplate()
+    //end getFirstSpecialTemplate()
 
 
     public function getHosts()
     {
         $hosts = [];
-        $conf  = $this->config->conf;
-        $i     = 0;
+        $conf = $this->config->conf;
+        $i = 0;
         if (is_dir($conf['rrdbase'])) {
             if ($dh = opendir($conf['rrdbase'])) {
                 while (($file = readdir($dh)) !== false) {
@@ -111,8 +111,8 @@ class Data_Model extends System_Model
                         continue;
                     }
 
-                    $stat              = stat($conf['rrdbase'] . '/' . $file);
-                    $age               = (time() - $stat['mtime']);
+                    $stat = stat($conf['rrdbase'] . '/' . $file);
+                    $age = (time() - $stat['mtime']);
                     $hosts[$i]['name'] = $file;
                     $hosts[$i]['sort'] = strtoupper($file);
                     if ($age < $conf['max_age']) {
@@ -122,16 +122,16 @@ class Data_Model extends System_Model
                     }
                     $i++;
                 }
-//end while
+                //end while
                 closedir($dh);
             } else {
                 throw new Kohana_User_Exception('Perfdata Dir', "Can not open $path");
             }
-//end if
+            //end if
         }
-//end if
+        //end if
         if (empty($hosts)) {
-            throw new Kohana_Exception('error.perfdata-dir-empty', $conf['rrdbase']);
+            throw new KohanaException('error.perfdata-dir-empty', $conf['rrdbase']);
         } else {
             // Obtain a list of columns
             foreach ($hosts as $key => $row) {
@@ -143,19 +143,19 @@ class Data_Model extends System_Model
         }
         return $hosts;
     }
-//end getHosts()
+    //end getHosts()
 
 
     private function getRawServices($hostname)
     {
         $services = [];
-        $host     = [];
-        $conf     = $this->config->conf;
-        $i        = 0;
-        $path     = $conf['rrdbase'] . $hostname;
+        $host = [];
+        $conf = $this->config->conf;
+        $i = 0;
+        $path = $conf['rrdbase'] . $hostname;
         if (is_dir($path)) {
             if ($dh = opendir($path)) {
-                while (($file = readdir($dh) ) !== false) {
+                while (($file = readdir($dh)) !== false) {
                     if ($file == '.' || $file == '..') {
                         continue;
                     }
@@ -165,25 +165,25 @@ class Data_Model extends System_Model
                     }
 
                     $fullpath = $path . '/' . $file;
-                    $stat     = stat("$fullpath");
-                    $age      = (time() - $stat['mtime']);
+                    $stat = stat("$fullpath");
+                    $age = (time() - $stat['mtime']);
 
                     $state = 'active';
                     if ($age > $conf['max_age']) {
-// 6Stunden
+                        // 6Stunden
                         $state = 'inactive';
                     }
                     $services[$i]['state'] = $state;
-                    $services[$i]['name']  = $servicedesc[1];
+                    $services[$i]['name'] = $servicedesc[1];
                     $i++;
                 }
-//end while
+                //end while
             }
-//end if
+            //end if
         } else {
-            throw new Kohana_Exception('error.perfdata-dir-for-host', $path, $hostname);
+            throw new KohanaException('error.perfdata-dir-for-host', $path, $hostname);
         }
-//end if
+        //end if
         if (is_array($services) && (!empty($services))) {
             // Obtain a list of columns
             foreach ($services as $key => $row) {
@@ -193,18 +193,18 @@ class Data_Model extends System_Model
             // Add $data as the last parameter, to sort by the common key
             array_multisort($sort, SORT_STRING, $services);
         } else {
-            throw new Kohana_Exception('error.host-perfdata-dir-empty', $path, $hostname);
+            throw new KohanaException('error.host-perfdata-dir-empty', $path, $hostname);
         }
         return $services;
     }
-//end getRawServices()
+    //end getRawServices()
 
 
     public function getServices($hostname)
     {
-        $services     = [];
-        $host         = [];
-        $i            = 0;
+        $services = [];
+        $host = [];
+        $i = 0;
         $service_list = $this->getRawServices($hostname);
         foreach ($service_list as $s) {
             if (!$this->readXML($hostname, $s['name'], false)) {
@@ -216,11 +216,11 @@ class Data_Model extends System_Model
                     continue;
                 }
 
-                $host[0]['name']        = '_HOST_';
-                $host[0]['hostname']    = (string) $this->XML->NAGIOS_HOSTNAME;
-                $host[0]['state']       = $s['state'];
+                $host[0]['name'] = '_HOST_';
+                $host[0]['hostname'] = (string) $this->XML->NAGIOS_HOSTNAME;
+                $host[0]['state'] = $s['state'];
                 $host[0]['servicedesc'] = 'Host Perfdata';
-                $host[0]['is_multi']    = (string) $this->XML->DATASOURCE[0]->IS_MULTI[0];
+                $host[0]['is_multi'] = (string) $this->XML->DATASOURCE[0]->IS_MULTI[0];
             } else {
                 // Check authorization
                 if ($this->auth->is_authorized((string) $this->XML->NAGIOS_AUTH_HOSTNAME, (string) $this->XML->NAGIOS_AUTH_SERVICEDESC) === false) {
@@ -232,19 +232,19 @@ class Data_Model extends System_Model
                 if ((string) $this->XML->NAGIOS_MULTI_PARENT == '') {
                     $services[$i]['sort'] = strtoupper($s['name']);
                 } else {
-                    $services[$i]['sort']  = strtoupper((string) $this->XML->NAGIOS_MULTI_PARENT);
+                    $services[$i]['sort'] = strtoupper((string) $this->XML->NAGIOS_MULTI_PARENT);
                     $services[$i]['sort'] .= (string) $this->XML->DATASOURCE[0]->IS_MULTI[0];
                     $services[$i]['sort'] .= strtoupper($s['name']);
                 }
-                $services[$i]['state']       = $s['state'];
-                $services[$i]['hostname']    = (string) $this->XML->NAGIOS_DISP_HOSTNAME;
+                $services[$i]['state'] = $s['state'];
+                $services[$i]['hostname'] = (string) $this->XML->NAGIOS_DISP_HOSTNAME;
                 $services[$i]['servicedesc'] = (string) $this->XML->NAGIOS_DISP_SERVICEDESC;
-                $services[$i]['is_multi']    = (string) $this->XML->DATASOURCE[0]->IS_MULTI[0];
+                $services[$i]['is_multi'] = (string) $this->XML->DATASOURCE[0]->IS_MULTI[0];
             }
-//end if
+            //end if
             $i++;
         }
-//end foreach
+        //end foreach
         // print Kohana::debug($services);
         if (is_array($services) && (!empty($services))) {
             // Obtain a list of columns
@@ -260,12 +260,12 @@ class Data_Model extends System_Model
         }
         return $services;
     }
-//end getServices()
+    //end getServices()
 
 
     public function getFirstService($hostname)
     {
-        $conf     = $this->config->conf;
+        $conf = $this->config->conf;
         $services = $this->getServices($hostname);
         foreach ($services as $srv) {
             if ($srv['state'] == 'active') {
@@ -273,16 +273,16 @@ class Data_Model extends System_Model
             }
         }
         if (empty($srv)) {
-            throw new Kohana_Exception('error.get-first-service', $hostname);
+            throw new KohanaException('error.get-first-service', $hostname);
         }
         return $srv['name'];
     }
-//end getFirstService()
+    //end getFirstService()
 
 
     public function getFirstHost()
     {
-        $conf  = $this->config->conf;
+        $conf = $this->config->conf;
         $hosts = $this->getHosts();
         foreach ($hosts as $host) {
             if ($host['state'] == 'active') {
@@ -290,41 +290,41 @@ class Data_Model extends System_Model
             }
         }
         if (empty($host)) {
-            throw new Kohana_Exception('error.get-first-host');
+            throw new KohanaException('error.get-first-host');
         }
         return $host['name'];
     }
-//end getFirstHost()
+    //end getFirstHost()
 
 
     public function readXML($hostname, $servicedesc, $throw_exception = true)
     {
-        $conf    = $this->config->conf;
+        $conf = $this->config->conf;
         $xmlfile = $conf['rrdbase'] . $hostname . '/' . $servicedesc . '.xml';
-        $xml     = [];
+        $xml = [];
         if (file_exists($xmlfile)) {
             libxml_use_internal_errors(true);
             libxml_clear_errors();
-            if (! $xml = simplexml_load_file($xmlfile)) {
+            if (!$xml = simplexml_load_file($xmlfile)) {
                 ;
                 if ($throw_exception == true) {
                     $errors = '<br>';
                     foreach (libxml_get_errors() as $error) {
-                         $errors .= $error->message . '<br>';
+                        $errors .= $error->message . '<br>';
                     }
-                    throw new Kohana_Exception('error.xml-generic_error', $xmlfile, $errors);
+                    throw new KohanaException('error.xml-generic_error', $xmlfile, $errors);
                 } else {
                     return false;
                 }
             }
-            $this->XML   = [];
+            $this->XML = [];
             $this->MACRO = [];
             $this->MACRO['AUTH_SERVICEDESC'] = '';
-            $this->MACRO['AUTH_HOSTNAME']    = '';
+            $this->MACRO['AUTH_HOSTNAME'] = '';
             $this->DS = [];
             // Throw excaption without a valid structure version
             if (!isset($xml->XML->VERSION) && $throw_exception == true) {
-                throw new Kohana_Exception('error.xml-structure-without-version-tag', $xmlfile);
+                throw new KohanaException('error.xml-structure-without-version-tag', $xmlfile);
             }
             if (!isset($xml->XML->VERSION) && $throw_exception == false) {
                 return false;
@@ -332,7 +332,7 @@ class Data_Model extends System_Model
             foreach ($xml as $key => $val) {
                 if (preg_match('/^NAGIOS_(.*)$/', $key, $match)) {
                     // print $match[1]." => ".$val."\n";
-                    $key               = $match[1];
+                    $key = $match[1];
                     $this->MACRO[$key] = (string) $val;
                 }
             }
@@ -348,11 +348,11 @@ class Data_Model extends System_Model
             $this->XML = $xml;
             return true;
         } else {
-            throw new Kohana_Exception('error.xml-not-found', $xmlfile);
+            throw new KohanaException('error.xml-not-found', $xmlfile);
         }
-//end if
+        //end if
     }
-//end readXML()
+    //end readXML()
 
 
     public function buildDataStruct($host = false, $service = false, $view = null, $source = null)
@@ -370,102 +370,27 @@ class Data_Model extends System_Model
             $this->includeTemplate($service, 'special');
         } else {
             if ($this->readXML($host, $service) == false) {
-                throw new Kohana_Exception('error.xml-not-found', 'Undefined error');
+                throw new KohanaException('error.xml-not-found', 'Undefined error');
                 return false;
             }
             $this->includeTemplate($this->DS[0]['TEMPLATE']);
         }
         if (isset($this->TIMERANGE['type']) && $this->TIMERANGE['type'] == 'start-end') {
             $view = intval($view);
-            $i    = 0;
+            $i = 0;
             foreach ($this->RRD['def'] as $key => $val) {
-                if (! is_null($source) && $source != $key) {
+                if (!is_null($source) && $source != $key) {
                     continue;
                 }
-                $tmp_struct                  = [];
-                $tmp_struct['LEVEL']         = $i;
-                $tmp_struct['VIEW']          = $view;
+                $tmp_struct = [];
+                $tmp_struct['LEVEL'] = $i;
+                $tmp_struct['VIEW'] = $view;
                 $tmp_struct['TEMPLATE_FILE'] = $this->TEMPLATE_FILE;
                 ;
-                $tmp_struct['SOURCE']       = $key;
-                $tmp_struct['RRD_CALL']     = $this->TIMERANGE['cmd'] . ' ' . $this->RRD['opt'][$key] . ' ' . $this->RRD['def'][$key];
-                $tmp_struct['TIMERANGE']    = $this->TIMERANGE;
-                $tmp_struct['GRAPH_WIDTH']  = $this->getGraphDimensions('width', $tmp_struct['RRD_CALL']);
-                $tmp_struct['GRAPH_HEIGHT'] = $this->getGraphDimensions('height', $tmp_struct['RRD_CALL']);
-                if (isset($this->RRD['ds_name'][$key])) {
-                     $tmp_struct['ds_name'] = $this->RRD['ds_name'][$key];
-                } elseif (array_key_exists($i, $this->DS)) {
-                     $tmp_struct['ds_name'] = $this->DS[$i]['NAME'];
-                } else {
-                     $tmp_struct['ds_name'] = 'UNDEF';
-                }
-                $tmp_struct['MACRO'] = $this->MACRO;
-                if (isset($this->XML->XML->VERSION)) {
-                    $tmp_struct['VERSION'] = pnp::xml_version_check((string) $this->XML->XML->VERSION);
-                } else {
-                    $tmp_struct['VERSION'] = pnp::xml_version_check('0');
-                }
-                $this->addToDataStruct($tmp_struct);
-                $i++;
-            }
-//end foreach
-            return;
-        }
-//end if
-        if ($view === '') {
-            $v = 0;
-            foreach ($this->config->views as $view_key => $view_val) {
-                $i = 0;
-                foreach ($this->RRD['def'] as $key => $val) {
-                    if (! is_null($source) && $source != $key) {
-                        continue;
-                    }
-                    $tmp_struct                  = [];
-                    $tmp_struct['LEVEL']         = $i;
-                    $tmp_struct['VIEW']          = $view_key;
-                    $tmp_struct['TEMPLATE_FILE'] = $this->TEMPLATE_FILE;
-                    ;
-                    $tmp_struct['SOURCE']       = $key;
-                    $tmp_struct['RRD_CALL']     = $this->TIMERANGE[$v]['cmd'] . ' ' . $this->RRD['opt'][$key] . ' ' . $this->RRD['def'][$key];
-                    $tmp_struct['GRAPH_WIDTH']  = $this->getGraphDimensions('width', $tmp_struct['RRD_CALL']);
-                    $tmp_struct['GRAPH_HEIGHT'] = $this->getGraphDimensions('height', $tmp_struct['RRD_CALL']);
-                    if (isset($this->RRD['ds_name'][$key])) {
-                        $tmp_struct['ds_name'] = $this->RRD['ds_name'][$key];
-                    } elseif (array_key_exists($i, $this->DS)) {
-                        $tmp_struct['ds_name'] = $this->DS[$i]['NAME'];
-                    } else {
-                        $tmp_struct['ds_name'] = 'UNDEF';
-                    }
-                    $tmp_struct['TIMERANGE'] = $this->TIMERANGE[$v];
-                    $tmp_struct['MACRO']     = $this->MACRO;
-                    if (isset($this->XML->XML->VERSION)) {
-                        $tmp_struct['VERSION'] = pnp::xml_version_check((string) $this->XML->XML->VERSION);
-                    } else {
-                        $tmp_struct['VERSION'] = pnp::xml_version_check('0');
-                    }
-                    $this->addToDataStruct($tmp_struct);
-                    $i++;
-                }
-//end foreach
-                $v++;
-            }
-//end foreach
-        } else {
-            $view = intval($view);
-            $i    = 0;
-            foreach ($this->RRD['def'] as $key => $val) {
-                if (! is_null($source) && $source != $key) {
-                    continue;
-                }
-                $tmp_struct                  = [];
-                $tmp_struct['LEVEL']         = $i;
-                $tmp_struct['VIEW']          = $view;
-                $tmp_struct['TEMPLATE_FILE'] = $this->TEMPLATE_FILE;
-                ;
-                $tmp_struct['SOURCE']       = $key;
-                $tmp_struct['RRD_CALL']     = $this->TIMERANGE[$view]['cmd'] . ' ' . $this->RRD['opt'][$key] . ' ' . $this->RRD['def'][$key];
-                $tmp_struct['TIMERANGE']    = $this->TIMERANGE[$view];
-                $tmp_struct['GRAPH_WIDTH']  = $this->getGraphDimensions('width', $tmp_struct['RRD_CALL']);
+                $tmp_struct['SOURCE'] = $key;
+                $tmp_struct['RRD_CALL'] = $this->TIMERANGE['cmd'] . ' ' . $this->RRD['opt'][$key] . ' ' . $this->RRD['def'][$key];
+                $tmp_struct['TIMERANGE'] = $this->TIMERANGE;
+                $tmp_struct['GRAPH_WIDTH'] = $this->getGraphDimensions('width', $tmp_struct['RRD_CALL']);
                 $tmp_struct['GRAPH_HEIGHT'] = $this->getGraphDimensions('height', $tmp_struct['RRD_CALL']);
                 if (isset($this->RRD['ds_name'][$key])) {
                     $tmp_struct['ds_name'] = $this->RRD['ds_name'][$key];
@@ -480,14 +405,89 @@ class Data_Model extends System_Model
                 } else {
                     $tmp_struct['VERSION'] = pnp::xml_version_check('0');
                 }
-                   $this->addToDataStruct($tmp_struct);
-                   $i++;
+                $this->addToDataStruct($tmp_struct);
+                $i++;
             }
-//end foreach
+            //end foreach
+            return;
         }
-//end if
+        //end if
+        if ($view === '') {
+            $v = 0;
+            foreach ($this->config->views as $view_key => $view_val) {
+                $i = 0;
+                foreach ($this->RRD['def'] as $key => $val) {
+                    if (!is_null($source) && $source != $key) {
+                        continue;
+                    }
+                    $tmp_struct = [];
+                    $tmp_struct['LEVEL'] = $i;
+                    $tmp_struct['VIEW'] = $view_key;
+                    $tmp_struct['TEMPLATE_FILE'] = $this->TEMPLATE_FILE;
+                    ;
+                    $tmp_struct['SOURCE'] = $key;
+                    $tmp_struct['RRD_CALL'] = $this->TIMERANGE[$v]['cmd'] . ' ' . $this->RRD['opt'][$key] . ' ' . $this->RRD['def'][$key];
+                    $tmp_struct['GRAPH_WIDTH'] = $this->getGraphDimensions('width', $tmp_struct['RRD_CALL']);
+                    $tmp_struct['GRAPH_HEIGHT'] = $this->getGraphDimensions('height', $tmp_struct['RRD_CALL']);
+                    if (isset($this->RRD['ds_name'][$key])) {
+                        $tmp_struct['ds_name'] = $this->RRD['ds_name'][$key];
+                    } elseif (array_key_exists($i, $this->DS)) {
+                        $tmp_struct['ds_name'] = $this->DS[$i]['NAME'];
+                    } else {
+                        $tmp_struct['ds_name'] = 'UNDEF';
+                    }
+                    $tmp_struct['TIMERANGE'] = $this->TIMERANGE[$v];
+                    $tmp_struct['MACRO'] = $this->MACRO;
+                    if (isset($this->XML->XML->VERSION)) {
+                        $tmp_struct['VERSION'] = pnp::xml_version_check((string) $this->XML->XML->VERSION);
+                    } else {
+                        $tmp_struct['VERSION'] = pnp::xml_version_check('0');
+                    }
+                    $this->addToDataStruct($tmp_struct);
+                    $i++;
+                }
+                //end foreach
+                $v++;
+            }
+            //end foreach
+        } else {
+            $view = intval($view);
+            $i = 0;
+            foreach ($this->RRD['def'] as $key => $val) {
+                if (!is_null($source) && $source != $key) {
+                    continue;
+                }
+                $tmp_struct = [];
+                $tmp_struct['LEVEL'] = $i;
+                $tmp_struct['VIEW'] = $view;
+                $tmp_struct['TEMPLATE_FILE'] = $this->TEMPLATE_FILE;
+                ;
+                $tmp_struct['SOURCE'] = $key;
+                $tmp_struct['RRD_CALL'] = $this->TIMERANGE[$view]['cmd'] . ' ' . $this->RRD['opt'][$key] . ' ' . $this->RRD['def'][$key];
+                $tmp_struct['TIMERANGE'] = $this->TIMERANGE[$view];
+                $tmp_struct['GRAPH_WIDTH'] = $this->getGraphDimensions('width', $tmp_struct['RRD_CALL']);
+                $tmp_struct['GRAPH_HEIGHT'] = $this->getGraphDimensions('height', $tmp_struct['RRD_CALL']);
+                if (isset($this->RRD['ds_name'][$key])) {
+                    $tmp_struct['ds_name'] = $this->RRD['ds_name'][$key];
+                } elseif (array_key_exists($i, $this->DS)) {
+                    $tmp_struct['ds_name'] = $this->DS[$i]['NAME'];
+                } else {
+                    $tmp_struct['ds_name'] = 'UNDEF';
+                }
+                $tmp_struct['MACRO'] = $this->MACRO;
+                if (isset($this->XML->XML->VERSION)) {
+                    $tmp_struct['VERSION'] = pnp::xml_version_check((string) $this->XML->XML->VERSION);
+                } else {
+                    $tmp_struct['VERSION'] = pnp::xml_version_check('0');
+                }
+                $this->addToDataStruct($tmp_struct);
+                $i++;
+            }
+            //end foreach
+        }
+        //end if
     }
-//end buildDataStruct()
+    //end buildDataStruct()
 
 
     private function addToDataStruct($data = false)
@@ -498,7 +498,7 @@ class Data_Model extends System_Model
 
         array_push($this->STRUCT, $data);
     }
-//end addToDataStruct()
+    //end addToDataStruct()
 
 
     private function includeTemplate($template = false, $type = 'normal')
@@ -511,17 +511,17 @@ class Data_Model extends System_Model
          * Normal PNP Templates
          */
         if ($type == 'normal') {
-            $template_file       = $this->findTemplate($template);
+            $template_file = $this->findTemplate($template);
             $this->TEMPLATE_FILE = $template_file;
-            $hostname            = $this->MACRO['HOSTNAME'];
-            $servicedesc         = $this->MACRO['SERVICEDESC'];
-            $TIMERANGE           = $this->TIMERANGE;
+            $hostname = $this->MACRO['HOSTNAME'];
+            $servicedesc = $this->MACRO['SERVICEDESC'];
+            $TIMERANGE = $this->TIMERANGE;
         } elseif ($type == 'special') {
             $template_file = $this->findTemplate($template, $type);
-            $TIMERANGE     = $this->TIMERANGE;
+            $TIMERANGE = $this->TIMERANGE;
         }
-        $def     = false;
-        $opt     = false;
+        $def = false;
+        $opt = false;
         $ds_name = false;
         /*
          * 0.4.x Template compatibility
@@ -540,7 +540,7 @@ class Data_Model extends System_Model
         }
         // Include template
         if ($template_file == false) {
-            throw new Kohana_Exception('error.no-templates-found');
+            throw new KohanaException('error.no-templates-found');
         } else {
             ob_start();
             include $template_file;
@@ -549,32 +549,32 @@ class Data_Model extends System_Model
         // Compatibility for very old Templates
         if (!is_array($def) && $def != false) {
             $tmp[1] = $def;
-            $def    = $tmp;
+            $def = $tmp;
         }
         if (!is_array($opt) && $opt != false) {
             $tmp[1] = $opt;
-            $opt    = $tmp;
+            $opt = $tmp;
         }
         if (!is_array($ds_name) && $ds_name != false) {
-            $tmp[1]  = $ds_name;
+            $tmp[1] = $ds_name;
             $ds_name = $tmp;
         }
         if ($def != false) {
             $this->RRD['def'] = $this->array_reindex($def);
         } else {
-            throw new Kohana_Exception('error.template-without-def', $template_file);
+            throw new KohanaException('error.template-without-def', $template_file);
         }
         if ($opt != false) {
             $this->RRD['opt'] = $this->array_reindex($opt);
         } else {
-            throw new Kohana_Exception('error.template-without-opt', $template_file);
+            throw new KohanaException('error.template-without-opt', $template_file);
         }
         if ($ds_name != false) {
             $this->RRD['ds_name'] = $this->array_reindex($ds_name);
         }
         return true;
     }
-//end includeTemplate()
+    //end includeTemplate()
 
 
     private function getGraphDimensions($search, $command)
@@ -597,7 +597,7 @@ class Data_Model extends System_Model
         }
         return false;
     }
-//end getGraphDimensions()
+    //end getGraphDimensions()
 
 
     private function array_reindex($data)
@@ -609,7 +609,7 @@ class Data_Model extends System_Model
         }
         return $tmp;
     }
-//end array_reindex()
+    //end array_reindex()
 
 
     public function findTemplate($template, $type = 'normal')
@@ -629,7 +629,7 @@ class Data_Model extends System_Model
             foreach (Kohana::config('core.template_dirs') as $dir) {
                 $template_dirs[] = $dir;
             }
-            // throw new Kohana_Exception(print_r($template_dirs,TRUE));
+            // throw new KohanaException(print_r($template_dirs,TRUE));
             foreach ($template_dirs as $dir) {
                 $match = $this->findRecursiveTemplate($template, $dir);
                 if ($match != false) {
@@ -647,7 +647,7 @@ class Data_Model extends System_Model
             }
             return false;
         }
-//end if
+        //end if
         /*
          * Special Templates
          */
@@ -655,12 +655,12 @@ class Data_Model extends System_Model
             if (is_readable($conf['special_template_dir'] . '/' . $template . '.php')) {
                 $template_file = $conf['special_template_dir'] . '/' . $template . '.php';
             } else {
-                throw new Kohana_Exception("Special Template '$template' not found");
+                throw new KohanaException("Special Template '$template' not found");
             }
             return $template_file;
         }
     }
-//end findTemplate()
+    //end findTemplate()
 
 
     private function findRecursiveTemplate($template, $dir)
@@ -668,10 +668,10 @@ class Data_Model extends System_Model
         if (!is_readable($dir)) {
             return false;
         }
-        $template_file   = '';
+        $template_file = '';
         $r_template_file = '';
-        $r_template      = '';
-        $recursive       = explode('_', $template);
+        $r_template = '';
+        $recursive = explode('_', $template);
         if ($this->config->conf['enable_recursive_template_search'] == 1) {
             $i = 0;
             foreach ($recursive as $value) {
@@ -699,9 +699,9 @@ class Data_Model extends System_Model
                 return false;
             }
         }
-//end if
+        //end if
     }
-//end findRecursiveTemplate()
+    //end findRecursiveTemplate()
 
 
     public function getTimeRange($start = false, $end = false, $view = '')
@@ -731,18 +731,18 @@ class Data_Model extends System_Model
             }
         }
         if ($start && $end) {
-            $timerange['title']   = Kohana::lang('common.timerange-selector-link');
-            $timerange['start']   = $start;
+            $timerange['title'] = Kohana::lang('common.timerange-selector-link');
+            $timerange['start'] = $start;
             $timerange['f_start'] = date($this->config->conf['date_fmt'], $start);
-            $timerange['end']     = $end;
-            $timerange['f_end']   = date($this->config->conf['date_fmt'], $end);
-            $timerange['cmd']     = $this->buildViewCmd(false, $start, $end);
-            $timerange['type']    = 'start-end';
-            $this->TIMERANGE      = $timerange;
+            $timerange['end'] = $end;
+            $timerange['f_end'] = date($this->config->conf['date_fmt'], $end);
+            $timerange['cmd'] = $this->buildViewCmd(false, $start, $end);
+            $timerange['type'] = 'start-end';
+            $this->TIMERANGE = $timerange;
             return;
         }
 
-           $view = intval(pnp::clean($view));
+        $view = intval(pnp::clean($view));
         if ($view >= count($this->config->views)) {
             $view = 1;
         }
@@ -761,7 +761,7 @@ class Data_Model extends System_Model
         }
 
         if (!$start) {
-            $start = ( $end - $this->config->views[$view]['start']);
+            $start = ($end - $this->config->views[$view]['start']);
         } elseif (!is_numeric($start)) {
             $timestamp = strtotime($start);
             if (!$timestamp) {
@@ -778,25 +778,25 @@ class Data_Model extends System_Model
             throw new Kohana_User_Exception('Wrong Timerange', 'start >= end');
         }
 
-           $timerange['title']   = $this->config->views[$view]['title'];
-           $timerange['start']   = $start;
-           $timerange['f_start'] = date($this->config->conf['date_fmt'], $start);
-           $timerange['end']     = $end;
-           $timerange['f_end']   = date($this->config->conf['date_fmt'], $end);
-           $timerange['cmd']     = $this->buildViewCmd($view, $start, $end);
-           $timerange['type']    = 'views';
+        $timerange['title'] = $this->config->views[$view]['title'];
+        $timerange['start'] = $start;
+        $timerange['f_start'] = date($this->config->conf['date_fmt'], $start);
+        $timerange['end'] = $end;
+        $timerange['f_end'] = date($this->config->conf['date_fmt'], $end);
+        $timerange['cmd'] = $this->buildViewCmd($view, $start, $end);
+        $timerange['type'] = 'views';
         for ($i = 0; $i < count($this->config->views); $i++) {
-            $timerange[$i]['title']   = $this->config->views[$i]['title'];
-            $timerange[$i]['start']   = ($end - $this->config->views[$i]['start']);
+            $timerange[$i]['title'] = $this->config->views[$i]['title'];
+            $timerange[$i]['start'] = ($end - $this->config->views[$i]['start']);
             $timerange[$i]['f_start'] = date($this->config->conf['date_fmt'], ($end - $this->config->views[$i]['start']));
-            $timerange[$i]['end']     = $end;
-            $timerange[$i]['f_end']   = date($this->config->conf['date_fmt'], $end);
-            $timerange[$i]['cmd']     = $this->buildViewCmd($i, ($end - $this->config->views[$i]['start']), $end);
-            $timerange[$i]['type']    = 'views';
+            $timerange[$i]['end'] = $end;
+            $timerange[$i]['f_end'] = date($this->config->conf['date_fmt'], $end);
+            $timerange[$i]['cmd'] = $this->buildViewCmd($i, ($end - $this->config->views[$i]['start']), $end);
+            $timerange[$i]['type'] = 'views';
         }
-           $this->TIMERANGE = $timerange;
+        $this->TIMERANGE = $timerange;
     }
-//end getTimeRange()
+    //end getTimeRange()
 
 
     public function buildViewCmd($view = false, $start = false, $end = false)
@@ -825,14 +825,14 @@ class Data_Model extends System_Model
 
         return "$cmd ";
     }
-//end buildViewCmd()
+    //end buildViewCmd()
 
 
     public function buildBasketStruct($basket, $view = null)
     {
         if (is_array($basket) && (!empty($basket))) {
             if ($view == '') {
-                 $views = array_keys($this->config->views);
+                $views = array_keys($this->config->views);
             } else {
                 $views = [$view];
             }
@@ -853,9 +853,9 @@ class Data_Model extends System_Model
                 }
             }
         }
-//end if
+        //end if
     }
-//end buildBasketStruct()
+    //end buildBasketStruct()
 
 
     public function buildPageStruct($page, $view)
@@ -876,9 +876,9 @@ class Data_Model extends System_Model
                             $data = $this->filterServiceByPage($graph, $host, $service);
                             if ($data) {
                                 $servicelist[] = [
-                                    'host'    => $host,
+                                    'host' => $host,
                                     'service' => $service['name'],
-                                    'source'  => $data['source'],
+                                    'source' => $data['source'],
                                 ];
                             }
                         }
@@ -893,15 +893,15 @@ class Data_Model extends System_Model
                     $data = $this->filterServiceByPage($this->PAGE_GRAPH, $host, $service);
                     if ($data) {
                         $servicelist[] = [
-                            'host'    => $host,
+                            'host' => $host,
                             'service' => $service['name'],
-                            'source'  => $data['source'],
+                            'source' => $data['source'],
                         ];
                     }
                 }
             }
         }
-//end if
+        //end if
         // print Kohana::debug($servicelist);
         if (empty($servicelist)) {
             $this->ERROR = 'ERROR: ' . Kohana::lang('error.no-data-for-page', $page . '.cfg');
@@ -911,7 +911,7 @@ class Data_Model extends System_Model
             }
         }
     }
-//end buildPageStruct()
+    //end buildPageStruct()
 
 
     public function parse_page_cfg($page)
@@ -920,16 +920,16 @@ class Data_Model extends System_Model
         if (is_readable($page_cfg)) {
             $data = file($page_cfg);
         } else {
-            throw new Kohana_Exception('error.page-not-readable', $page . '.cfg');
+            throw new KohanaException('error.page-not-readable', $page . '.cfg');
         }
-        $l      = 0;
-        $line   = '';
-        $tag    = '';
+        $l = 0;
+        $line = '';
+        $tag = '';
         $inside = 0;
         $this->PAGE_DEF['page_name'] = 'UNDEF';
         $this->PAGE_DEF['use_regex'] = 0;
-        $this->PAGE_GRAPH            = [];
-        $allowed_tags                = [
+        $this->PAGE_GRAPH = [];
+        $allowed_tags = [
             'page',
             'graph',
         ];
@@ -941,7 +941,7 @@ class Data_Model extends System_Model
             preg_match('/define\s+(\w+)\W+{/', $line, $tag);
             if (isset($tag[1]) && in_array($tag[1], $allowed_tags)) {
                 $inside = 1;
-                $t      = $tag[1];
+                $t = $tag[1];
                 $l++;
                 continue;
             }
@@ -956,18 +956,18 @@ class Data_Model extends System_Model
             }
             if (preg_match('/}/', $line)) {
                 $inside = 0;
-                $t      = '';
+                $t = '';
                 continue;
             }
         }
-//end foreach
+        //end foreach
     }
-//end parse_page_cfg()
+    //end parse_page_cfg()
 
 
     public function getHostsByPage()
     {
-        $hosts     = $this->getHosts();
+        $hosts = $this->getHosts();
         $new_hosts = [];
         foreach ($hosts as $host) {
             if ($host['state'] == 'inactive') {
@@ -979,7 +979,7 @@ class Data_Model extends System_Model
         }
         return $new_hosts;
     }
-//end getHostsByPage()
+    //end getHostsByPage()
 
 
     private function filterHostByPage($host)
@@ -1001,7 +1001,7 @@ class Data_Model extends System_Model
         }
         return false;
     }
-//end filterHostByPage()
+    //end filterHostByPage()
 
 
     private function filterServiceByPage($g, $host, $service)
@@ -1013,8 +1013,8 @@ class Data_Model extends System_Model
                 if (isset($g['host_name']) && preg_match('/' . $g['host_name'] . '/', $host)) {
                     if (isset($g['service_desc']) && preg_match('/' . $g['service_desc'] . '/', $service['name'])) {
                         $data['service_desc'] = $g['service_desc'];
-                        $data['host_name']    = $g['host_name'];
-                        $data['source']       = null;
+                        $data['host_name'] = $g['host_name'];
+                        $data['source'] = null;
                         // if we only want a single image
                         if (isset($g['source'])) {
                             $this->readXML($host, $service['name']);
@@ -1029,13 +1029,13 @@ class Data_Model extends System_Model
                 }
             }
         } else {
-            $hosts_to_search_for    = explode(',', $g['host_name']);
+            $hosts_to_search_for = explode(',', $g['host_name']);
             $services_to_search_for = explode(',', $g['service_desc']);
             if (isset($g['host_name']) && in_array($host, $hosts_to_search_for)) {
                 if (isset($g['service_desc']) && in_array($service['name'], $services_to_search_for)) {
                     $data['service_desc'] = $g['service_desc'];
-                    $data['host_name']    = $g['host_name'];
-                    $data['source']       = null;
+                    $data['host_name'] = $g['host_name'];
+                    $data['source'] = null;
                     // if we only want a single image
                     if (isset($g['source'])) {
                         $this->readXML($host, $service['name']);
@@ -1049,10 +1049,10 @@ class Data_Model extends System_Model
                 }
             }
         }
-//end if
+        //end if
         return false;
     }
-//end filterServiceByPage()
+    //end filterServiceByPage()
 
 
     public function getPages()
@@ -1062,7 +1062,7 @@ class Data_Model extends System_Model
             if ($dh = opendir($this->config->conf['page_dir'])) {
                 while (($file = readdir($dh)) !== false) {
                     if (preg_match('/(.*)\.cfg$/', basename($file), $page)) {
-                         $pages[] = urlencode($page[1]);
+                        $pages[] = urlencode($page[1]);
                     }
                 }
                 closedir($dh);
@@ -1077,7 +1077,7 @@ class Data_Model extends System_Model
         }
         return $pages;
     }
-//end getPages()
+    //end getPages()
 
 
     public function getFirstPage()
@@ -1089,7 +1089,7 @@ class Data_Model extends System_Model
             return urldecode($pages[0]);
         }
     }
-//end getFirstPage()
+    //end getFirstPage()
 
 
     public function getPageDetails($page)
@@ -1097,17 +1097,17 @@ class Data_Model extends System_Model
         $this->parse_page_cfg($page);
         return $this->PAGE_DEF['page_name'];
     }
-//end getPageDetails()
+    //end getPageDetails()
 
 
     public function buildXport($host, $service)
     {
         // FIXME add max rows to config
-        $this->XPORT  = ' -m 2000';
+        $this->XPORT = ' -m 2000';
         $this->XPORT .= $this->buildViewCmd(false, $this->TIMERANGE['start'], $this->TIMERANGE['end']);
         $this->readXML($host, $service);
         $count = 0;
-        $RRAs  = [
+        $RRAs = [
             'MIN',
             'MAX',
             'AVERAGE',
@@ -1120,7 +1120,7 @@ class Data_Model extends System_Model
             $count++;
         }
     }
-//end buildXport()
+    //end buildXport()
 
 
     public function xml2csv($string)
@@ -1138,19 +1138,19 @@ class Data_Model extends System_Model
          * rrdtool version is used
          */
         $timestamp2 = $xml->meta->start;
-        $step       = $xml->meta->step;
-        $csv       .= "\n";
+        $step = $xml->meta->step;
+        $csv .= "\n";
         foreach ($xml->data->row as $key => $value) {
             $csv .= $timestamp2;
             foreach ($value->v as $item) {
                 $csv .= ';' . floatval((string) $item);
             }
-            $csv       .= "\n";
+            $csv .= "\n";
             $timestamp2 = ($timestamp2 + $step);
         }
         return $csv;
     }
-//end xml2csv()
+    //end xml2csv()
 
 
     /*
@@ -1159,21 +1159,21 @@ class Data_Model extends System_Model
      */
     public function tplGetData($hostname, $servicedesc, $throw_exception = true)
     {
-        $conf    = $this->config->conf;
+        $conf = $this->config->conf;
         $xmlfile = $conf['rrdbase'] . $hostname . '/' . $servicedesc . '.xml';
-        $data    = [];
+        $data = [];
         if (file_exists($xmlfile)) {
             $xml = simplexml_load_file($xmlfile);
             // Throw excaption without a valid structure version
             if (!isset($xml->XML->VERSION) && $throw_exception == true) {
-                throw new Kohana_Exception('error.xml-structure-without-version-tag', $xmlfile);
+                throw new KohanaException('error.xml-structure-without-version-tag', $xmlfile);
             }
             if (!isset($xml->XML->VERSION) && $throw_exception == false) {
                 return false;
             }
             foreach ($xml as $key => $val) {
                 if (preg_match('/^NAGIOS_(.*)$/', $key, $match)) {
-                    $key                 = $match[1];
+                    $key = $match[1];
                     $data['MACRO'][$key] = (string) $val;
                 }
             }
@@ -1186,11 +1186,11 @@ class Data_Model extends System_Model
             }
             return $data;
         } else {
-            throw new Kohana_Exception('error.xml-not-found', $xmlfile);
+            throw new KohanaException('error.xml-not-found', $xmlfile);
         }
-//end if
+        //end if
     }
-//end tplGetData()
+    //end tplGetData()
 
 
     /*
@@ -1202,10 +1202,10 @@ class Data_Model extends System_Model
         if ($hostregex === false) {
             return false;
         }
-        $hostregex    = sprintf('/%s/', $hostregex);
+        $hostregex = sprintf('/%s/', $hostregex);
         $serviceregex = sprintf('/%s/', $serviceregex);
-        $hosts        = $this->getHosts();
-        $new_hosts    = [];
+        $hosts = $this->getHosts();
+        $new_hosts = [];
         foreach ($hosts as $host) {
             if (preg_match($hostregex, $host['name'])) {
                 $new_hosts[] = $host['name'];
@@ -1213,33 +1213,33 @@ class Data_Model extends System_Model
         }
 
         if (empty($new_hosts)) {
-            throw new Kohana_Exception('error.tpl-no-hosts-found', $hostregex);
+            throw new KohanaException('error.tpl-no-hosts-found', $hostregex);
         }
 
-        $i            = 0;
+        $i = 0;
         $new_services = [];
         foreach ($new_hosts as $host) {
             $services = $this->getRawServices($host);
             if (empty($services)) {
-                throw new Kohana_Exception('error.tpl-no-services-found', $serviceregex);
+                throw new KohanaException('error.tpl-no-services-found', $serviceregex);
             }
             foreach ($services as $service) {
                 if (preg_match($serviceregex, $service['name'])) {
-                    $new_services[$i]['hostname']            = $host;
-                    $new_services[$i]['host']                = $host;
+                    $new_services[$i]['hostname'] = $host;
+                    $new_services[$i]['host'] = $host;
                     $new_services[$i]['service_description'] = $service['name'];
-                    $new_services[$i]['service']             = $service['name'];
+                    $new_services[$i]['service'] = $service['name'];
                     $i++;
                 }
             }
         }
 
         if (empty($new_services)) {
-            throw new Kohana_Exception('error.tpl-no-services-found', $serviceregex);
+            throw new KohanaException('error.tpl-no-services-found', $serviceregex);
         }
 
         return $new_services;
     }
-//end tplGetServices()
+    //end tplGetServices()
 }
 //end class

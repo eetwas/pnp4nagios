@@ -18,7 +18,7 @@ function _ucwords($str)
         return mb_convert_case($str, MB_CASE_TITLE);
     }
 
-    if (utf8::is_ascii($str)) {
+    if (Utf8::is_ascii($str)) {
         return ucwords($str);
     }
 

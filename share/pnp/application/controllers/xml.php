@@ -13,7 +13,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @author     Jorg Linge
  * @license    GPL
  */
-class Xml_Controller extends System_Controller
+class XmlController extends SystemController
 {
     public function __construct()
     {

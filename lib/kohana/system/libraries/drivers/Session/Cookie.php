@@ -17,7 +17,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class Session_Cookie_Driver implements Session_Driver
+class SessionCookieDriver implements SessionDriver
 {
     protected $cookie_name;
     protected $encrypt; // Library

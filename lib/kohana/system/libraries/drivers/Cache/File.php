@@ -17,7 +17,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class Cache_File_Driver implements Cache_Driver
+class CacheFileDriver implements CacheDriver
 {
     protected $directory = '';
 
@@ -30,8 +30,8 @@ class Cache_File_Driver implements Cache_Driver
         $directory = str_replace('\\', '/', realpath($directory)) . '/';
 
         // Make sure the cache directory is writable
-        if (! is_dir($directory) or ! is_writable($directory)) {
-            throw new Kohana_Exception('cache.unwritable', $directory);
+        if (!is_dir($directory) or !is_writable($directory)) {
+            throw new KohanaException('cache.unwritable', $directory);
         }
 
         // Directory is valid
@@ -100,7 +100,7 @@ class Cache_File_Driver implements Cache_Driver
             $lifetime += time();
         }
 
-        if (! empty($tags)) {
+        if (!empty($tags)) {
             // Convert the tags into a string list
             $tags = implode('+', $tags);
         }
@@ -197,7 +197,7 @@ class Cache_File_Driver implements Cache_Driver
 
         foreach ($files as $file) {
             // Remove the cache file
-            if (! unlink($file)) {
+            if (!unlink($file)) {
                 Kohana::log('error', 'Cache: Unable to delete cache file: ' . $file);
             }
         }
@@ -222,7 +222,7 @@ class Cache_File_Driver implements Cache_Driver
             foreach ($files as $file) {
                 if ($this->expired($file)) {
                     // The cache file has already expired, delete it
-                    if (! unlink($file)) {
+                    if (!unlink($file)) {
                         Kohana::log('error', 'Cache: Unable to delete cache file: ' . $file);
                     }
                 }

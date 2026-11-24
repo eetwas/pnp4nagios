@@ -18,7 +18,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class Image_ImageMagick_Driver extends Image_Driver
+class ImageImageMagickDriver extends ImageDriver
 {
     // Directory that IM is installed in
     protected $dir = '';
@@ -32,7 +32,7 @@ class Image_ImageMagick_Driver extends Image_Driver
     /**
      * Attempts to detect the ImageMagick installation directory.
      *
-     * @throws  Kohana_Exception
+     * @throws  KohanaException
      * @param   array   configuration
      * @return  void
      */
@@ -40,8 +40,8 @@ class Image_ImageMagick_Driver extends Image_Driver
     {
         if (empty($config['directory'])) {
             // Attempt to locate IM by using "which" (only works for *nix!)
-            if (! is_file($path = exec('which convert'))) {
-                throw new Kohana_Exception('image.imagemagick.not_found');
+            if (!is_file($path = exec('which convert'))) {
+                throw new KohanaException('image.imagemagick.not_found');
             }
 
             $config['directory'] = dirname($path);
@@ -51,8 +51,8 @@ class Image_ImageMagick_Driver extends Image_Driver
         $this->ext = (PHP_SHLIB_SUFFIX === 'dll') ? '.exe' : '';
 
         // Check to make sure the provided path is correct
-        if (! is_file(realpath($config['directory']) . '/convert' . $this->ext)) {
-            throw new Kohana_Exception('image.imagemagick.not_found', 'convert' . $this->ext);
+        if (!is_file(realpath($config['directory']) . '/convert' . $this->ext)) {
+            throw new KohanaException('image.imagemagick.not_found', 'convert' . $this->ext);
         }
 
         // Set the installation directory
@@ -177,11 +177,11 @@ class Image_ImageMagick_Driver extends Image_Driver
     {
         if (
             $error = exec(escapeshellcmd($this->dir . 'convert' . $this->ext) .
-                          ' -rotate ' .
-                          escapeshellarg($amt) .
-                          ' -background transparent ' .
-                          $this->cmd_image . ' ' .
-                          $this->cmd_image)
+                ' -rotate ' .
+                escapeshellarg($amt) .
+                ' -background transparent ' .
+                $this->cmd_image . ' ' .
+                $this->cmd_image)
         ) {
             $this->errors[] = $error;
             return false;
@@ -194,7 +194,7 @@ class Image_ImageMagick_Driver extends Image_Driver
     {
         // Set the sigma, radius, and amount. The amount formula allows a nice
         // spread between 1 and 100 without pixelizing the image badly.
-        $sigma  = 0.5;
+        $sigma = 0.5;
         $radius = $sigma * 2;
         $amount = round(($amount / 80) * 3.14, 2);
 

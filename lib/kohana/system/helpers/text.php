@@ -17,7 +17,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class text_Core
+class TextCore
 {
     /**
      * Limits a phrase to a given number of words.
@@ -62,7 +62,7 @@ class text_Core
 
         $limit = (int) $limit;
 
-        if (trim($str) === '' or utf8::strlen($str) <= $limit) {
+        if (trim($str) === '' or Utf8::strlen($str) <= $limit) {
             return $str;
         }
 
@@ -71,7 +71,7 @@ class text_Core
         }
 
         if ($preserve_words == false) {
-            return rtrim(utf8::substr($str, 0, $limit)) . $end_char;
+            return rtrim(Utf8::substr($str, 0, $limit)) . $end_char;
         }
 
         preg_match('/^.{' . ($limit - 1) . '}\S*/us', $str, $matches);
@@ -137,12 +137,12 @@ class text_Core
                 break;
             default:
                 $pool = (string) $type;
-                $utf8 = ! utf8::is_ascii($pool);
+                $utf8 = !Utf8::is_ascii($pool);
                 break;
         }
 
         // Split the pool into an array of characters
-        $pool = ($utf8 === true) ? utf8::str_split($pool, 1) : str_split($pool, 1);
+        $pool = ($utf8 === true) ? Utf8::str_split($pool, 1) : str_split($pool, 1);
 
         // Largest pool key
         $max = count($pool) - 1;
@@ -202,7 +202,7 @@ class text_Core
 
         $regex = '!' . $regex . '!ui';
 
-        if (utf8::strlen($replacement) == 1) {
+        if (Utf8::strlen($replacement) == 1) {
             $regex .= 'e';
             return preg_replace($regex, 'str_repeat($replacement, utf8::strlen(\'$1\'))', $str);
         }
@@ -224,7 +224,7 @@ class text_Core
         for ($i = 0, $max = strlen($word); $i < $max; ++$i) {
             foreach ($words as $w) {
                 // Once a difference is found, break out of the loops
-                if (! isset($w[$i]) or $w[$i] !== $word[$i]) {
+                if (!isset($w[$i]) or $w[$i] !== $word[$i]) {
                     break 2;
                 }
             }
@@ -361,11 +361,11 @@ class text_Core
         // IEC prefixes (binary)
         if ($si == false or strpos($force_unit, 'i') !== false) {
             $units = array('B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB');
-            $mod   = 1024;
+            $mod = 1024;
         } else {
-        // SI prefixes (decimal)
+            // SI prefixes (decimal)
             $units = array('B', 'kB', 'MB', 'GB', 'TB', 'PB');
-            $mod   = 1000;
+            $mod = 1000;
         }
 
         // Determine unit to use

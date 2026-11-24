@@ -16,7 +16,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class expires_Core
+class ExpiresCore
 {
     /**
      * Sets the amount of time before a page expires
@@ -51,7 +51,7 @@ class expires_Core
      */
     public static function check($seconds = 60)
     {
-        if (! empty($_SERVER['HTTP_IF_MODIFIED_SINCE']) and expires::check_headers()) {
+        if (!empty($_SERVER['HTTP_IF_MODIFIED_SINCE']) and expires::check_headers()) {
             if (($strpos = strpos($_SERVER['HTTP_IF_MODIFIED_SINCE'], ';')) !== false) {
                 // IE6 and perhaps other IE versions send length too, compensate here
                 $mod_time = substr($_SERVER['HTTP_IF_MODIFIED_SINCE'], 0, $strpos);

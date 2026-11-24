@@ -17,7 +17,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class Cache_Memcache_Driver implements Cache_Driver
+class CacheMemcacheDriver implements CacheDriver
 {
     const TAGS_KEY = 'memcache_tags_array';
 
@@ -33,8 +33,8 @@ class Cache_Memcache_Driver implements Cache_Driver
 
     public function __construct()
     {
-        if (! extension_loaded('memcache')) {
-            throw new Kohana_Exception('cache.extension_not_loaded', 'memcache');
+        if (!extension_loaded('memcache')) {
+            throw new KohanaException('cache.extension_not_loaded', 'memcache');
         }
 
         $this->backend = new Memcache();
@@ -54,7 +54,7 @@ class Cache_Memcache_Driver implements Cache_Driver
         // Load tags
         self::$tags = $this->backend->get(self::TAGS_KEY);
 
-        if (! is_array(self::$tags)) {
+        if (!is_array(self::$tags)) {
             // Create a new tags array
             self::$tags = array();
 
@@ -77,8 +77,8 @@ class Cache_Memcache_Driver implements Cache_Driver
     public function find($tag)
     {
         if (isset(self::$tags[$tag]) and $results = $this->backend->get(self::$tags[$tag])) {
-                // Return all the found caches
-                return $results;
+            // Return all the found caches
+            return $results;
         } else {
             // No matching tags
             return array();
@@ -92,7 +92,7 @@ class Cache_Memcache_Driver implements Cache_Driver
 
     public function set($id, $data, array $tags = null, $lifetime)
     {
-        if (! empty($tags)) {
+        if (!empty($tags)) {
             // Tags will be changed
             self::$tags_changed = true;
 
@@ -158,7 +158,7 @@ class Cache_Memcache_Driver implements Cache_Driver
 
         foreach (self::$tags as $tag => $_ids) {
             foreach ($_ids as $id) {
-                if (! $this->backend->get($id)) {
+                if (!$this->backend->get($id)) {
                     // This id has disappeared, delete it from the tags
                     unset(self::$tags[$tag][$id]);
                 }

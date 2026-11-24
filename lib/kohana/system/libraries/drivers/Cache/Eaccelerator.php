@@ -17,12 +17,12 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class Cache_Eaccelerator_Driver implements Cache_Driver
+class CacheEacceleratorDriver implements CacheDriver
 {
     public function __construct()
     {
-        if (! extension_loaded('eaccelerator')) {
-            throw new Kohana_Exception('cache.extension_not_loaded', 'eaccelerator');
+        if (!extension_loaded('eaccelerator')) {
+            throw new KohanaException('cache.extension_not_loaded', 'eaccelerator');
         }
     }
 
@@ -40,7 +40,7 @@ class Cache_Eaccelerator_Driver implements Cache_Driver
 
     public function set($id, $data, array $tags = null, $lifetime)
     {
-        if (! empty($tags)) {
+        if (!empty($tags)) {
             Kohana::log('error', 'tags are unsupported by the eAccelerator driver');
         }
 

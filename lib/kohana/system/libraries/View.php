@@ -18,7 +18,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class View_Core
+class ViewCore
 {
     // The view file name and type
     protected $kohana_filename = false;
@@ -44,7 +44,7 @@ class View_Core
     /**
      * Attempts to load a view and pre-load view data.
      *
-     * @throws  Kohana_Exception  if the requested view cannot be found
+     * @throws  KohanaException  if the requested view cannot be found
      * @param   string  view name
      * @param   array   pre-load data
      * @param   string  type of file: html, css, js, etc.
@@ -57,7 +57,7 @@ class View_Core
             $this->set_filename($name, $type);
         }
 
-        if (is_array($data) and ! empty($data)) {
+        if (is_array($data) and !empty($data)) {
             // Preload data using array_merge, to allow user extensions
             $this->kohana_local_data = array_merge($this->kohana_local_data, $data);
         }
@@ -90,8 +90,8 @@ class View_Core
             $this->kohana_filetype = EXT;
         } else {
             // Check if the filetype is allowed by the configuration
-            if (! in_array($type, Kohana::config('view.allowed_filetypes'))) {
-                throw new Kohana_Exception('core.invalid_filetype', $type);
+            if (!in_array($type, Kohana::config('view.allowed_filetypes'))) {
+                throw new KohanaException('core.invalid_filetype', $type);
             }
 
             // Load the filename and set the content type
@@ -252,7 +252,7 @@ class View_Core
     public function render($print = false, $renderer = false)
     {
         if (empty($this->kohana_filename)) {
-            throw new Kohana_Exception('core.view_set_filename');
+            throw new KohanaException('core.view_set_filename');
         }
 
         if (is_string($this->kohana_filetype)) {

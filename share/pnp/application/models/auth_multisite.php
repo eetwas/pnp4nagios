@@ -6,7 +6,7 @@ defined('SYSPATH') or die('No direct access allowed.');
 // phpcs:enable PSR1.Files.SideEffects
 // phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
 
-class Auth_Multisite_Model
+class AuthMultisiteModel
 {
     private $htpasswdPath;
 
@@ -20,9 +20,9 @@ class Auth_Multisite_Model
     public function __construct($htpasswdPath, $serialsPath, $secretPath, $loginUrl)
     {
         $this->htpasswdPath = $htpasswdPath;
-        $this->serialsPath  = $serialsPath;
-        $this->secretPath   = $secretPath;
-        $this->loginUrl     = $loginUrl;
+        $this->serialsPath = $serialsPath;
+        $this->secretPath = $secretPath;
+        $this->loginUrl = $loginUrl;
 
         // When the auth.serial file exists, use this instead of the htpasswd
         // for validating the cookie. The structure of the file is equal, so
@@ -32,7 +32,7 @@ class Auth_Multisite_Model
         } elseif (file_exists($this->htpasswdPath)) {
             $this->authFile = 'htpasswd';
         } else {
-            throw new Kohana_exception('error.auth_multisite_missing_htpasswd');
+            throw new KohanaException('error.auth_multisite_missing_htpasswd');
         }
 
         if (!file_exists($this->secretPath)) {
@@ -48,7 +48,7 @@ class Auth_Multisite_Model
         foreach (file($path) as $line) {
             if (strpos($line, ':') !== false) {
                 list($username, $secret) = explode(':', $line, 2);
-                $creds[$username]        = rtrim($secret);
+                $creds[$username] = rtrim($secret);
             }
         }
         return $creds;

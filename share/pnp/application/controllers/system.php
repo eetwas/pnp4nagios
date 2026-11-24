@@ -13,7 +13,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @author  Joerg Linge
  * @license GPL
  */
-class System_Controller extends Template_Controller
+class SystemController extends TemplateController
 {
     public $data = '';
 
@@ -52,29 +52,29 @@ class System_Controller extends Template_Controller
     {
         parent::__construct();
 
-        $this->data    = new Data_Model();
-        $this->config  = new Config_Model();
-        $this->rrdtool = new Rrdtool_Model();
-        $this->auth    = new Auth_Model();
-    // $this->system    = new System_Model();
+        $this->data = new DataModel();
+        $this->config = new ConfigModel();
+        $this->rrdtool = new RrdtoolModel();
+        $this->auth = new AuthModel();
+        // $this->system    = new SystemModel();
         $this->config->read_config();
         Kohana::config_set('locale.language', $this->config->conf['lang']);
         // Check for mod_rewrite
         $this->check_mod_rewrite();
 
-        $this->start      = $this->input->get('start', false);
-        $this->end        = $this->input->get('end', false);
-        $this->theme      = pnp::clean($this->input->get('theme', false));
-        $this->view       = pnp::clean($this->input->get('view', ''));
-        $this->host       = pnp::clean($this->input->get('host', null));
-        $this->service    = pnp::clean($this->input->get('srv', null));
-        $this->source     = pnp::clean($this->input->get('source', null));
-        $this->version    = pnp::clean($this->input->get('version', null));
-        $this->tpl        = pnp::clean($this->input->get('tpl'));
+        $this->start = $this->input->get('start', false);
+        $this->end = $this->input->get('end', false);
+        $this->theme = pnp::clean($this->input->get('theme', false));
+        $this->view = pnp::clean($this->input->get('view', ''));
+        $this->host = pnp::clean($this->input->get('host', null));
+        $this->service = pnp::clean($this->input->get('srv', null));
+        $this->source = pnp::clean($this->input->get('source', null));
+        $this->version = pnp::clean($this->input->get('version', null));
+        $this->tpl = pnp::clean($this->input->get('tpl'));
         $this->controller = Router::$controller;
 
         $this->data->getTimeRange($this->start, $this->end, $this->view);
-        if (! in_array(Router::$controller, ['image', 'image_special', 'xport'])) {
+        if (!in_array(Router::$controller, ['image', 'image_special', 'xport'])) {
             $this->session = Session::instance();
 
             // Initialize CSRF Token
@@ -91,7 +91,7 @@ class System_Controller extends Template_Controller
                     $this->theme = $this->config->conf['ui-theme'];
                     Kohana::config_set('core.theme', $this->theme);
                 }
-            // Sesion with theme info
+                // Sesion with theme info
             } else {
                 if ($this->theme && $this->theme != 'default') {
                     // store $this->theme if available
@@ -193,51 +193,51 @@ class System_Controller extends Template_Controller
     {
         $conf = $this->config->conf;
         if ($auth == 'service_links') {
-                $users = explode(',', $conf['allowed_for_service_links']);
+            $users = explode(',', $conf['allowed_for_service_links']);
             if (in_array('EVERYONE', $users)) {
-                    return 1;
+                return 1;
             } elseif (in_array('NONE', $users)) {
-                    return 0;
+                return 0;
             } elseif (in_array($this->auth->REMOTE_USER, $users)) {
-                    return 1;
+                return 1;
             } else {
-                    return 0;
+                return 0;
             }
         }
         if ($auth == 'host_search') {
-                $users = explode(',', $conf['allowed_for_host_search']);
+            $users = explode(',', $conf['allowed_for_host_search']);
             if (in_array('EVERYONE', $users)) {
-                    return 1;
+                return 1;
             } elseif (in_array('NONE', $users)) {
-                    return 0;
+                return 0;
             } elseif (in_array($this->auth->REMOTE_USER, $users)) {
-                    return 1;
+                return 1;
             } else {
-                    return 0;
+                return 0;
             }
         }
         if ($auth == 'host_overview') {
-                $users = explode(',', $conf['allowed_for_host_overview']);
+            $users = explode(',', $conf['allowed_for_host_overview']);
             if (in_array('EVERYONE', $users)) {
-                    return 1;
+                return 1;
             } elseif (in_array('NONE', $users)) {
-                    return 0;
+                return 0;
             } elseif (in_array($this->auth->REMOTE_USER, $users)) {
-                    return 1;
+                return 1;
             } else {
-                    return 0;
+                return 0;
             }
         }
         if ($auth == 'pages') {
-                $users = explode(',', $conf['allowed_for_pages']);
+            $users = explode(',', $conf['allowed_for_pages']);
             if (in_array('EVERYONE', $users)) {
-                    return 1;
+                return 1;
             } elseif (in_array('NONE', $users)) {
-                    return 0;
+                return 0;
             } elseif (in_array($this->auth->REMOTE_USER, $users)) {
-                    return 1;
+                return 1;
             } else {
-                    return 0;
+                return 0;
             }
         }
     }
@@ -247,7 +247,7 @@ class System_Controller extends Template_Controller
     public function isMobileDevice()
     {
         if ($this->session->get('classic-ui', 0) == 1) {
-             return false;
+            return false;
         }
         if (preg_match('/' . $this->config->conf['mobile_devices'] . '/', $_SERVER['HTTP_USER_AGENT'])) {
             return true;

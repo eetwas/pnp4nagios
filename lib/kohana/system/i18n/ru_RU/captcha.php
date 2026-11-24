@@ -6,24 +6,64 @@ defined('SYSPATH') or die('No direct access allowed.');
 
 $lang = array
 (
-  'file_not_found' => 'Файл "%s" не найден. Убедитесь в наличии файлов функцией file_exists() перед их использованием.',
-  'requires_GD2'   => 'Библиотека Captcha нуждается в расширении GD2 с поддержкой FreeType. Подробности на http://php.net/gd_info .',
+    'file_not_found' => 'Файл "%s" не найден. Убедитесь в наличии файлов функцией file_exists() перед их использованием.',
+    'requires_GD2' => 'Библиотека Captcha нуждается в расширении GD2 с поддержкой FreeType. Подробности на http://php.net/gd_info .',
 
-    // Words of varying length for the Captcha_Word_Driver to pick from
+    // Words of varying length for the CaptchaWordDriver to pick from
     // Note: use only alphanumeric characters
     'words' => array
     (
-        'cd', 'tv', 'it', 'to', 'be', 'or',
-        'sun', 'car', 'dog', 'bed', 'kid', 'egg',
-        'bike', 'tree', 'bath', 'roof', 'road', 'hair',
-        'hello', 'world', 'earth', 'beard', 'chess', 'water',
-        'barber', 'bakery', 'banana', 'market', 'purple', 'writer',
-        'america', 'release', 'playing', 'working', 'foreign', 'general',
-        'aircraft', 'computer', 'laughter', 'alphabet', 'kangaroo', 'spelling',
-        'architect', 'president', 'cockroach', 'encounter', 'terrorism', 'cylinders',
+        'cd',
+        'tv',
+        'it',
+        'to',
+        'be',
+        'or',
+        'sun',
+        'car',
+        'dog',
+        'bed',
+        'kid',
+        'egg',
+        'bike',
+        'tree',
+        'bath',
+        'roof',
+        'road',
+        'hair',
+        'hello',
+        'world',
+        'earth',
+        'beard',
+        'chess',
+        'water',
+        'barber',
+        'bakery',
+        'banana',
+        'market',
+        'purple',
+        'writer',
+        'america',
+        'release',
+        'playing',
+        'working',
+        'foreign',
+        'general',
+        'aircraft',
+        'computer',
+        'laughter',
+        'alphabet',
+        'kangaroo',
+        'spelling',
+        'architect',
+        'president',
+        'cockroach',
+        'encounter',
+        'terrorism',
+        'cylinders',
     ),
 
-    // Riddles for the Captcha_Riddle_Driver to pick from
+    // Riddles for the CaptchaRiddleDriver to pick from
     // Note: use only alphanumeric characters
     'riddles' => array
     (

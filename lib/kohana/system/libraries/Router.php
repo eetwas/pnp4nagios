@@ -17,15 +17,15 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class Router_Core
+class RouterCore
 {
     protected static $routes;
 
-    public static $current_uri  = '';
+    public static $current_uri = '';
     public static $query_string = '';
     public static $complete_uri = '';
-    public static $routed_uri   = '';
-    public static $url_suffix   = '';
+    public static $routed_uri = '';
+    public static $url_suffix = '';
 
     public static $segments;
     public static $rsegments;
@@ -33,7 +33,7 @@ class Router_Core
     public static $controller;
     public static $controller_path;
 
-    public static $method    = 'index';
+    public static $method = 'index';
     public static $arguments = array();
 
     /**
@@ -43,7 +43,7 @@ class Router_Core
      */
     public static function setup()
     {
-        if (! empty($_SERVER['QUERY_STRING'])) {
+        if (!empty($_SERVER['QUERY_STRING'])) {
             // Set the query string to the current query string
             Router::$query_string = '?' . trim($_SERVER['QUERY_STRING'], '&/');
         }
@@ -58,8 +58,8 @@ class Router_Core
 
         if (Router::$current_uri === '') {
             // Make sure the default route is set
-            if (! isset(Router::$routes['_default'])) {
-                throw new Kohana_Exception('core.no_default_route');
+            if (!isset(Router::$routes['_default'])) {
+                throw new KohanaException('core.no_default_route');
             }
 
             // Use the default route when no segments exist
@@ -97,7 +97,7 @@ class Router_Core
 
         // Prepare to find the controller
         $controller_path = '';
-        $method_segment  = null;
+        $method_segment = null;
 
         // Paths to search
         $paths = Kohana::include_paths();
@@ -177,13 +177,13 @@ class Router_Core
 
                 // Remove GET string from segments
                 if (($query = strpos(Router::$current_uri, '?')) !== false) {
-                    list (Router::$current_uri, $query) = explode('?', Router::$current_uri, 2);
+                    list(Router::$current_uri, $query) = explode('?', Router::$current_uri, 2);
 
                     // Parse the query string into $_GET
                     parse_str($query, $_GET);
 
                     // Convert $_GET to UTF-8
-                    $_GET = utf8::clean($_GET);
+                    $_GET = Utf8::clean($_GET);
                 }
             }
         } elseif (isset($_GET['kohana_uri'])) {

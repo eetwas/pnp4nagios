@@ -14,7 +14,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  */
 function _stristr($str, $search)
 {
-    if (utf8::is_ascii($str) and utf8::is_ascii($search)) {
+    if (Utf8::is_ascii($str) and Utf8::is_ascii($search)) {
         return stristr($str, $search);
     }
 
@@ -22,8 +22,8 @@ function _stristr($str, $search)
         return $str;
     }
 
-    $str_lower = utf8::strtolower($str);
-    $search_lower = utf8::strtolower($search);
+    $str_lower = Utf8::strtolower($str);
+    $search_lower = Utf8::strtolower($search);
 
     preg_match('/^(.*?)' . preg_quote($search, '/') . '/s', $str_lower, $matches);
 

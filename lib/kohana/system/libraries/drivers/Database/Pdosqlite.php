@@ -9,7 +9,7 @@ defined('SYSPATH') or die('No direct access allowed.');
 
 
 /*
- * Class: Database_PdoSqlite_Driver
+ * Class: DatabasePdoSqliteDriver
  *  Provides specific database items for Sqlite.
  *
  * Connection string should be, eg: "pdosqlite://path/to/database.db"
@@ -20,7 +20,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  *  license   - <no>
  */
 
-class Database_Pdosqlite_Driver extends Database_Driver
+class DatabasePdosqliteDriver extends DatabaseDriver
 {
     // Database connection link
     protected $link;
@@ -61,7 +61,7 @@ class Database_Pdosqlite_Driver extends Database_Driver
                 $this->set_charset($charset);
             }
         } catch (PDOException $e) {
-            throw new Kohana_Database_Exception('database.error', $e->getMessage());
+            throw new KohanaDatabaseException('database.error', $e->getMessage());
         }
 
         // Clear password after successful connect
@@ -75,9 +75,9 @@ class Database_Pdosqlite_Driver extends Database_Driver
         try {
             $sth = $this->link->prepare($sql);
         } catch (PDOException $e) {
-            throw new Kohana_Database_Exception('database.error', $e->getMessage());
+            throw new KohanaDatabaseException('database.error', $e->getMessage());
         }
-        return new Pdosqlite_Result($sth, $this->link, $this->db_config['object'], $sql);
+        return new PdosqliteResult($sth, $this->link, $this->db_config['object'], $sql);
     }
 
     public function set_charset($charset)
@@ -87,7 +87,7 @@ class Database_Pdosqlite_Driver extends Database_Driver
 
     public function escape_table($table)
     {
-        if (! $this->db_config['escape']) {
+        if (!$this->db_config['escape']) {
             return $table;
         }
 
@@ -96,7 +96,7 @@ class Database_Pdosqlite_Driver extends Database_Driver
 
     public function escape_column($column)
     {
-        if (! $this->db_config['escape']) {
+        if (!$this->db_config['escape']) {
             return $column;
         }
 
@@ -114,7 +114,7 @@ class Database_Pdosqlite_Driver extends Database_Driver
         }
 
         // This matches any modifiers we support to SELECT.
-        if (! preg_match('/\b(?:rand|all|distinct(?:row)?|high_priority|sql_(?:small_result|b(?:ig_result|uffer_result)|no_cache|ca(?:che|lc_found_rows)))\s/i', $column)) {
+        if (!preg_match('/\b(?:rand|all|distinct(?:row)?|high_priority|sql_(?:small_result|b(?:ig_result|uffer_result)|no_cache|ca(?:che|lc_found_rows)))\s/i', $column)) {
             if (stripos($column, ' AS ') !== false) {
                 // Force 'AS' to uppercase
                 $column = str_ireplace(' AS ', ' AS ', $column);
@@ -196,7 +196,7 @@ class Database_Pdosqlite_Driver extends Database_Driver
 
     public function escape_str($str)
     {
-        if (! $this->db_config['escape']) {
+        if (!$this->db_config['escape']) {
             return $str;
         }
 
@@ -218,7 +218,7 @@ class Database_Pdosqlite_Driver extends Database_Driver
                 $tables[] = current($row);
             }
         } catch (PDOException $e) {
-            throw new Kohana_Database_Exception('database.error', $e->getMessage());
+            throw new KohanaDatabaseException('database.error', $e->getMessage());
         }
         return $tables;
     }
@@ -268,15 +268,15 @@ class Database_Pdosqlite_Driver extends Database_Driver
         return $this->link->getAttribute(constant("PDO::ATTR_SERVER_VERSION"));
     }
 }
-// End Database_PdoSqlite_Driver Class
+// End DatabasePdoSqliteDriver Class
 
 /*
  * PDO-sqlite Result
  */
-class Pdosqlite_Result extends Database_Result
+class PdosqliteResult extends DatabaseResult
 {
     // Data fetching types
-    protected $fetch_type  = PDO::FETCH_OBJ;
+    protected $fetch_type = PDO::FETCH_OBJ;
     protected $return_type = PDO::FETCH_ASSOC;
 
     /**
@@ -291,10 +291,10 @@ class Pdosqlite_Result extends Database_Result
     {
         if (is_object($result) or $result = $link->prepare($sql)) {
             // run the query. Return true if success, false otherwise
-            if (! $result->execute()) {
+            if (!$result->execute()) {
                 // Throw Kohana Exception with error message. See PDOStatement errorInfo() method
                 $arr_infos = $result->errorInfo();
-                throw new Kohana_Database_Exception('database.error', $arr_infos[2]);
+                throw new KohanaDatabaseException('database.error', $arr_infos[2]);
             }
 
             if (preg_match('/^SELECT|PRAGMA|EXPLAIN/i', $sql)) {
@@ -305,13 +305,13 @@ class Pdosqlite_Result extends Database_Result
 
                 $this->fetch_type = ($object === true) ? PDO::FETCH_OBJ : PDO::FETCH_ASSOC;
             } elseif (preg_match('/^DELETE|INSERT|UPDATE/i', $sql)) {
-                $this->insert_id  = $link->lastInsertId();
+                $this->insert_id = $link->lastInsertId();
 
                 $this->total_rows = $result->rowCount();
             }
         } else {
             // SQL error
-            throw new Kohana_Database_Exception('database.error', $link->errorInfo() . ' - ' . $sql);
+            throw new KohanaDatabaseException('database.error', $link->errorInfo() . ' - ' . $sql);
         }
 
         // Set result type
@@ -393,7 +393,7 @@ class Pdosqlite_Result extends Database_Result
                 $rows[] = $row;
             }
         } catch (PDOException $e) {
-            throw new Kohana_Database_Exception('database.error', $e->getMessage());
+            throw new KohanaDatabaseException('database.error', $e->getMessage());
             return false;
         }
         return $rows;
@@ -424,7 +424,7 @@ class Pdosqlite_Result extends Database_Result
         try {
             return $this->result->fetch($this->fetch_type, PDO::FETCH_ORI_ABS, $offset);
         } catch (PDOException $e) {
-            throw new Kohana_Database_Exception('database.error', $e->getMessage());
+            throw new KohanaDatabaseException('database.error', $e->getMessage());
         }
     }
 
@@ -434,4 +434,4 @@ class Pdosqlite_Result extends Database_Result
         return $this->seek(0);
     }
 }
-// End PdoSqlite_Result Class
+// End PdosqliteResult Class

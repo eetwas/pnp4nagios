@@ -17,7 +17,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class Captcha_Basic_Driver extends Captcha_Driver
+class CaptchaBasicDriver extends CaptchaDriver
 {
     /**
      * Generates a new Captcha challenge.

@@ -18,13 +18,13 @@ function _substr($str, $offset, $length = null)
         return ($length === null) ? mb_substr($str, $offset) : mb_substr($str, $offset, $length);
     }
 
-    if (utf8::is_ascii($str)) {
+    if (Utf8::is_ascii($str)) {
         return ($length === null) ? substr($str, $offset) : substr($str, $offset, $length);
     }
 
     // Normalize params
-    $str    = (string) $str;
-    $strlen = utf8::strlen($str);
+    $str = (string) $str;
+    $strlen = Utf8::strlen($str);
     $offset = (int) ($offset < 0) ? max(0, $strlen + $offset) : $offset; // Normalize to positive offset
     $length = ($length === null) ? null : (int) $length;
 
